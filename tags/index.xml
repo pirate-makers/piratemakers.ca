@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/</link>
+    <description>Recent content in Tags on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 22 May 2019 14:29:43 -0400</lastBuildDate>
+    
+	<atom:link href="https://piratemakers.ca/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>test</title>
+      <link>https://piratemakers.ca/tags/test/</link>
+      <pubDate>Wed, 22 May 2019 14:29:43 -0400</pubDate>
+      
+      <guid>https://piratemakers.ca/tags/test/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
