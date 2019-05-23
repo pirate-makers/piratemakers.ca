@@ -11,21 +11,20 @@
 
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Tags"/>
-<meta name="twitter:description" content="All tags {{- with .Params.tags -}} Tags// {{ delimit (apply (apply (sort . ) &ldquo;partial&rdquo; &ldquo;post/tag/link&rdquo; &ldquo;.&rdquo;) &ldquo;chomp&rdquo; &ldquo;.&rdquo;) &ldquo;, &rdquo; }}  {{- end -}}"/>
+<meta name="twitter:description" content="Pirate Makers website"/>
 
     <meta property="og:title" content="Tags" />
-<meta property="og:description" content="All tags {{- with .Params.tags -}} Tags// {{ delimit (apply (apply (sort . ) &ldquo;partial&rdquo; &ldquo;post/tag/link&rdquo; &ldquo;.&rdquo;) &ldquo;chomp&rdquo; &ldquo;.&rdquo;) &ldquo;, &rdquo; }}  {{- end -}}" />
-<meta property="og:type" content="article" />
+<meta property="og:description" content="Pirate Makers website" />
+<meta property="og:type" content="website" />
 <meta property="og:url" content="https://piratemakers.ca/tags/" />
-<meta property="article:modified_time" content="2019-05-23T17:54:14&#43;00:00"/>
+
+<meta property="og:updated_time" content="2019-05-22T14:29:43-04:00"/>
 
 
     
       <base href="https://piratemakers.ca/tags/">
     
-    <title>
-  Tags · Pirate Makers
-</title>
+    <title>Tags · Pirate Makers</title>
 
     
       <link rel="canonical" href="https://piratemakers.ca/tags/">
@@ -52,6 +51,7 @@
     <link rel="icon" type="image/png" href="https://piratemakers.ca/img/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="https://piratemakers.ca/img/favicon-16x16.png" sizes="16x16">
 
+    <link rel="alternate" type="application/rss+xml" href="https://piratemakers.ca/tags/index.xml" title="Pirate Makers" />
     <meta name="generator" content="Hugo 0.55.6" />
   </head>
 
@@ -88,24 +88,23 @@
 
       <div class="content">
         
-  <section class="container page">
-  <article>
-    <header>
-      <h1>Tags</h1>
-    </header>
-
+  <section class="container list">
+  <h1 class="title">Tags</h1>
+  <ul>
     
+    <li>
+      <span class="date">May 22, 2019</span>
+      <a class="title" href="https://piratemakers.ca/tags/test/">test</a>
+    </li>
+    
+  </ul>
+  
 
-<h2 id="all-tags">All tags</h2>
 
-<p>{{- with .Params.tags -}}
-<div class="tags-list">
-  <span class="dark-red">Tags</span><span class="decorative-marker">//</span>
-  {{ delimit (apply (apply (sort . ) &ldquo;partial&rdquo; &ldquo;post/tag/link&rdquo; &ldquo;.&rdquo;) &ldquo;chomp&rdquo; &ldquo;.&rdquo;) &ldquo;, &rdquo; }}
-</div>
-{{- end -}}</p>
 
-  </article>
+
+
+
 </section>
 
 
