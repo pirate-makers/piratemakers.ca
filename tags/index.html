@@ -11,12 +11,10 @@
 
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Tags"/>
-<meta name="twitter:description" content=" All tags trying to add something
---- # Source: elasticsearch-curator/templates/configmap.yaml apiVersion: v1 kind: ConfigMap metadata: name: es-curator-elasticsearch-curator-config labels: app: elasticsearch-curator chart: elasticsearch-curator-1.5.0 release: es-curator heritage: Tiller data: action_file.yml: |- ---"/>
+<meta name="twitter:description" content="All tags {{- with .Params.tags -}} Tags// {{ delimit (apply (apply (sort . ) &ldquo;partial&rdquo; &ldquo;post/tag/link&rdquo; &ldquo;.&rdquo;) &ldquo;chomp&rdquo; &ldquo;.&rdquo;) &ldquo;, &rdquo; }}  {{- end -}}"/>
 
     <meta property="og:title" content="Tags" />
-<meta property="og:description" content=" All tags trying to add something
---- # Source: elasticsearch-curator/templates/configmap.yaml apiVersion: v1 kind: ConfigMap metadata: name: es-curator-elasticsearch-curator-config labels: app: elasticsearch-curator chart: elasticsearch-curator-1.5.0 release: es-curator heritage: Tiller data: action_file.yml: |- ---" />
+<meta property="og:description" content="All tags {{- with .Params.tags -}} Tags// {{ delimit (apply (apply (sort . ) &ldquo;partial&rdquo; &ldquo;post/tag/link&rdquo; &ldquo;.&rdquo;) &ldquo;chomp&rdquo; &ldquo;.&rdquo;) &ldquo;, &rdquo; }}  {{- end -}}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://piratemakers.ca/tags/" />
 
@@ -100,21 +98,13 @@
 
 <h2 id="all-tags">All tags</h2>
 
-<p>trying to add something</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">---
-# Source: elasticsearch-curator/templates/configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: es-curator-elasticsearch-curator-config
-  labels:
-    app: elasticsearch-curator
-    chart: elasticsearch-curator-1.5.0
-    release: es-curator
-    heritage: Tiller
-data:
-  action_file.yml:   |-
-    ---</pre></div>
+<p>{{- with .Params.tags -}}
+<div class="tags-list">
+  <span class="dark-red">Tags</span><span class="decorative-marker">//</span>
+  {{ delimit (apply (apply (sort . ) &ldquo;partial&rdquo; &ldquo;post/tag/link&rdquo; &ldquo;.&rdquo;) &ldquo;chomp&rdquo; &ldquo;.&rdquo;) &ldquo;, &rdquo; }}
+</div>
+{{- end -}}</p>
+
   </article>
 </section>
 

@@ -46,8 +46,7 @@ Thanks for reading!</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://piratemakers.ca/tags/</guid>
-      <description> All tags trying to add something
---- # Source: elasticsearch-curator/templates/configmap.yaml apiVersion: v1 kind: ConfigMap metadata: name: es-curator-elasticsearch-curator-config labels: app: elasticsearch-curator chart: elasticsearch-curator-1.5.0 release: es-curator heritage: Tiller data: action_file.yml: |- ---</description>
+      <description>All tags {{- with .Params.tags -}} Tags// {{ delimit (apply (apply (sort . ) &amp;ldquo;partial&amp;rdquo; &amp;ldquo;post/tag/link&amp;rdquo; &amp;ldquo;.&amp;rdquo;) &amp;ldquo;chomp&amp;rdquo; &amp;ldquo;.&amp;rdquo;) &amp;ldquo;, &amp;rdquo; }}  {{- end -}}</description>
     </item>
     
   </channel>
