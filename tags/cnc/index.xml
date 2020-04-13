@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Pirate Makers</title>
-    <link>https://piratemakers.ca/posts/</link>
-    <description>Recent content in Posts on Pirate Makers</description>
+    <title>cnc on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/cnc/</link>
+    <description>Recent content in cnc on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 11 Apr 2020 18:29:43 +0000</lastBuildDate>
     
-	<atom:link href="https://piratemakers.ca/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://piratemakers.ca/tags/cnc/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>

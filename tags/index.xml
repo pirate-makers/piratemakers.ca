@@ -6,15 +6,24 @@
     <description>Recent content in Tags on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 11 Apr 2020 14:29:43 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 11 Apr 2020 18:29:43 +0000</lastBuildDate>
     
 	<atom:link href="https://piratemakers.ca/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>cnc</title>
+      <link>https://piratemakers.ca/tags/cnc/</link>
+      <pubDate>Sat, 11 Apr 2020 18:29:43 +0000</pubDate>
+      
+      <guid>https://piratemakers.ca/tags/cnc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>fusion360</title>
       <link>https://piratemakers.ca/tags/fusion360/</link>
-      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      <pubDate>Sat, 11 Apr 2020 18:29:43 +0000</pubDate>
       
       <guid>https://piratemakers.ca/tags/fusion360/</guid>
       <description></description>
@@ -23,7 +32,7 @@
     <item>
       <title>laser</title>
       <link>https://piratemakers.ca/tags/laser/</link>
-      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      <pubDate>Sat, 11 Apr 2020 18:29:43 +0000</pubDate>
       
       <guid>https://piratemakers.ca/tags/laser/</guid>
       <description></description>
@@ -32,18 +41,9 @@
     <item>
       <title>shapeoko</title>
       <link>https://piratemakers.ca/tags/shapeoko/</link>
-      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      <pubDate>Sat, 11 Apr 2020 18:29:43 +0000</pubDate>
       
       <guid>https://piratemakers.ca/tags/shapeoko/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>test</title>
-      <link>https://piratemakers.ca/tags/test/</link>
-      <pubDate>Wed, 22 May 2019 14:29:43 -0400</pubDate>
-      
-      <guid>https://piratemakers.ca/tags/test/</guid>
       <description></description>
     </item>
     
