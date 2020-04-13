@@ -1,44 +1,38 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
     <loc>https://piratemakers.ca/</loc>
-    <lastmod>2019-05-23T18:49:31+00:00</lastmod>
-    <priority>0</priority>
+    <lastmod>2019-05-22T14:29:43-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://piratemakers.ca/posts/</loc>
-    <lastmod>2019-05-23T18:49:31+00:00</lastmod>
-    <priority>0</priority>
+    <lastmod>2019-05-22T14:29:43-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://piratemakers.ca/tags/</loc>
-    <lastmod>2019-05-23T18:49:31+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/posts/welcome/</loc>
-    <lastmod>2019-05-23T18:49:31+00:00</lastmod>
+    <lastmod>2019-05-22T14:29:43-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://piratemakers.ca/tags/test/</loc>
-    <lastmod>2019-05-23T18:49:31+00:00</lastmod>
-    <priority>0</priority>
+    <lastmod>2019-05-22T14:29:43-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://piratemakers.ca/posts/welcome/</loc>
+    <lastmod>2019-05-22T14:29:43-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://piratemakers.ca/about/</loc>
-    <lastmod>2019-05-22T15:08:02-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://piratemakers.ca/categories/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>
