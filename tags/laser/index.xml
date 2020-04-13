@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Pirate Makers</title>
-    <link>https://piratemakers.ca/posts/</link>
-    <description>Recent content in Posts on Pirate Makers</description>
+    <title>laser on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/laser/</link>
+    <description>Recent content in laser on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 11 Apr 2020 14:29:43 -0400</lastBuildDate>
     
-	<atom:link href="https://piratemakers.ca/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://piratemakers.ca/tags/laser/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,17 +19,6 @@
       <guid>https://piratemakers.ca/posts/laserpostprocess/</guid>
       <description>I bought a 10W+ Endurence Laser last year. This is an addon to mount on my Shapeoko3 CNC. It&amp;rsquo;s really easy to setup as you only have to attach it on your spindle and connect it to the PWM port of the Shapeoko controler. Don&amp;rsquo;t forget to unplug your spindle :)
 I mostly use Autodesk Fusion 360 when I create my CNC projects, and sadly, I found no post-processor that could create Gcode files compatible with the Shapeoko 3 (GRBL).</description>
-    </item>
-    
-    <item>
-      <title>Welcome to a Pirate world</title>
-      <link>https://piratemakers.ca/posts/welcome/</link>
-      <pubDate>Wed, 22 May 2019 14:29:43 -0400</pubDate>
-      
-      <guid>https://piratemakers.ca/posts/welcome/</guid>
-      <description>&amp;lt;section id=&amp;#34;main&amp;#34;&amp;gt; &amp;lt;div&amp;gt; &amp;lt;h1 id=&amp;#34;title&amp;#34;&amp;gt;{{ .Title }}&amp;lt;/h1&amp;gt; {{ range .Pages }} {{ .Render &amp;#34;summary&amp;#34;}} {{ end }} &amp;lt;/div&amp;gt; &amp;lt;/section&amp;gt; var foo = function (bar) { return bar++; }; console.log(foo(5)); Here is a little Python function to welcome you: def hello_world(): print &amp;#34;Hello there!&amp;#34;   ```json
-{&amp;ldquo;a&amp;rdquo;: &amp;ldquo;v&amp;rdquo;}
-```</description>
     </item>
     
   </channel>

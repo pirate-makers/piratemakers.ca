@@ -6,10 +6,20 @@
     <description>Recent content on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 22 May 2019 14:29:43 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 11 Apr 2020 14:29:43 -0400</lastBuildDate>
     
 	<atom:link href="https://piratemakers.ca/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Laser Post-Processor for Fusion 360 that works on Shapeoko</title>
+      <link>https://piratemakers.ca/posts/laserpostprocess/</link>
+      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      
+      <guid>https://piratemakers.ca/posts/laserpostprocess/</guid>
+      <description>I bought a 10W+ Endurence Laser last year. This is an addon to mount on my Shapeoko3 CNC. It&amp;rsquo;s really easy to setup as you only have to attach it on your spindle and connect it to the PWM port of the Shapeoko controler. Don&amp;rsquo;t forget to unplug your spindle :)
+I mostly use Autodesk Fusion 360 when I create my CNC projects, and sadly, I found no post-processor that could create Gcode files compatible with the Shapeoko 3 (GRBL).</description>
+    </item>
     
     <item>
       <title>Welcome to a Pirate world</title>
@@ -28,7 +38,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://piratemakers.ca/about/</guid>
-      <description>Why Pirate Because !
+      <description>Why Pirate Because Pirates are free people which values friendship and freewill !
 Who are the Pirate Makers At the moment, only Prune is onboard.
  Thanks for reading!</description>
     </item>

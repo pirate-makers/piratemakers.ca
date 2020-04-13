@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 22 May 2019 14:29:43 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 11 Apr 2020 14:29:43 -0400</lastBuildDate>
     
 	<atom:link href="https://piratemakers.ca/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>fusion360</title>
+      <link>https://piratemakers.ca/tags/fusion360/</link>
+      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      
+      <guid>https://piratemakers.ca/tags/fusion360/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>laser</title>
+      <link>https://piratemakers.ca/tags/laser/</link>
+      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      
+      <guid>https://piratemakers.ca/tags/laser/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shapeoko</title>
+      <link>https://piratemakers.ca/tags/shapeoko/</link>
+      <pubDate>Sat, 11 Apr 2020 14:29:43 -0400</pubDate>
+      
+      <guid>https://piratemakers.ca/tags/shapeoko/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>test</title>
