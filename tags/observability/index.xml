@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>observability on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/observability/</link>
+    <description>Recent content in observability on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Fri, 07 Aug 2020 00:52:19 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/observability/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prometheus-Operator and Istio Telemetry V2</title>
+      <link>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</link>
+      <pubDate>Fri, 07 Aug 2020 00:52:19 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</guid>
+      <description>Starting Istio 1.4 and up, the way the Observability metrics are created, exchanged and scraped changed. Here is how I configure Prometheus-Operator resources to scrape metrics from Istio 1.6 and install latest Grafana Dashboards
+ServiceMonitor Prometheus-Operator is far more dynamic than the default Prometheus install. It adds some CRD to dynamically and transparently re-configure your Prometheus cluster.
+A ServiceMonitor is a resource describing which pods to scrape based on a Service.</description>
+    </item>
+  </channel>
+</rss>

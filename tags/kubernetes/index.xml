@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubernetes on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/kubernetes/</link>
+    <description>Recent content in kubernetes on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 24 Aug 2022 18:27:29 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Playing with Crossplane, for real</title>
+      <link>https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/</link>
+      <pubDate>Wed, 24 Aug 2022 18:27:29 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/</guid>
+      <description>It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
+that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it.</description>
+    </item>
+    <item>
+      <title>Kubernetes tooling and shell setup</title>
+      <link>https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/</link>
+      <pubDate>Tue, 29 Mar 2022 16:54:21 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/</guid>
+      <description>How to be productive fast with Kubernetes
+Updates:
+20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes.</description>
+    </item>
+    <item>
+      <title>Prometheus-Operator and Istio Telemetry V2</title>
+      <link>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</link>
+      <pubDate>Fri, 07 Aug 2020 00:52:19 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</guid>
+      <description>Starting Istio 1.4 and up, the way the Observability metrics are created, exchanged and scraped changed. Here is how I configure Prometheus-Operator resources to scrape metrics from Istio 1.6 and install latest Grafana Dashboards
+ServiceMonitor Prometheus-Operator is far more dynamic than the default Prometheus install. It adds some CRD to dynamically and transparently re-configure your Prometheus cluster.
+A ServiceMonitor is a resource describing which pods to scrape based on a Service.</description>
+    </item>
+    <item>
+      <title>Understanding Istio and TCP services</title>
+      <link>https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/</link>
+      <pubDate>Thu, 06 Aug 2020 23:41:53 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/</guid>
+      <description>overview I lately came across an Istio setup where both the downstream (client) and the upstream (server) were using the same sets of ports:
+port 8080 for HTTP protocol port 5701 for Hazelcast protocol, a Java based memory database embedded in the pod’s workload, using TCP The setup is presented here:
+In theory, two types of communications happens:
+each Hazelcast database (the red and purple cylinders) talk to each other on port 5701 using TCP protocol.</description>
+    </item>
+    <item>
+      <title>Banzaicloud Kafka Operator and Broker AutoScaling</title>
+      <link>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/</link>
+      <pubDate>Thu, 03 Oct 2019 16:34:43 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/</guid>
+      <description>The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.
+In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
+EDIT also check my previous article on the Banzaicloud Kafka Operator
+EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers.</description>
+    </item>
+    <item>
+      <title>BanzaiCloud Kafka Operator tour</title>
+      <link>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/</link>
+      <pubDate>Tue, 01 Oct 2019 19:29:00 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/</guid>
+      <description>Welcome to the Kafka Operator (Magical) Mystery tour ! I’m sure the Beatles would have rebranded the song if they were still here to see how BanzaiCloud team finally rocked the Kafka Operator world !
+They also did a good job of branding it, so I won’t dive into “why this another Kafka Operator is better than the others”. I can assure it is !
+Just check :
+https://banzaicloud.com/products/kafka-operator/ https://banzaicloud.</description>
+    </item>
+    <item>
+      <title>Using Jsonnet does not have to be complex</title>
+      <link>https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/</link>
+      <pubDate>Tue, 04 Jun 2019 19:25:40 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/</guid>
+      <description>In this Post I’ll try to explain what I’ve set up to generate Kubernetes manifests for all my Micro-Services using Jsonnet.
+Kubernetes / Jsonnet The obvious gain you have when using Jsonnet is that you template JSON files instead of YAML.
+While YAML is easier to read by humans, it is far less computational friendly. There’s a must read about that : Lee Briggs post about “Why the fuck are we templating YAML”</description>
+    </item>
+    <item>
+      <title>Micro-Services deployment as Snapshots</title>
+      <link>https://piratemakers.ca/posts/2019/06/micro-services-deployment-as-snapshots/</link>
+      <pubDate>Tue, 04 Jun 2019 15:28:58 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/06/micro-services-deployment-as-snapshots/</guid>
+      <description>In this article you’ll learn how we bundle our Micro-Services in Snapshots, targeting deployment in Kubernetes.
+Micro-Services Now we have cut our old monolith into a lot of small micro-services, we need to deploy them.
+You think, well, your CI build the micro-service when someone commit a change, and your CD deploy it.
+Yeah.
+When your project start growing, you end up with a lot of micro-services. If you’re lucky and smart enough, your services API will not change, AT ALL, and all your micro-services are back and forth compatible with each others.</description>
+    </item>
+    <item>
+      <title>Istio 1.1.7 &#43; Let’s Encrypt : WORKING !</title>
+      <link>https://piratemakers.ca/posts/2019/05/istio-1.1.7--lets-encrypt-working/</link>
+      <pubDate>Wed, 22 May 2019 13:01:42 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/05/istio-1.1.7--lets-encrypt-working/</guid>
+      <description>It’s been almost a year since I first wrote about using Let’s Encrypt SSL Certificates with Istio, 0.8.0 at this time.
+Then I blogged again when Istio 1.0.2 came out. I had to build an Operator, Cert-Merge, to allow to merge all the SSL certificates created in many Secrets by Cert-Manager into ONE single secret that Istio’s Gateway could use.
+While building this Operator was cool, and I learnt a lot by this time, I knew this was a temporary solution, a highly insecure one.</description>
+    </item>
+    <item>
+      <title>Istio 1.0.2 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS &#43; Certificate Merge</title>
+      <link>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</link>
+      <pubDate>Wed, 07 Nov 2018 17:38:31 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</guid>
+      <description>Recap I already talked about Istio + Cert-Manager in part one and part two. In the meantime Istio went to release 1.0, lastly 1.0.3.
+While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.
+Let me remind you :
+Cert-Manager only create TLS Secrets, which are a kind of Secret that only contains a crt and key file.</description>
+    </item>
+    <item>
+      <title>Istio 0.8.0 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS</title>
+      <link>https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/</link>
+      <pubDate>Tue, 26 Jun 2018 18:57:13 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/</guid>
+      <description>A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
+Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
+What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part.</description>
+    </item>
+    <item>
+      <title>Istio (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS</title>
+      <link>https://piratemakers.ca/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/</link>
+      <pubDate>Tue, 23 Jan 2018 23:12:08 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/</guid>
+      <description>Updates 1 Thanks to comments by Laurent Demailly, here are some updates. This article have been updated accordinately :
+there is now an official Helm Chart for Cert-Manager Istio Ingress also support GRPC, which is based on HTTP/2 Update 2 (2018–06–26) I made a new post to use Cert-Manager with Istio 0.8.0 here.
+Istio Istio is a part of a new way to manage the flow of data in your Microservice world.</description>
+    </item>
+    <item>
+      <title>What nobody tells you about Kubernetes</title>
+      <link>https://piratemakers.ca/posts/2017/07/what-nobody-tells-you-about-kubernetes/</link>
+      <pubDate>Tue, 18 Jul 2017 12:03:59 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2017/07/what-nobody-tells-you-about-kubernetes/</guid>
+      <description>This is a first post in a long serie to come about what you never heard and maybe never thought about when using K8s (Kubernetes), and maybe other orchestration tools.
+I’ve been using Kubernetes for a long time. In fact, at some point, I decided not to use K8s for the company I was working for, because it was too new, unstable, not easy to deploy… At this time, I also decided not to use Marrathon, which was brand new and too linked to the (crappy) Mesos/Hadoop ecosystem (it’s better now with DC/OS).</description>
+    </item>
+  </channel>
+</rss>

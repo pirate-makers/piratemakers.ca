@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pirate Makers</title>
+    <link>https://piratemakers.ca/fr/</link>
+    <description>Recent content on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Tue, 29 Nov 2022 14:31:56 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/fr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ratés avec Docker.io &amp; OpenSource (et quoi faire à la place...)</title>
+      <link>https://piratemakers.ca/fr/posts/2022/11/rat%C3%A9s-avec-docker.io-opensource-et-quoi-faire-%C3%A0-la-place.../</link>
+      <pubDate>Tue, 29 Nov 2022 14:31:56 +0000</pubDate>
+      <guid>https://piratemakers.ca/fr/posts/2022/11/rat%C3%A9s-avec-docker.io-opensource-et-quoi-faire-%C3%A0-la-place.../</guid>
+      <description>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…
+After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.
+Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</description>
+    </item>
+    <item>
+      <title>Comment se faire vacciner au Quebec</title>
+      <link>https://piratemakers.ca/fr/posts/2021/04/comment-se-faire-vacciner-au-quebec/</link>
+      <pubDate>Thu, 29 Apr 2021 21:05:54 +0000</pubDate>
+      <guid>https://piratemakers.ca/fr/posts/2021/04/comment-se-faire-vacciner-au-quebec/</guid>
+      <description>Il y a deux semaines le Quebec a ouvert la vaccination aux personnes de 45 ans et plus, avec le vaccin AstraZeneca.
+Apres plusieurs essais, IMPOSSIBLE d’avoir une place. Impossible de remplir le formulaire assez vite.
+Un ami a donc crée un bot pour être le plus rapide. Voila comment.
+Disclamer Cette publication est faite à titre purement informatif et éducatif.
+C’est une analyse du fonctionnement du site de reservation de vaccin faite uniquement avec les outils qui se trouvent dans tous les navigateurs.</description>
+    </item>
+    <item>
+      <title>A Propos</title>
+      <link>https://piratemakers.ca/fr/apropos/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://piratemakers.ca/fr/apropos/</guid>
+      <description>Pourquoi un Pirate Parce que les Pirates sont libres et croient dans les valeurs d&amp;rsquo;entraide et de liberté de choix !
+Qui sont les Pirate Makers Pour le moment, seulement Prune est sur le pont. Venez nous rejoindre !
+Merci !</description>
+    </item>
+  </channel>
+</rss>

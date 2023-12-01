@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Prune">
+<meta name="description" content="The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.
+In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
+EDIT also check my previous article on the Banzaicloud Kafka Operator
+EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, devops, kubernetes, pubsub" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/" />
+
+
+    <title>
+        
+            Banzaicloud Kafka Operator and Broker AutoScaling :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Banzaicloud Kafka Operator and Broker AutoScaling">
+<meta itemprop="description" content="The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.
+In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
+EDIT also check my previous article on the Banzaicloud Kafka Operator
+EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers."><meta itemprop="datePublished" content="2019-10-03T16:34:43+00:00" />
+<meta itemprop="dateModified" content="2023-12-01T14:31:59-05:00" />
+<meta itemprop="wordCount" content="1575"><meta itemprop="image" content="https://piratemakers.ca/images/1.png"><meta itemprop="image" content="https://piratemakers.ca/images/2.png">
+<meta itemprop="keywords" content="devops,kubernetes,pubsub," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://piratemakers.ca/images/1.png"/>
+
+<meta name="twitter:title" content="Banzaicloud Kafka Operator and Broker AutoScaling"/>
+<meta name="twitter:description" content="The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.
+In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
+EDIT also check my previous article on the Banzaicloud Kafka Operator
+EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers."/>
+
+
+
+    <meta property="og:title" content="Banzaicloud Kafka Operator and Broker AutoScaling" />
+<meta property="og:description" content="The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.
+In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
+EDIT also check my previous article on the Banzaicloud Kafka Operator
+EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/" /><meta property="og:image" content="https://piratemakers.ca/images/1.png" /><meta property="og:image" content="https://piratemakers.ca/images/2.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-10-03T16:34:43+00:00" />
+<meta property="article:modified_time" content="2023-12-01T14:31:59-05:00" />
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2019-10-03 16:34:43 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        8 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/">Banzaicloud Kafka Operator and Broker AutoScaling</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+<p>The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.</p>
+<p>In this poste we’re going to see how to use your own Prometheus cluster deployed using the <a href="https://github.com/coreos/prometheus-operator">Prometheus Operator</a>.</p>
+<p><strong>EDIT</strong> also check my previous article on the <a href="https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/">Banzaicloud Kafka Operator</a></p>
+<p><strong>EDIT</strong> : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers. Article is more precise about this.</p>
+<h3 id="prometheus-operator">Prometheus Operator</h3>
+<p>This <a href="https://github.com/coreos/prometheus-operator">operator</a> is a simple way to bootstrap your Prometheus cluster. Install the Operator, create few manifest and BAM, all set up !</p>
+<p>I’m not going to explain it all here, just follow the operator setup. But here’s a Prometheus overview of what is going on there (some parts have been dismissed for clarity) :</p>
+<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p>Normally you already have the left side of the picture in place. The Prometheus CR creates a Prometheus cluster. The AlertManager CR creates… an AlertManager pool of servers. The PrometheusRule CR configure Prometheus Cluster to scrape metrics and create alerts.</p>
+<h4 id="prometheusrule">PrometheusRule</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">k8s.rules  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">|  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">sum(rate(container_cpu_usage_seconds_total{job=&#34;kubelet&#34;, image!=&#34;&#34;, container_name!=&#34;&#34;}[5m])) by (namespace)  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">record</span>: <span style="color:#ae81ff">namespace:container_cpu_usage_seconds_total:sum_rate  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">|  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">sum(container_memory_usage_bytes{job=&#34;kubelet&#34;, image!=&#34;&#34;, container_name!=&#34;&#34;}) by (namespace)  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">record</span>: <span style="color:#ae81ff">namespace:container_memory_usage_bytes:sum</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">...</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alertmanager.rules  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">AlertmanagerConfigInconsistent  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">message</span>: <span style="color:#ae81ff">The configuration of the instances of the Alertmanager cluster `{{$labels.service}}`  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">are out of sync.  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">|  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">count_values(&#34;config_hash&#34;, alertmanager_config_hash{job=&#34;alertmanager-k8s&#34;,namespace=&#34;monitoring&#34;}) BY (service) / ON(service) GROUP_LEFT() label_replace(max(prometheus_operator_spec_replicas{job=&#34;prometheus-operator&#34;,namespace=&#34;monitoring&#34;,controller=&#34;alertmanager&#34;}) by (name, job, namespace, controller), &#34;service&#34;, &#34;alertmanager-$1&#34;, &#34;name&#34;, &#34;(.*)&#34;) != 1  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">critical  </span>
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>You see two types of rules :</p>
+<ul>
+<li><code>record rules</code>which evaluate the metrics and record (mutate/store) them</li>
+<li><code>alert rules</code> which evaluate an expression and return a boolean value (true/false), which trigger the alert.</li>
+</ul>
+<p>Alert rules usually have two other parameters :</p>
+<ul>
+<li><code>for</code> which is a duration. If the <code>alert</code> stays triggered for this duration, it is considered valid and is fired.</li>
+<li><code>labels</code> (and <code>annotations</code>) are some <em>key:value</em> added to the alert and used by<code>AlertManager</code>. It’s a way to add more context or information to the Alert.</li>
+</ul>
+<h4 id="prometheus-to-alertmanager">Prometheus to AlertManager</h4>
+<p>When using the Operator, you have to tell the Prometheus cluster which AlertManager to use.</p>
+<p>This is done in the <code>Prometheus</code> Manifest. My Prometheus cluster is name <code>k8s</code>. Here is my full spec as a reference. Create your own using the Jsonnet bundle :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">monitoring.coreos.com/v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">enableAdminAPI</span>: <span style="color:#e6db74">&#34;true&#34;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Prometheus  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">monitoring  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">alerting</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">alertmanagers</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alertmanager-k8s  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">monitoring  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">web  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">baseImage</span>: <span style="color:#ae81ff">privaterepo:4567/infra/docker-images/prometheus  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">externalUrl</span>: [<span style="color:#ae81ff">https://prometheus.devops.k8s.local](https://prometheus.devops.k8s.coyote.local)  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeSelector</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">beta.kubernetes.io/os</span>: <span style="color:#ae81ff">linux  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">400Mi  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">retention</span>: <span style="color:#ae81ff">45d  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ruleSelector</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">prometheus</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">role</span>: <span style="color:#ae81ff">alert-rules  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">securityContext</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fsGroup</span>: <span style="color:#ae81ff">2000</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runAsNonRoot</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runAsUser</span>: <span style="color:#ae81ff">1000</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">prometheus-k8s  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceMonitorNamespaceSelector</span>: {}  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceMonitorSelector</span>: {}  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storage</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumeClaimTemplate</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">accessModes</span>:  
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">ReadWriteOnce  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resources</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">requests</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">200Gi  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">ssd  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">version</span>: <span style="color:#ae81ff">v2.11.2</span>
+</span></span></code></pre></div><p>The link is made at the beginning of the Spec :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">alerting</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">alertmanagers</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alertmanager-k8s  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">monitoring  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">web</span>
+</span></span></code></pre></div><p>This tells Prometheus to send alerts to the Service <code>alertmanager-k8s</code> in the namespace <code>monitoring</code> on the port named <code>web</code>.</p>
+<p>We can check that using kubectl :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n monitoring describe svc alertmanager-k8s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Name:              alertmanager-k8s                    &lt;---  
+</span></span><span style="display:flex;"><span>Namespace:         monitoring                          &lt;---  
+</span></span><span style="display:flex;"><span>Labels:            alertmanager<span style="color:#f92672">=</span>k8s  
+</span></span><span style="display:flex;"><span>Selector:          alertmanager<span style="color:#f92672">=</span>k8s,app<span style="color:#f92672">=</span>alertmanager  
+</span></span><span style="display:flex;"><span>Type:              ClusterIP  
+</span></span><span style="display:flex;"><span>IP:                10.230.55.190  
+</span></span><span style="display:flex;"><span>Port:              web  9093/TCP                       &lt;---  
+</span></span><span style="display:flex;"><span>TargetPort:        web/TCP  
+</span></span><span style="display:flex;"><span>Endpoints:         10.230.128.129:9093,10.230.128.233:9093,10.230.130.205:9093  
+</span></span><span style="display:flex;"><span>Session Affinity:  ClientIP  
+</span></span><span style="display:flex;"><span>Events:            &lt;none&gt;
+</span></span></code></pre></div><h4 id="sending-alerts-to-kafka-operator">Sending Alerts to Kafka Operator</h4>
+<p>So, it’s now clear that we have to add an <code>alerting</code> block inside the <code>Prometheus</code> spec.<br>
+Let’s first check the <code>Services</code> created by the Kafka Operator (my kafka operator is deployed in the <code>tools</code> namespace) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n tools get svc -l app.kubernetes.io/name<span style="color:#f92672">=</span>kafka-operator
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>            AGE  
+</span></span><span style="display:flex;"><span>kafka-alertmanager   ClusterIP   10.230.6.131   &lt;none&gt;        9001/TCP           3d2h  
+</span></span><span style="display:flex;"><span>kafka-operator       ClusterIP   10.230.97.22   &lt;none&gt;        443/TCP,8080/TCP   42d
+</span></span></code></pre></div><p>So we have a <code>kafka-alertmanager</code> service…</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n tools describe svc kafka-alertmanager
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Name:              kafka-alertmanager                     &lt;---  
+</span></span><span style="display:flex;"><span>Namespace:         tools                                  &lt;---  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>Type:              ClusterIP  
+</span></span><span style="display:flex;"><span>IP:                10.230.6.131  
+</span></span><span style="display:flex;"><span>Port:              alerts  9001/TCP                       &lt;---  
+</span></span><span style="display:flex;"><span>TargetPort:        9001/TCP  
+</span></span><span style="display:flex;"><span>Endpoints:         10.230.128.144:9001  
+</span></span><span style="display:flex;"><span>Session Affinity:  None  
+</span></span><span style="display:flex;"><span>Events:            &lt;none&gt;
+</span></span></code></pre></div><p>So let’s add it with <code>kubectl edit prometheus k8s</code> :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">alerting</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">alertmanagers</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alertmanager-k8s  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">monitoring  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">web  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kafka-alertmanager             &lt;---   </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">tools                          add these 3 lines  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">alerts                         &lt;---  </span>
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>After few seconds, or minutes, the Prometheus config is reloaded. You can check it’s working by going to your Prometheus web interface and call the <code>/config</code> URL (<a href="http://localhost:9090/config">http://localhost:9090/config</a> if you’re using a port-forward) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">global</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">scrape_interval</span>: <span style="color:#ae81ff">30s  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">scrape_timeout</span>: <span style="color:#ae81ff">10s  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">evaluation_interval</span>: <span style="color:#ae81ff">30s  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">external_labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus</span>: <span style="color:#ae81ff">monitoring/k8s  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus_replica</span>: <span style="color:#ae81ff">prometheus-k8s-1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">alerting</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">alertmanagers</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">kubernetes_sd_configs</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">role</span>: <span style="color:#ae81ff">endpoints                          &lt;---------- default  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">namespaces</span>:                                            <span style="color:#ae81ff">...  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">names</span>:  
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">monitoring  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">scheme</span>: <span style="color:#ae81ff">http  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path_prefix</span>: <span style="color:#ae81ff">/  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeout</span>: <span style="color:#ae81ff">10s  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">api_version</span>: <span style="color:#ae81ff">v1  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">relabel_configs</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__meta_kubernetes_service_name]  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">separator</span>: <span style="color:#ae81ff">;  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">regex</span>: <span style="color:#ae81ff">alertmanager-k8s  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">replacement</span>: <span style="color:#ae81ff">$1  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">action</span>: <span style="color:#ae81ff">keep  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__meta_kubernetes_endpoint_port_name]  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">separator</span>: <span style="color:#ae81ff">;  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">regex</span>: <span style="color:#ae81ff">web  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">replacement</span>: <span style="color:#ae81ff">$1  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">action</span>: <span style="color:#ae81ff">keep  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">kubernetes_sd_configs</span>:                      <span style="color:#ae81ff">&lt;---------- Kafka  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">role</span>: <span style="color:#ae81ff">endpoints                                        ...  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">namespaces</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">names</span>:  
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">tools  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">scheme</span>: <span style="color:#ae81ff">http  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path_prefix</span>: <span style="color:#ae81ff">/  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeout</span>: <span style="color:#ae81ff">10s  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">api_version</span>: <span style="color:#ae81ff">v1  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">relabel_configs</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__meta_kubernetes_service_name]  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">separator</span>: <span style="color:#ae81ff">;  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">regex</span>: <span style="color:#ae81ff">kafka-alertmanager  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">replacement</span>: <span style="color:#ae81ff">$1  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">action</span>: <span style="color:#ae81ff">keep  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">source_labels</span>: [<span style="color:#ae81ff">__meta_kubernetes_endpoint_port_name]  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">separator</span>: <span style="color:#ae81ff">;  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">regex</span>: <span style="color:#ae81ff">alerts  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">replacement</span>: <span style="color:#ae81ff">$1  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">action</span>: <span style="color:#ae81ff">keep</span>
+</span></span></code></pre></div><h4 id="alerting-rules">Alerting Rules</h4>
+<p>Now we have Prometheus sending alerts to the Kafka Operator, we need to create specific rules for Kafka….</p>
+<p>You can find a default example on the <a href="https://github.com/banzaicloud/kafka-operator/blob/0.6.0/config/samples/example-prometheus-alerts.yaml">Github project</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">monitoring.coreos.com/v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PrometheusRule  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">creationTimestamp</span>: <span style="color:#66d9ef">null</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">role</span>: <span style="color:#ae81ff">alert-rules  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kafka-alerts  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">groups</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">KafkaAlerts  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">BrokerOverLoaded  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">avg(sum by(brokerId, kafka_cr, namespace) (rate(kafka_network_requestmetrics_requests_total[15m]))) &gt; 500  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">alert  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#39;broker {{ $labels.brokerId }} overloaded (current value is: {{ $value }})&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#39;broker overloaded&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">brokerConfigGroup</span>: <span style="color:#e6db74">&#39;default_group&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: <span style="color:#e6db74">&#39;upScale&#39;</span>
+</span></span></code></pre></div><p>Let’s break this down :</p>
+<ul>
+<li>metadata.labels
+You need at least the two that are here. the <code>prometheus</code> value should be <strong>the name of your Prometheus server</strong> as described in the <code>prometheus</code> resource. I’m not sure for the <code>role</code>… just keep it :)</li>
+<li>spec.rules.annotations
+These are “config values” that you are going to pass to the Kafka Operator AlertManager. You need them to tell the Operator <em>HOW</em> to create the new brokers.</li>
+</ul>
+<p>From the example above, if the alert is triggered, it will send this information to the Operator :</p>
+<ul>
+<li><code>broker 0 is overloaded (current value is 12)</code> : you will see that in the Operator logs if set to Info log-level</li>
+<li><code>command: upScale</code> : this will be treated by the Operator as a direct command to upscale.<br>
+The Operator will create a new Broker (pod) which will join the cluster.<br>
+It will forward the command to CruiseControl, which will trigger a Rebalance, so the topics/partitions/leaders are spread to the new broker.<br>
+Other commands includes “downScale” and “addPVC”. I haven’t test the PVC one yet…</li>
+<li><code>brokerConfigGroup: 'default-group'</code> : this is some configuration from the <code>kafkacluster</code> custom resource definition.<br>
+In fact you can use most of the config parameter of a BrokerConfig.<br>
+(have you read my article on <a href="https://medium.com/@prune998/banzaicloud-kafka-operator-tour-56fca7d6261e">installing Kafka Operator</a> ?)</li>
+</ul>
+<p>From the example I gave earlier, here’s what we can add to the alert to configure the new broker :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># If brokerConfigGroup is defined it will override scaled broker config  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># brokerConfigGroup: &#39;default_group&#39;  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">storageClass</span>: <span style="color:#e6db74">&#39;standard&#39;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">mountPath</span>: <span style="color:#e6db74">&#39;/kafkalog&#39;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">diskSize</span>: <span style="color:#e6db74">&#39;2G&#39;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">image</span>: <span style="color:#e6db74">&#39;wurstmeister/kafka:2.12-2.1.0&#39;</span>
+</span></span></code></pre></div><p>As a wrap up, here’s my full PrometheusRule for Kafka Operator. Note that the values are testing values… you may (you will) have to tune them :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">monitoring.coreos.com/v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PrometheusRule  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">creationTimestamp</span>: <span style="color:#66d9ef">null</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus</span>: <span style="color:#ae81ff">k8s  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">role</span>: <span style="color:#ae81ff">alert-rules  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kafka-alerts  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">groups</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">KafkaAlerts  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rules</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">BrokerOverLoaded  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">avg(sum by(brokerId, kafka_cr, namespace) (rate(kafka_network_requestmetrics_requests_total[15m]))) &gt; 500  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">alert  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#39;broker {{ $labels.brokerId }} overloaded (current value is: {{ $value }})&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#39;broker overloaded&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">brokerConfigGroup</span>: <span style="color:#e6db74">&#39;default_group&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: <span style="color:#e6db74">&#39;upScale&#39;</span>  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">BrokerUnderReplicated  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">kafka_server_replicamanager_underreplicatedpartitions &gt; 0  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">5m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">alert  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#39;broker {{ $labels.brokerId }} underreplicated&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#39;broker underreplicated&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">brokerConfigGroup</span>: <span style="color:#e6db74">&#39;default_group&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: <span style="color:#e6db74">&#39;upScale&#39;</span>  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">PartitionCountHigh  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">max(kafka_server_replicamanager_partitioncount)  by (namespace, kafka_cr) &gt; 800  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">3m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">alert  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#39;broker {{ $labels.brokerId }} has high partition count&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#39;high partition count&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">brokerConfigGroup</span>: <span style="color:#e6db74">&#39;default_group&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: <span style="color:#e6db74">&#39;upScale&#39;</span>  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">PartitionCountLow  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">min(kafka_server_replicamanager_partitioncount)  by (namespace, kafka_cr) &lt; 50  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">3m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">alert  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#39;broker {{ $labels.brokerId }} has low partition count&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#39;low partition count&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">brokerConfigGroup</span>: <span style="color:#e6db74">&#39;default_group&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: <span style="color:#e6db74">&#39;downScale&#39;</span>  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">alert</span>: <span style="color:#ae81ff">RemainingDiskSpaceLow  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">expr</span>: <span style="color:#ae81ff">kubelet_volume_stats_available_bytes{persistentvolumeclaim=~&#34;kafka-.*&#34;} &lt; 1 * 1000 * 1000 * 1000  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">for</span>: <span style="color:#ae81ff">2m  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">severity</span>: <span style="color:#ae81ff">alert  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#39;broker {{ $labels.brokerId }} has low disk space&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">summary</span>: <span style="color:#e6db74">&#39;low diskspace&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">brokerConfigGroup</span>: <span style="color:#e6db74">&#39;default_group&#39;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: <span style="color:#e6db74">&#39;addPVC&#39;</span>
+</span></span></code></pre></div><h3 id="conclusion">Conclusion</h3>
+<p>We now know how to use the <em>Prometheus Metrics</em> from <strong>Kafka</strong> to up/downscale our cluster.</p>
+<p>Note that this feature can rapidly become a <strong>chaos factor</strong> : during my tests, a manual <em>“rebalance”</em> of the partitions/leaders triggered a downscale of the cluster, which went from 3 nodes to 2. The cluster was then in a “failed” state as I require a minimum of 3 brokers alive.<br>
+This situation then triggered two <code>upScale</code> alerts, which grow the cluster from 2 to 4 nodes…</p>
+<p>I was live testing so I was able to change the thresholds. The scale situation stopped, but imagine this happen during the night when you’re oncall ?</p>
+<p>Because that’s where this situation is going to happen right ?</p>
+<p>Happy Kafka/Prometheus config !<br>
+Thanks again to the Banzaicloud team for doing all this opensource !</p>
+<p><strong>Note</strong> : We discussed the need to block the downscale of a cluster below the count of the minimum cluster size on Slack. There should be a way to set that at some point…</p>
+<p><strong>Note 2</strong> : at the moment (Kafka Operator 0.6.1), you will get logs for every alert that is fired by Prometheus… Watch out as you’ll end up with quite some logs… next release should silently drop all alerts not linked to the Kafka cluster.</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/devops/">devops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/pubsub/">pubsub</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        1575 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2019-10-03 12:34
+        
+
+         
+          
+            
+              (Last updated: 2023-12-01 14:31)
+            
+          
+        
+      </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="1ab993c2d9f5b7b58edda6893280e093b620e8db" target="_blank" rel="noopener">1ab993c</a>
+          @ 2023-12-01
+        </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling&amp;caption=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling&amp;canonicalUrl=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling&amp;body=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f&amp;media=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f;description=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f&amp;title=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling&amp;summary=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling&amp;source=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f&amp;resubmit=true&amp;title=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f;title=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling%20https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f&amp;t=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Banzaicloud%20Kafka%20Operator%20and%20Broker%20AutoScaling&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f10%2fbanzaicloud-kafka-operator-and-broker-autoscaling%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://piratemakers.ca/posts/2020/04/laser-post-processor-for-fusion-360-that-works-on-shapeoko/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Laser Post-Processor for Fusion 360 that works on Shapeoko</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/">
+                    <span class="button__text">BanzaiCloud Kafka Operator tour</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+      
+        <div id="comments">
+          <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "piratemakers-ca" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2023</span>
+            
+            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            <span>Pirate Makers™</span>
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.0931a358499291afca6f741478e9fc9fa973a9fbd7aeb3390f3b10463966dc8195daf98a0e33685a1fbfb9d7578631c3f31fc8e558eaf6e2c30c4c3e14df4931.js" integrity="sha512-CTGjWEmSka/Kb3QUeOn8n6lzqfvXrrM5DzsQRjlm3IGV2vmKDjNoWh&#43;/uddXhjHD8x/I5Vjq9uLDDEw&#43;FN9JMQ=="></script>
+
+
+
+
+    </body>
+</html>

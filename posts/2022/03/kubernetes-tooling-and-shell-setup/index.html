@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Prune">
+<meta name="description" content="How to be productive fast with Kubernetes
+Updates:
+20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, devops, gitops, kubernetes, tooling, productivity" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/" />
+
+
+    <title>
+        
+            Kubernetes tooling and shell setup :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Kubernetes tooling and shell setup">
+<meta itemprop="description" content="How to be productive fast with Kubernetes
+Updates:
+20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes."><meta itemprop="datePublished" content="2022-03-29T16:54:21+00:00" />
+<meta itemprop="dateModified" content="2023-12-01T14:31:59-05:00" />
+<meta itemprop="wordCount" content="1961"><meta itemprop="image" content="https://piratemakers.ca/images/1.png"><meta itemprop="image" content="https://piratemakers.ca/images/2.png"><meta itemprop="image" content="https://piratemakers.ca/images/3.jpg"><meta itemprop="image" content="https://piratemakers.ca/images/4.png"><meta itemprop="image" content="https://piratemakers.ca/images/5.png"><meta itemprop="image" content="https://piratemakers.ca/images/6.jpg">
+<meta itemprop="keywords" content="devops,gitops,kubernetes,tooling,productivity," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://piratemakers.ca/images/1.png"/>
+
+<meta name="twitter:title" content="Kubernetes tooling and shell setup"/>
+<meta name="twitter:description" content="How to be productive fast with Kubernetes
+Updates:
+20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes."/>
+
+
+
+    <meta property="og:title" content="Kubernetes tooling and shell setup" />
+<meta property="og:description" content="How to be productive fast with Kubernetes
+Updates:
+20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/" /><meta property="og:image" content="https://piratemakers.ca/images/1.png" /><meta property="og:image" content="https://piratemakers.ca/images/2.png" /><meta property="og:image" content="https://piratemakers.ca/images/3.jpg" /><meta property="og:image" content="https://piratemakers.ca/images/4.png" /><meta property="og:image" content="https://piratemakers.ca/images/5.png" /><meta property="og:image" content="https://piratemakers.ca/images/6.jpg" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-29T16:54:21+00:00" />
+<meta property="article:modified_time" content="2023-12-01T14:31:59-05:00" />
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2022-03-29 16:54:21 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        10 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/">Kubernetes tooling and shell setup</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <p><em>How to be productive fast with Kubernetes</em></p>
+<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+<p><strong>Updates</strong>:</p>
+<ul>
+<li>20220410: added some Dasel examples</li>
+<li>20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: <a href="https://lnkd.in/ep9yaj6Z">https://lnkd.in/ep9yaj6Z</a></li>
+<li>20220412: add commands to build a patched kubecolor</li>
+<li>20220413: <a href="https://www.youtube.com/watch?v=lmefhvXYnnI">recording of the K8s/CNCF CANADA Meetup talk</a></li>
+</ul>
+<p>A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes.<br>
+Well, I think it needed another one blog post (and talk) about it !</p>
+<p>This one is focussing on Apple Mac setup, and specifically ZSH setup, but beside few small changes, it should work the same for Bash or even on Linux.</p>
+<p>It’s also a primer, not an advanced setup. But it should contain all the basics so a new user, or a developper, can get going quickly.</p>
+<p>Well, do whatever you want with this blog post. I’m writing it as a reference for myself 🙏</p>
+<h3 id="what-is-kubectl-">What is Kubectl ?</h3>
+<p>Come on, we all know that: <em>kubectl</em> is the CLI to interact with the K8s API !</p>
+<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><em>kubectl</em> is taking your human-readable requests and translate them to a REST call against the Kubernetes API server.</p>
+<p>Then, the server answer with some information, mostly JSON. Usually, <em>kubectl</em> dump that in a human-readable way, or, quite often, in YAML, because we all love YAML !</p>
+<p>Here, <em>kubectl</em> is usually doing the minimum, and things quickly gets messy when you have a large cluster with hundreds of resources.</p>
+<p>Because of that, a bunch of talented people started building tooling around <em>kubectl</em> and the K8s API so we can spend less time reading <em>kubectl</em> outputs and spend more time doing the important stuff: snacking, watching Hell’s Kitchen show and plowing snow (last one is true when you live in Quebec City, QC, Canada)</p>
+<p>OK, let’s go now.</p>
+<h3 id="kubectl">Kubectl</h3>
+<p>Of course it all starts with <em>kubectl</em>… it’s up to you, there’s too many ways to intall it to give them all here ! <em>gcloud</em> can install one, brew, curl… find your own way !</p>
+<p>Here’s one with <em>curl:</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -LO <span style="color:#e6db74">&#34;[https://dl.k8s.io/release/</span><span style="color:#66d9ef">$(</span>curl<span style="color:#f92672">](</span>https://dl.k8s.io/release/$%28curl<span style="color:#66d9ef">)</span><span style="color:#e6db74"> -L -s [https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl](https://dl.k8s.io/release/stable.txt%29/bin/darwin/amd64/kubectl)&#34;</span>  
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">755</span> kubectl
+</span></span></code></pre></div><p>Or using Brew…
+<code>brew install kubectl</code></p>
+<p>And here’s a Linux one (don’t expect more Linux example):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -LO <span style="color:#e6db74">&#34;[https://dl.k8s.io/release/</span><span style="color:#66d9ef">$(</span>curl<span style="color:#f92672">](</span>https://dl.k8s.io/release/$%28curl<span style="color:#66d9ef">)</span><span style="color:#e6db74"> -L -s  
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl](https://dl.k8s.io/release/stable.txt%29/bin/linux/amd64/kubectl)&#34;</span>  
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">755</span> kubectl
+</span></span></code></pre></div><p>Always try to use the same <em>kubectl</em> version as the server you are targeting, or +/- one version.<br>
+BTW, this <em>kubectl version</em> command is a great way to check for your server’s version:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl version
+</span></span><span style="display:flex;"><span>Client Version: version.Info<span style="color:#f92672">{</span>Major:<span style="color:#e6db74">&#34;1&#34;</span>, Minor:<span style="color:#e6db74">&#34;22&#34;</span>, GitVersion:<span style="color:#e6db74">&#34;v1.22.2&#34;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>Server Version: version.Info<span style="color:#f92672">{</span>Major:<span style="color:#e6db74">&#34;1&#34;</span>, Minor:<span style="color:#e6db74">&#34;20+&#34;</span>, GitVersion:<span style="color:#e6db74">&#34;v1.20.9-gke.1001&#34;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>WARNING: version difference between client <span style="color:#f92672">(</span>1.22<span style="color:#f92672">)</span> and server <span style="color:#f92672">(</span>1.20<span style="color:#f92672">)</span> exceeds the supported minor version skew of +/-1
+</span></span></code></pre></div><h3 id="kubecolor">Kubecolor</h3>
+<p><a href="https://github.com/hidetatz/kubecolor">KubeColor</a> is used to Colourize your <em>kubectl</em> output. It makes reading all those lines of resources easier !</p>
+<p>Install:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install dty1er/tap/kubecolor
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># add in your .zshrc  </span>
+</span></span><span style="display:flex;"><span>alias k<span style="color:#f92672">=</span>kubecolor
+</span></span></code></pre></div><p>Result:</p>
+<p><img src="images/3.jpg#layoutTextWidth" alt="image"></p>
+<p>Until the <a href="https://github.com/hidetatz/kubecolor/pull/86">PR 86</a> is merged, you may reach an issue when using the <strong>ctx</strong> or <strong>ns</strong> commands, where the whole output is displayed in yellow and hiding the selected default value. In the meantime, clone my own fork and build the binary yourself:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone <span style="color:#f92672">[</span>git@github.com<span style="color:#f92672">](</span>mailto:git@github.com<span style="color:#f92672">)</span>:prune998/kubecolor.git
+</span></span><span style="display:flex;"><span>git checkout prune/ctx-no-color
+</span></span><span style="display:flex;"><span>cd cmd/kubecolor <span style="color:#f92672">&amp;&amp;</span> go build <span style="color:#f92672">&amp;&amp;</span> cp kubecolor /usr/local/bin
+</span></span></code></pre></div><h3 id="zsh-setup">ZSH Setup</h3>
+<p>Alias, Completion, Tooling… in your .zshrc: use <strong>k</strong> instead of <strong>kubectl</strong> and reclaim 1s of your life at every command!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>KREW_ROOT<span style="color:#66d9ef">:-</span>$HOME/.krew<span style="color:#e6db74">}</span><span style="color:#e6db74">/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>alias k<span style="color:#f92672">=</span>kubecolor  
+</span></span><span style="display:flex;"><span>source &lt;<span style="color:#f92672">(</span>kubectl completion zsh<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>complete -F __start_kubectl k
+</span></span><span style="display:flex;"><span>compdef kubecolor<span style="color:#f92672">=</span>kubectl
+</span></span><span style="display:flex;"><span>source &lt;;<span style="color:#f92672">(</span>stern --completion<span style="color:#f92672">=</span>zsh<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>ulimit -n <span style="color:#ae81ff">2048</span>          <span style="color:#75715e"># kubectl opens one cnx (file) per resource</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># gcloud  </span>
+</span></span><span style="display:flex;"><span>source <span style="color:#e6db74">&#34;/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc&#34;</span>
+</span></span><span style="display:flex;"><span>source <span style="color:#e6db74">&#34;/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS  </span>
+</span></span><span style="display:flex;"><span>complete -C <span style="color:#e6db74">&#39;/usr/local/bin/aws_completer&#39;</span> aws
+</span></span></code></pre></div><h4 id="zsh-customization">ZSH customization:</h4>
+<ul>
+<li><a href="https://ohmyz.sh/">Oh-My-ZSH</a> : lots of features in your shell
+Use plugins !!</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>plugins<span style="color:#f92672">=(</span>brew kubectl git python tmux vault terraform<span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li>Themes
+<ul>
+<li><a href="https://github.com/agnoster/agnoster-zsh-theme">Agnoster ZSH theme</a>: better prompt using Powerline Fonts</li>
+<li><a href="https://github.com/romkatv/powerlevel10k">PowerLevel10k</a>: emphasizes speed, flexibility and out-of-the-box experience</li>
+</ul>
+</li>
+<li>Fonts
+<ul>
+<li>Powerline Font: recommend <a href="https://www.nerdfonts.com/">NerdFonts</a> Inconsolata or Firacode</li>
+</ul>
+</li>
+</ul>
+<p>Here’s an example prompt when customizing all this. Of course, it’s possible to add more Kubernetes related stuff in the prompt, but it’s going to get messy quickly:</p>
+<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<h3 id="krew">Krew</h3>
+<p><a href="https://krew.sigs.k8s.io"><em>Krew</em></a> is a plugin manager for <em>kubectl</em>.<br>
+Install: <a href="https://krew.sigs.k8s.io/docs/user-guide/setup/install/">https://krew.sigs.k8s.io/docs/user-guide/setup/install/</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl krew list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>PLUGIN  VERSION  
+</span></span><span style="display:flex;"><span>ctx     v0.9.4  
+</span></span><span style="display:flex;"><span>krew    v0.4.1  
+</span></span><span style="display:flex;"><span>ns      v0.9.4  
+</span></span><span style="display:flex;"><span>whoami  v0.0.36
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl krew search
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                            DESCRIPTION                                         INSTALLED  
+</span></span><span style="display:flex;"><span>access-matrix                   Show an RBAC access matrix <span style="color:#66d9ef">for</span> server resources     no  
+</span></span><span style="display:flex;"><span>blame                           Show who edited resource fields.                    no  
+</span></span><span style="display:flex;"><span>cert-manager                    Manage cert-manager resources inside your cluster   no  
+</span></span><span style="display:flex;"><span>ctx                             Switch between contexts in your kubeconfig          yes  
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>Kool Krew Plugins to have:</p>
+<ul>
+<li><strong>ctx</strong>: quick context ( current cluster ) changes</li>
+<li><strong>ns</strong>: quick current namespace changes</li>
+<li><strong>whoami</strong>: who the cluster thinks you are from your authentication</li>
+<li><strong>who-can</strong>: RBAC rules introspection</li>
+</ul>
+<p>Example <strong>ctx</strong> usage to manage your contexts:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># list all the existing context, current one in yellow  </span>
+</span></span><span style="display:flex;"><span>k ctx
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>arn:aws:eks:us-east-1:111111111111:cluster/eks-example  
+</span></span><span style="display:flex;"><span>gke-dv-st-cluster-1  
+</span></span><span style="display:flex;"><span>gke-dev_us-central1_test-gke-cluster
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># change context “manually”  </span>
+</span></span><span style="display:flex;"><span>kubectl config use-context gke-dev_us-central1_test-gke-cluster
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># change the context using ctx  </span>
+</span></span><span style="display:flex;"><span>k ctx gke-dev_us-central1_test-gke-cluster
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># delete context (why not ?)  </span>
+</span></span><span style="display:flex;"><span>k ctx -d gke-dv-st-cluster-1
+</span></span></code></pre></div><p>Example using <strong>ns</strong> to change default namespace:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># List all namespaces, current NS in yellow (not in Medium blogs...)  </span>
+</span></span><span style="display:flex;"><span>k ns
+</span></span><span style="display:flex;"><span>datadog-agents  
+</span></span><span style="display:flex;"><span>default         &lt;----  
+</span></span><span style="display:flex;"><span>kube-public  
+</span></span><span style="display:flex;"><span>kube-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Set default NS by hand  </span>
+</span></span><span style="display:flex;"><span>kubectl config set-context --current --namespace<span style="color:#f92672">=</span>kube-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Set default Namespace  </span>
+</span></span><span style="display:flex;"><span>k ns kube-system
+</span></span></code></pre></div><h3 id="cloud-provider-setup">Cloud provider setup</h3>
+<h4 id="aws">AWS</h4>
+<p>First, install the awscli:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl <span style="color:#e6db74">&#34;[https://awscli.amazonaws.com/AWSCLIV2.pkg](https://awscli.amazonaws.com/AWSCLIV2.pkg)&#34;</span> -o <span style="color:#e6db74">&#34;AWSCLIV2.pkg&#34;</span>  
+</span></span><span style="display:flex;"><span>sudo installer -pkg AWSCLIV2.pkg -target /
+</span></span></code></pre></div><p>Then, setup SSO login:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export AWS_DEFAULT_REGION<span style="color:#f92672">=</span>us-east-1  
+</span></span><span style="display:flex;"><span>export AWS_PAGER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#75715e"># prevent aws cli to auto-page = display inline  </span>
+</span></span><span style="display:flex;"><span>export BROWSER<span style="color:#f92672">=</span>echo <span style="color:#75715e"># Do not open a browser, let you choose which browser to open</span>
+</span></span><span style="display:flex;"><span>complete -C <span style="color:#e6db74">&#39;/usr/local/bin/aws_completer&#39;</span> aws <span style="color:#75715e"># add that to .zshrc for completion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># remove dandling env variables  </span>
+</span></span><span style="display:flex;"><span>unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># configure (may ask questions here)  </span>
+</span></span><span style="display:flex;"><span>aws configure sso  
+</span></span><span style="display:flex;"><span>aws sso login --profile profile_xxxxxx  
+</span></span><span style="display:flex;"><span>export AWS_PROFILE<span style="color:#f92672">=</span>profile_xxxxxx
+</span></span></code></pre></div><p>Configure <em>kubectl</em> context to use your EKS cluster:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws eks update-kubeconfig <span style="color:#ae81ff">\ </span>  
+</span></span><span style="display:flex;"><span>    --region us-east-1    <span style="color:#ae81ff">\ </span> 
+</span></span><span style="display:flex;"><span>    --name &lt;cluster_name&gt; <span style="color:#ae81ff">\ </span> 
+</span></span><span style="display:flex;"><span>    --alias &lt;friendly_name&gt;
+</span></span></code></pre></div><h4 id="google">Google</h4>
+<p>Install Google CLI (gcloud):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install --cask google-cloud-sdk  
+</span></span><span style="display:flex;"><span>gcloud components install kubectl <span style="color:#75715e"># Optional</span>
+</span></span><span style="display:flex;"><span>gcloud init  
+</span></span><span style="display:flex;"><span>gcloud auth login
+</span></span><span style="display:flex;"><span>gcloud config set compute/region us-east1
+</span></span></code></pre></div><p>Configure <em>kubectl</em> to use your GKE cluster:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gcloud container clusters get-credentials &lt;cluster&gt; --project &lt;project&gt;
+</span></span></code></pre></div><h3 id="stern">Stern</h3>
+<p><a href="https://github.com/wercker/stern">Stern</a> allows you to tail **** the logs of <strong>multiple pods</strong> on Kubernetes and <strong>multiple containers</strong> within the pod.<br>
+Each result is colour coded for quicker debugging.</p>
+<p>Install:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install stern
+</span></span><span style="display:flex;"><span>stern -n my-namespace dv-oma
+</span></span></code></pre></div><p>Stern will tail the logs of all pods matching <em>dv-oma</em> as a pattern. There’s a ton of options to further filter what you want to display:</p>
+<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<h3 id="kustomize">Kustomize</h3>
+<p><a href="https://kustomize.io/">Kustomize</a> is a Kubernetes native configuration management (templating)</p>
+<ul>
+<li>Bundled with <em>kubectl</em>, but not all the features are available</li>
+<li>Better install the full version for your CI/CD pipelines</li>
+<li>Only output rendered YAML, you have to apply it later</li>
+</ul>
+<p>Ex:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl   kustomize --enable-alpha-plugins /path/to/kustomize/folder
+</span></span><span style="display:flex;"><span>kustomize build     --enable-alpha-plugins /path/to/kustomize/folder
+</span></span></code></pre></div><p>Render and apply the <em>kustomization</em>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kustomize build --enable-alpha-plugins /path/to/kustomize/folder | kubectl apply -f -
+</span></span></code></pre></div><p>Kustomize requires a <em>kustomization.yaml</em> file in the target folder, which link resources together, patch them, use generators to create new resources and plugins to patch/generate new yaml. Ex:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat /path/to/kustomize/folder/kustomization.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kustomize.config.k8s.io/v1beta1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Kustomization</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">resources</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">my_resources_file.yaml  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">../base</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">patches</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">./manifests/my_patch.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">generators</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">my_generator.yaml</span>
+</span></span></code></pre></div><h3 id="kubernetes-dashboards">Kubernetes Dashboards</h3>
+<h4 id="k9s">K9s</h4>
+<p><a href="https://github.com/derailed/k9s">K9s</a> — Kubernetes CLI To Manage Your Clusters In Style!</p>
+<ul>
+<li>Open-Source</li>
+<li>In your terminal, like top</li>
+<li>CRUD operations on K8s resources</li>
+<li>nothing to install server-side</li>
+<li>lightweight</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install k9s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>k9s -n &lt;namespace&gt;      <span style="color:#75715e"># To run K9s in a given namespace</span>
+</span></span><span style="display:flex;"><span>k9s --context &lt;context&gt; <span style="color:#75715e"># Start K9s in an existing KubeConfig context</span>
+</span></span><span style="display:flex;"><span>k9s --readonly          <span style="color:#75715e"># Start K9s in readonly mode - with all cluster modification  </span>
+</span></span><span style="display:flex;"><span>                          commands disabled
+</span></span></code></pre></div><p><img src="images/6.jpg#layoutTextWidth" alt="K9s"></p>
+<h4 id="lens">Lens</h4>
+<p><a href="https://k8slens.dev/">Lens</a> is the only IDE you’ll ever need to take control of your Kubernetes clusters (well, that’s what they say)</p>
+<ul>
+<li>Launch on your own desktop, no server-side install</li>
+<li>Include advanced config to reach remote clusters</li>
+<li>Manage CustomResourceDefinitions (CRD)</li>
+<li>Nice UI</li>
+<li>Multi-cluster
+<img src="images/7.jpg#layoutTextWidth" alt="image"></li>
+</ul>
+<h3 id="vscode-extensions-for-kubernetes">VsCode extensions for Kubernetes</h3>
+<p>I’m sure there are a lot more than these, but I would consider these as essentials:</p>
+<ul>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools">Kubernetes</a>: Develop, deploy and debug Kubernetes applications</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml">YAML</a>: Language Support, with built-in Kubernetes syntax support</li>
+<li><a href="https://github.com/oderwat/vscode-indent-rainbow">Indent-Rainbow</a>: helper to better see Yaml indentations
+<img src="images/8.jpg#layoutTextWidth" alt="Indent-Rainbow"></li>
+</ul>
+<h3 id="local-kubernetes">Local Kubernetes</h3>
+<p>Here’s a minimal list of solutions to deploy a local Kubernetes cluster on your laptop:</p>
+<h4 id="kind">Kind</h4>
+<ul>
+<li><a href="https://kind.sigs.k8s.io/">Kind</a> is a local K8s cluster</li>
+<li>Official Kubernetes tool to create lightweight K8s clusters</li>
+<li>Support ingress / LB (with some tuning)</li>
+<li>Work with Docker and Podman (and rootless with some more sweat)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install kind
+</span></span><span style="display:flex;"><span>kind create cluster --help
+</span></span></code></pre></div><h4 id="k3s">K3s</h4>
+<p><a href="https://k3s.io/">K3s</a> is the Rancher take on local clusters. Both ARM64 and ARMv7 are supported</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo k3s server &amp;
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Kubeconfig is written to /etc/rancher/k3s/k3s.yaml  </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo k3s kubectl get node
+</span></span></code></pre></div><h4 id="minikube">Minikube</h4>
+<p><a href="https://k3s.io/">Minikube</a> is certainly the oldest of all. Still supported, well documented and support different container runtimes, so you can get rid of Docker !</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+</span></span><span style="display:flex;"><span>sudo install minikube-darwin-amd64 /usr/local/bin/minikube
+</span></span><span style="display:flex;"><span>minikube start
+</span></span></code></pre></div><h3 id="bonus-tooling">Bonus tooling</h3>
+<p>Here’s few more tools to help working with Kubernetes resources (and YAML)</p>
+<h4 id="kubepug">KubePug</h4>
+<p>Use <a href="https://github.com/rikatz/kubepug">KubePug</a> to ensure your cluster is not using deprecated resources:</p>
+<blockquote>
+<p>Verifies the current kubernetes cluster or input files, checking whether exists objects in this deprecated API Versions, allowing the user to check before migrating</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl krew install deprecations
+</span></span><span style="display:flex;"><span>k deprecations --k8s-version<span style="color:#f92672">=</span>v1.22.0
+</span></span></code></pre></div><h4 id="dive">Dive</h4>
+<p>Use <a href="https://github.com/wagoodman/dive">Dive</a> to inspect the Docker Images. It’s a terminal app that enables you to deep-dive into your container’s layers and all:</p>
+<blockquote>
+<p>Ensure your Docker (container) images are not too big and does not contain unnecessary data</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install dive
+</span></span><span style="display:flex;"><span>dive cilium/cilium:v1.9.10
+</span></span></code></pre></div><h4 id="dasel">Dasel</h4>
+<p>Use <a href="https://github.com/TomWright/dasel">Dasel</a> to query and modify data structures using selector strings:</p>
+<blockquote>
+<p>Comparable to jq / yq, but supports JSON, YAML, TOML, XML and CSV with zero runtime dependencies</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install dasel
+</span></span></code></pre></div><p>Here’s some examples of what you can do quickly:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Select the image for a container named auth</span>
+</span></span><span style="display:flex;"><span>dasel <span style="color:#66d9ef">select</span> -f deployment.yaml -s <span style="color:#e6db74">&#34;spec.template.spec.containers.(name=auth).image&#34;</span> tomwright/x:v2.0.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Change the image for a container named auth</span>
+</span></span><span style="display:flex;"><span>dasel put string -f deployment.yaml -s <span style="color:#e6db74">&#34;spec.template.spec.containers.(name=auth).image&#34;</span> <span style="color:#e6db74">&#34;tomwright/x:v2.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Update replicas to 3</span>
+</span></span><span style="display:flex;"><span>dasel put int -f deployment.yaml -s <span style="color:#e6db74">&#34;spec.replicas&#34;</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add a new env var</span>
+</span></span><span style="display:flex;"><span>dasel put object -f deployment.yaml -s <span style="color:#e6db74">&#34;spec.template.spec.containers.(name=auth).env.[]&#34;</span> -t string -t string name<span style="color:#f92672">=</span>MY_NEW_ENV_VAR value<span style="color:#f92672">=</span>MY_NEW_VALUE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Update an existing env var</span>
+</span></span><span style="display:flex;"><span>dasel put string -f deployment.yaml -s <span style="color:#e6db74">&#34;spec.template.spec.containers.(name=auth).env.(name=MY_NEW_ENV_VAR).value&#34;</span> NEW_VALUE
+</span></span></code></pre></div><h3 id="more-bonus-containers-without-docker">More Bonus: Containers without Docker</h3>
+<h4 id="colima">Colima</h4>
+<p><a href="https://github.com/abiosoft/colima">Colima</a> Container runtimes on macOS (and Linux) with minimal setup</p>
+<ul>
+<li>Intel and M1 Macs support</li>
+<li>Simple CLI interface</li>
+<li>Docker and Containerd support</li>
+<li>Port Forwarding</li>
+<li>Volume mounts</li>
+<li>Kubernetes</li>
+<li>Replace Docker-for-Desktop</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install colima  
+</span></span><span style="display:flex;"><span>brew install docker  
+</span></span><span style="display:flex;"><span>colima start                       <span style="color:#75715e"># default using Docker runtime  </span>
+</span></span><span style="display:flex;"><span>colima start --with-kubernetes     <span style="color:#75715e"># start kubernetes local cluster  </span>
+</span></span><span style="display:flex;"><span>colima start --runtime containerd --with-kubernetes  <span style="color:#75715e"># remove docker completely  </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>colima status  
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> colima is running  
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> runtime: docker       <span style="color:#75715e"># or containerd  </span>
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> arch: x86_64  
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> kubernetes: enabled  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat ~/.colima/colima.yaml  
+</span></span><span style="display:flex;"><span>vm:  
+</span></span><span style="display:flex;"><span>    cpu: <span style="color:#ae81ff">2</span>  
+</span></span><span style="display:flex;"><span>    disk: <span style="color:#ae81ff">60</span>  
+</span></span><span style="display:flex;"><span>    memory: <span style="color:#ae81ff">2</span>  
+</span></span><span style="display:flex;"><span>    arch: x86_64  
+</span></span><span style="display:flex;"><span>    forward_agent: false  
+</span></span><span style="display:flex;"><span>    mounts: <span style="color:#f92672">[]</span>  
+</span></span><span style="display:flex;"><span>runtime: containerd  
+</span></span><span style="display:flex;"><span>kubernetes:  
+</span></span><span style="display:flex;"><span>    enabled: true  
+</span></span><span style="display:flex;"><span>    version: v1.22.2  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>colima nerdctl run -- -ti --rm alpine:latest sh  
+</span></span><span style="display:flex;"><span>/ <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>colima nerdctl ps  
+</span></span><span style="display:flex;"><span>CONTAINER ID    IMAGE                              COMMAND    CREATED           STATUS    PORTS    NAMES  
+</span></span><span style="display:flex;"><span>47e87f00711d    docker.io/library/alpine:latest    <span style="color:#e6db74">&#34;sh&#34;</span>       <span style="color:#ae81ff">18</span> seconds ago    Up                 alpine-47e87<span style="color:#e6db74">``</span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl ctx  
+</span></span><span style="display:flex;"><span>colima
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>kubectl get pods -A  
+</span></span><span style="display:flex;"><span>NAMESPACE     NAME                                     READY   STATUS    RESTARTS   AGE  
+</span></span><span style="display:flex;"><span>kube-system   coredns-85cb69466-bz5mw                  1/1     Running   <span style="color:#ae81ff">0</span>          8m18s  
+</span></span><span style="display:flex;"><span>kube-system   local-path-provisioner-64ffb68fd-2g9gz   1/1     Running   <span style="color:#ae81ff">0</span>          8m18s  
+</span></span><span style="display:flex;"><span>kube-system   metrics-server-9cf544f65-t6tzs           1/1     Running   <span style="color:#ae81ff">0</span>          8m18s
+</span></span></code></pre></div><h3 id="podman">Podman</h3>
+<p><a href="https://podman.io/">Podman</a> is the container Swiss-Army knife from RedHat:</p>
+<ul>
+<li>multiple image formats including the OCI and Docker image formats</li>
+<li>full management of container lifecycle</li>
+<li>container image management (managing image layers, overlay filesystems, etc)</li>
+<li>Podman 3.4+ now support M1 Apple Macs</li>
+<li>Replaces Docker for Desktop</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install podman  
+</span></span><span style="display:flex;"><span>podman machine init  
+</span></span><span style="display:flex;"><span>podman machine start  
+</span></span><span style="display:flex;"><span>podman info
+</span></span><span style="display:flex;"><span>podman run registry.fedoraproject.org/fedora:latest echo hello
+</span></span><span style="display:flex;"><span>alias docker<span style="color:#f92672">=</span>podman
+</span></span></code></pre></div><h3 id="conclusion">Conclusion</h3>
+<p>Well, this list is not 100% complete. Who could build and maintain such a list ?<br>
+Kubernetes is still a highly evolving ecosystem and new tools and patterns keeps emerging every week.</p>
+<p>Feel free to comment and share your favorite tools and I’ll add them here.</p>
+<p>This post is abstracted from a talk that I built for <a href="https://community.cncf.io/cloud-native-canada/">CNCF/Kubernetes Canada</a> Meetups. Please contact me if you’re organizing a meetup and are interested.</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/devops/">devops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/gitops/">gitops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/tooling/">tooling</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/productivity/">productivity</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        1961 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2022-03-29 12:54
+        
+
+         
+          
+            
+              (Last updated: 2023-12-01 14:31)
+            
+          
+        
+      </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="1ab993c2d9f5b7b58edda6893280e093b620e8db" target="_blank" rel="noopener">1ab993c</a>
+          @ 2023-12-01
+        </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Kubernetes%20tooling%20and%20shell%20setup&amp;caption=Kubernetes%20tooling%20and%20shell%20setup&amp;canonicalUrl=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Kubernetes%20tooling%20and%20shell%20setup&amp;body=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f&amp;media=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f;description=Kubernetes%20tooling%20and%20shell%20setup" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f&amp;title=Kubernetes%20tooling%20and%20shell%20setup&amp;summary=Kubernetes%20tooling%20and%20shell%20setup&amp;source=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f&amp;resubmit=true&amp;title=Kubernetes%20tooling%20and%20shell%20setup" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f;title=Kubernetes%20tooling%20and%20shell%20setup" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Kubernetes%20tooling%20and%20shell%20setup%20https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f&amp;t=Kubernetes%20tooling%20and%20shell%20setup" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Kubernetes%20tooling%20and%20shell%20setup&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f03%2fkubernetes-tooling-and-shell-setup%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://piratemakers.ca/posts/2022/06/playing-with-dasel/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Playing with Dasel</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/">
+                    <span class="button__text">Prometheus-Operator and Istio Telemetry V2</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+      
+        <div id="comments">
+          <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "piratemakers-ca" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2023</span>
+            
+            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            <span>Pirate Makers™</span>
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.0931a358499291afca6f741478e9fc9fa973a9fbd7aeb3390f3b10463966dc8195daf98a0e33685a1fbfb9d7578631c3f31fc8e558eaf6e2c30c4c3e14df4931.js" integrity="sha512-CTGjWEmSka/Kb3QUeOn8n6lzqfvXrrM5DzsQRjlm3IGV2vmKDjNoWh&#43;/uddXhjHD8x/I5Vjq9uLDDEw&#43;FN9JMQ=="></script>
+
+
+
+
+    </body>
+</html>

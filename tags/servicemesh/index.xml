@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>servicemesh on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/servicemesh/</link>
+    <description>Recent content in servicemesh on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Fri, 07 Aug 2020 00:52:19 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/servicemesh/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prometheus-Operator and Istio Telemetry V2</title>
+      <link>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</link>
+      <pubDate>Fri, 07 Aug 2020 00:52:19 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</guid>
+      <description>Starting Istio 1.4 and up, the way the Observability metrics are created, exchanged and scraped changed. Here is how I configure Prometheus-Operator resources to scrape metrics from Istio 1.6 and install latest Grafana Dashboards
+ServiceMonitor Prometheus-Operator is far more dynamic than the default Prometheus install. It adds some CRD to dynamically and transparently re-configure your Prometheus cluster.
+A ServiceMonitor is a resource describing which pods to scrape based on a Service.</description>
+    </item>
+    <item>
+      <title>Understanding Istio and TCP services</title>
+      <link>https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/</link>
+      <pubDate>Thu, 06 Aug 2020 23:41:53 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/</guid>
+      <description>overview I lately came across an Istio setup where both the downstream (client) and the upstream (server) were using the same sets of ports:
+port 8080 for HTTP protocol port 5701 for Hazelcast protocol, a Java based memory database embedded in the pod’s workload, using TCP The setup is presented here:
+In theory, two types of communications happens:
+each Hazelcast database (the red and purple cylinders) talk to each other on port 5701 using TCP protocol.</description>
+    </item>
+    <item>
+      <title>Istio 1.1.7 &#43; Let’s Encrypt : WORKING !</title>
+      <link>https://piratemakers.ca/posts/2019/05/istio-1.1.7--lets-encrypt-working/</link>
+      <pubDate>Wed, 22 May 2019 13:01:42 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/05/istio-1.1.7--lets-encrypt-working/</guid>
+      <description>It’s been almost a year since I first wrote about using Let’s Encrypt SSL Certificates with Istio, 0.8.0 at this time.
+Then I blogged again when Istio 1.0.2 came out. I had to build an Operator, Cert-Merge, to allow to merge all the SSL certificates created in many Secrets by Cert-Manager into ONE single secret that Istio’s Gateway could use.
+While building this Operator was cool, and I learnt a lot by this time, I knew this was a temporary solution, a highly insecure one.</description>
+    </item>
+    <item>
+      <title>Istio 1.0.2 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS &#43; Certificate Merge</title>
+      <link>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</link>
+      <pubDate>Wed, 07 Nov 2018 17:38:31 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</guid>
+      <description>Recap I already talked about Istio + Cert-Manager in part one and part two. In the meantime Istio went to release 1.0, lastly 1.0.3.
+While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.
+Let me remind you :
+Cert-Manager only create TLS Secrets, which are a kind of Secret that only contains a crt and key file.</description>
+    </item>
+    <item>
+      <title>Istio 0.8.0 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS</title>
+      <link>https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/</link>
+      <pubDate>Tue, 26 Jun 2018 18:57:13 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/</guid>
+      <description>A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
+Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
+What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part.</description>
+    </item>
+    <item>
+      <title>Istio (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS</title>
+      <link>https://piratemakers.ca/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/</link>
+      <pubDate>Tue, 23 Jan 2018 23:12:08 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/</guid>
+      <description>Updates 1 Thanks to comments by Laurent Demailly, here are some updates. This article have been updated accordinately :
+there is now an official Helm Chart for Cert-Manager Istio Ingress also support GRPC, which is based on HTTP/2 Update 2 (2018–06–26) I made a new post to use Cert-Manager with Istio 0.8.0 here.
+Istio Istio is a part of a new way to manage the flow of data in your Microservice world.</description>
+    </item>
+  </channel>
+</rss>

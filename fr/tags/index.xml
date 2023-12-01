@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Pirate Makers</title>
+    <link>https://piratemakers.ca/fr/tags/</link>
+    <description>Recent content in Tags on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Thu, 29 Apr 2021 21:05:54 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/fr/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>hacking</title>
+      <link>https://piratemakers.ca/fr/tags/hacking/</link>
+      <pubDate>Thu, 29 Apr 2021 21:05:54 +0000</pubDate>
+      <guid>https://piratemakers.ca/fr/tags/hacking/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>life</title>
+      <link>https://piratemakers.ca/fr/tags/life/</link>
+      <pubDate>Thu, 29 Apr 2021 21:05:54 +0000</pubDate>
+      <guid>https://piratemakers.ca/fr/tags/life/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

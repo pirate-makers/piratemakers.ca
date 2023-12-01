@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Prune">
+<meta name="description" content="It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
+that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, devops, gitops, kubernetes" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/" />
+
+
+    <title>
+        
+            Playing with Crossplane, for real :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Playing with Crossplane, for real">
+<meta itemprop="description" content="It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
+that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it."><meta itemprop="datePublished" content="2022-08-24T18:27:29+00:00" />
+<meta itemprop="dateModified" content="2023-12-01T14:31:59-05:00" />
+<meta itemprop="wordCount" content="3439"><meta itemprop="image" content="https://piratemakers.ca/images/1.png"><meta itemprop="image" content="https://piratemakers.ca/images/2.png"><meta itemprop="image" content="https://piratemakers.ca/images/3.png"><meta itemprop="image" content="https://piratemakers.ca/images/4.png"><meta itemprop="image" content="https://piratemakers.ca/images/5.png"><meta itemprop="image" content="https://piratemakers.ca/images/6.png">
+<meta itemprop="keywords" content="devops,gitops,kubernetes," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://piratemakers.ca/images/1.png"/>
+
+<meta name="twitter:title" content="Playing with Crossplane, for real"/>
+<meta name="twitter:description" content="It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
+that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it."/>
+
+
+
+    <meta property="og:title" content="Playing with Crossplane, for real" />
+<meta property="og:description" content="It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
+that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/" /><meta property="og:image" content="https://piratemakers.ca/images/1.png" /><meta property="og:image" content="https://piratemakers.ca/images/2.png" /><meta property="og:image" content="https://piratemakers.ca/images/3.png" /><meta property="og:image" content="https://piratemakers.ca/images/4.png" /><meta property="og:image" content="https://piratemakers.ca/images/5.png" /><meta property="og:image" content="https://piratemakers.ca/images/6.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-08-24T18:27:29+00:00" />
+<meta property="article:modified_time" content="2023-12-01T14:31:59-05:00" />
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2022-08-24 18:27:29 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        17 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/">Playing with Crossplane, for real</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+<p>It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that <a href="https://www.hashicorp.com/products/terraform">Terraform (TF)</a> is the leader in this field.</p>
+<p>that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, <a href="https://www.hashicorp.com/">Hashicorp</a>), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it.</p>
+<p>So we end up with complicated code, tricks to make things happen or not (like using <code>count</code>) and the two biggest pain point:</p>
+<ul>
+<li>having to manage a state file which holds the result of the last apply</li>
+<li>globally not possible to re-use code or build simple abstraction to create a resource in different clouds, like a K8s cluster in AWS and Google.</li>
+</ul>
+<p>The global consensus is that TF is too complicated for Devs team to use and maintain well. It’s down to the Ops to operate it, or at least, try to provide <code>modules</code> so Devs can work with what is supposed to be an abstraction.</p>
+<h4 id="then-enters-crossplanehttpscrossplanegithubio-">Then enters <a href="https://crossplane.github.io/">Crossplane</a> !</h4>
+<p>Before diving into Crossplane, let’s put some notice, or as we like to call it:</p>
+<h3 id="tl--dr">TL ; DR</h3>
+<ul>
+<li>I’m no Crossplane expert and only spent few days playing with it for a Proof Of Concept. Please, help me better understand/use it if you think i’m wrong</li>
+<li>OSS Crossplane Providers are really limited</li>
+<li>Jet Providers are on par with Terraform providers, but lack docs and may be buggy and are not well supported or updated by the community</li>
+<li>Still unsure how to replicate 100% of what you can do with TF</li>
+</ul>
+<p><strong>Overall conclusion is that it’s not production ready for me</strong></p>
+<p>Please follow up for details</p>
+<h3 id="crossplane">Crossplane</h3>
+<p>As stated on their website: <strong>The cloud native control plane framework</strong></p>
+<p>Saying that Crossplane is a K8s native way to do IaC would be limitative. Crossplane is far more than that. Crossplane, to me, is a way to build simple abstractions in front of complex stuff, like infrastructure or deployments.</p>
+<p>As TF, Crossplane is build up on <a href="https://github.com/crossplane-contrib"><strong>Providers</strong></a> (<a href="https://crossplane.github.io/docs/v1.9/concepts/providers.html">see official list here</a>), which extends Crossplane with new <em>Managed Resource Type</em> to work with.</p>
+<p>But the strength of Crossplane lies in its <code>Composition</code> feature. It is exactly what the name implies: you build up a new type of resource by combining (composing) other type of resources. Ex: create a K8s cluster and a nodepool, or create a DB Instance, a DB schema and a DB user, all at one.</p>
+<p>Let’s grab some pictures from the official docs:</p>
+<p><img src="images/2.png#layoutTextWidth" alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview"></p>
+<p>You <code>claim</code> a Postresql Instance, that references a <code>Composite Resource</code> that will trigger the creation of a <code>CloudSQL Instance</code> and a <code>Firewall Rule</code> to access it. Neat !</p>
+<p>It’s a little bit more complicated, so here’s another picture from the doc that is supposed to be closer to reality:</p>
+<p><img src="images/3.png#layoutTextWidth" alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#how-it-works"></p>
+<p>AH ! There we go !</p>
+<p>You can go read the docs at <a href="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview">https://crossplane.github.io/docs/v1.9/concepts/composition.html</a>. I personally read that again and again, and wasn’t able to fully understand the real thing until I played with it, and built my own schema:</p>
+<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p>Let me break things down:</p>
+<ol>
+<li><strong>Infra</strong>: Deploy a Provider, like GKE, AWS, Helm, K8s, even a <a href="https://github.com/crossplane-contrib/provider-terraform">Terraform provider</a></li>
+<li>The provider created a set of CRDs corresponding to each Cloud resource it manages (yellow boxes)</li>
+<li><strong>Infra</strong>: Create a CompositeResourceDefinition (XRD) which creates an interface with a limited set of parameters to tweak</li>
+<li>Crossplane will create and maintain two new CRDs based on the XRD: a Claim and a CompositeResource (XR) (green boxes). Crossplane will start watching and reconciling CR based on those CRDs</li>
+<li><strong>Infra</strong>: Create a Composition, which will reference a source XRD and a list of Resources to created (from the CRDs created by the Provider). It’s a sort of templating resources with values from the interface (the XRD)</li>
+<li><strong>Dev</strong>: Claim a resource (purple box) -&gt; a Claim is actually a CustomResource of a type maintained by Crossplane</li>
+<li>Crossplane will create a CompositeResource (XR) based on the Claim</li>
+<li>Crossplane will create CustomResources (CR) which are instances of the Provider’s resources, based on the content of the CompositeResource (XR) (red boxes)</li>
+<li>Provider will reconcile the resources he manages, and call GCP API (in case of the GCP provider) to create the resources declared in the CR</li>
+</ol>
+<p>This is really powerful, and the only limitation is actually in what a provider can do.</p>
+<p>Talking of which, I guess you see me coming, it’s also the biggest problem Crossplane has: it all depends on what a Provider can do !Oh, by the way, I’ll be a speaker at <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/">KubeCon North America 2022 in Detroit</a> , please <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/program/schedule/">check my talk here</a>, register for Thursday, October 27 • 2:30pm — 4:00pm:</p>
+<p><a href="https://kccncna2022.sched.com/event/182F7/tutorial-set-up-your-shell-for-kubernetes-productivity-and-be-efficient-quickly-sebastien-prune-thomas-wunderkind-archy-ayrat-khayretdinov-google">Tutorial: Set Up Your Shell For Kubernetes Productivity And Be Efficient Quickly — Sebastien “Prune” Thomas, Wunderkind &amp; Archy Ayrat Khayretdinov, Google</a></p>
+<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<h3 id="question-1-providers">Question 1: Providers</h3>
+<p>As stated, <code>Providers</code> are the part that manages some resources. In fact, it’s a <code>Pod</code> that will be deployed along Crossplane, will create CRD for the resource it manages and watch on them. Each instance of a managed resource will make the <code>Provider</code> create and maintain a resource. For the GCP provider, that means calling the GCP API and create some resources.</p>
+<p>I’m not diving into <code>Providers</code>configuration here. It involves installing the provider, giving it a global config and some more specific variations of the config, like having a <code>Dev</code> , <code>Staging</code> and <code>Prod</code>provider for GCP. I would maybe have to create a mix of configurations for each of my <code>env</code> * <code>project</code> so I can ensure some devs can deploy to <code>Project A</code> in <code>Dev</code> but not on <code>Prod</code> or in <code>Project B</code> . This is something I haven’t explored yet… Please, again, comment.</p>
+<p>You can usually check for Provider’s CRD (supported Resources) at <a href="https://doc.crds.dev/">https://doc.crds.dev/</a>.<br>
+Ex:</p>
+<ul>
+<li>crossplane own CRDs: <a href="https://doc.crds.dev/github.com/crossplane/crossplane@v1.9.0">https://doc.crds.dev/github.com/crossplane/crossplane@v1.9.0</a></li>
+<li>crossplane GCP Provider (official): <a href="https://doc.crds.dev/github.com/crossplane/provider-gcp@v0.21.0">https://doc.crds.dev/github.com/crossplane/provider-gcp@v0.21.0</a></li>
+</ul>
+<p>Let’s dive in the GCP provider:</p>
+<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p>28 CRDs discovered ? wait, what ? only 28 different GCP resources are managed by Crossplane ?</p>
+<p>short answer: YES :(</p>
+<p>So, for example, you can create a <code>CloudSQLInstance</code> which represents a Postgres or MySQL Database Instance:</p>
+<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
+<p>But then, you just can’t create any specific DB, User or anything else related to this DB Instance. Because, well, the resources were not ported into the Provider.</p>
+<p>AWS official Provider is a little better, with 172 resources.</p>
+<p>This situation is just normal. Building up a provider is tedious, there are a lot of different resources, and Crossplane team is quite small compared to this huge work.<br>
+At first, I guess the Cloud providers wanted to help, but it feels that in the end, they prefered build their own version of Crossplane for themselves. That is when Google created it <a href="https://cloud.google.com/config-connector/docs/overview">Config Connector</a> app, which in term is a lightweight version of Crossplane, or <a href="https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/">AWS ACK</a>.</p>
+<p>But Crossplane team is smart, so they asked <code>who else in the world is already maintaining Providers ?</code> and the answer was, as often… Terraform !</p>
+<p>And the <a href="https://github.com/crossplane/terrajet">TerraJet</a> project was born !</p>
+<p>TerraJet (Jet) is a way to convert Terraform Providers into Crossplane Providers, hiding the TF mechanics. With Jet, TF is run in the background and the TF State file is, let’s say, split and stored along each Crossplane Resource.</p>
+<h4 id="_smart-_"><em>Smart ?</em></h4>
+<p>Well, the GCP Jet Provider counts 438 resources, including all that we need to manage SQL DBs in GCP. AWS Jet Provider counts a wooping 780 resources ! I guess it’s more than you’ll ever use.</p>
+<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<h3 id="question-2-docs-">Question 2: Docs ?</h3>
+<p>It seems to be a lot of resources to use ! While TF docs are, well, not that bad in the end, and you have a LOT of blog posts and examples to play with, it’s not the same story for Crossplane.</p>
+<p>The <a href="https://crossplane.github.io/docs/v1.9/concepts/composition.html">Composition Docs</a>, for example, showcase few different stuffs that will work out of the box if you copy/paste. But then, you want your own stuff, maybe not a DB instance. So you start digging in… and reach the <a href="https://crossplane.github.io/docs/v1.9/reference/composition.html">Composition Reference doc</a>.<br>
+Once again, you’re driven through the same example, with little more detail that will just confuse you even more (at least it confused me):</p>
+<ul>
+<li>Should I create Claims or XR ?</li>
+<li>what is this <code>compositionRef</code> about ?</li>
+<li>where should I set <code>writeConnectionSecretToRef</code> ? in the Claim ? The XR ? the resource in the Composition ?</li>
+<li>What are the <code>secret values</code> that the provider is returning ?</li>
+</ul>
+<p>Well, I guess the product is new, and not widely used yet, but man, EVERY doc, blog, talk, demo is using the same stuff. They all create a single bucket, <a href="https://crossplane.github.io/docs/v1.9/getting-started/create-configuration.html#create-compositions">a single DB instance, a VPC with few subnets</a>, and in a rare case, <a href="https://github.com/upbound/platform-ref-multi-k8s">some K8s clusters</a>.</p>
+<p>To me, nothing that related to my needs.</p>
+<p>And because what I want is not (yet?) supported in the official providers, I have to use the GCP Jet Provider.</p>
+<h3 id="jet-providers-straight-from-terraform">Jet Providers, straight from Terraform</h3>
+<p>Don’t expect to find docs on the Jet Providers… because they are transpositions from TF providers, the doc is minimal, usually <a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs">a copy of the TF doc itself</a>, if any.</p>
+<p>For my POC, I wanted something simple, and luckily, something that looks like what most of the examples are based on: a Postgres DB (CloudSQL). Of course, I want the Instance, plus a DB, plus few Users, hopefully using GCP WorkloadIdentity (IAM ServiceAccount binding).</p>
+<p>Note that this is a really limited need so far. Only 3 resourceTypes are at play here. The real use-case would have been creating a Pub/Sub, a ComposerV2, some cloud-functions, and all the IAM stuff that allow one to trigger the other. All that at once, by Claiming ONE <code>Composition</code> .</p>
+<h4 id="xrd">XRD</h4>
+<p>I started creating a XRD:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apiextensions.crossplane.io/v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">CompositeResourceDefinition  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">xjetpostgresqls.database.wk  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group</span>: <span style="color:#ae81ff">database.wk  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">names</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">XJetPostgreSQL  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">plural</span>: <span style="color:#ae81ff">xjetpostgresqls  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">claimNames</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">JetPostgreSQL  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">plural</span>: <span style="color:#ae81ff">jetpostgresqls  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">versions</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">v1alpha1  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">served</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">referenceable</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">schema</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">openAPIV3Schema</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">type</span>: <span style="color:#ae81ff">object  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">properties</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">type</span>: <span style="color:#ae81ff">object  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">properties</span>:  
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">parameters</span>:  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">type</span>: <span style="color:#ae81ff">object  </span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">properties</span>:  
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">storageGB</span>:  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">integer  </span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">description</span>: <span style="color:#ae81ff">size of the Database in GB - integer  </span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">dbName</span>:  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string  </span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">description</span>: <span style="color:#ae81ff">name of the new DB inside the DB instance - string  </span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">instanceSize</span>:  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string  </span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">description</span>: <span style="color:#ae81ff">instance size - string  </span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">enum</span>:  
+</span></span><span style="display:flex;"><span>                      - <span style="color:#ae81ff">small  </span>
+</span></span><span style="display:flex;"><span>                      - <span style="color:#ae81ff">medium  </span>
+</span></span><span style="display:flex;"><span>                      - <span style="color:#ae81ff">large  </span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">required</span>:  
+</span></span><span style="display:flex;"><span>                  - <span style="color:#ae81ff">storageGB  </span>
+</span></span><span style="display:flex;"><span>                  - <span style="color:#ae81ff">dbName  </span>
+</span></span><span style="display:flex;"><span>                  - <span style="color:#ae81ff">instanceSize  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">required</span>:  
+</span></span><span style="display:flex;"><span>              - <span style="color:#ae81ff">parameters</span>
+</span></span></code></pre></div><p>Here I can already see different problems. I wanted to create a DB, and a DB user with the same name, but what if I want 2 DBs ? 3 DBs? 2 users per DB ?</p>
+<p>I guess I have to re-write the schema to use something like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">properties</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">dbs</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">array  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">items</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">type</span>: <span style="color:#ae81ff">object  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">properties</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">description</span>: <span style="color:#ae81ff">name of the new DB inside the DB instance - string  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">users</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">type</span>: <span style="color:#ae81ff">array  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">items</span>:  
+</span></span><span style="display:flex;"><span>             <span style="color:#f92672">properties</span>:  
+</span></span><span style="display:flex;"><span>               <span style="color:#f92672">name</span>:  
+</span></span><span style="display:flex;"><span>                 <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string</span>
+</span></span></code></pre></div><p>Whatever, modelling those is not straightforward… but, well, it’s a one time effort. Totally worth it. Take your time building this, as it defines the parameters that your Dev team will use to create resources. Whatever is not defined here will use the defaults from the composition or the Provider. You’re creating your abstraction.</p>
+<h4 id="compositions">Compositions</h4>
+<p>Now we can create the Composition, which will take the values defined by the XRD and apply them to the Cloud Resources we need.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apiextensions.crossplane.io/v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Composition  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jetpostgresql.gcp.database.wk  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">provider</span>: <span style="color:#ae81ff">gcp  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">crossplane.io/xrd</span>: <span style="color:#ae81ff">xjetpostgresql.database.wk  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># should I set this here ? Please help  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># writeConnectionSecretsToNamespace: crossplane  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">compositeTypeRef</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">database.wk/v1alpha1  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">XJetPostgreSQL  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudsqlinstance  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">base</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">sql.gcp.jet.crossplane.io/v1alpha2  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">DatabaseInstance  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">annotations</span>:   
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">crossplane.io/external-name</span>: <span style="color:#e6db74">&#34;crossplanesqlinstance&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">providerConfigRef</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">crossplane-provider-jet-gcp  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">deletionPolicy</span>: <span style="color:#ae81ff">Delete  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">forProvider</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">databaseVersion</span>: <span style="color:#ae81ff">POSTGRES_14  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">region</span>: <span style="color:#ae81ff">us-central1  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">deletionProtection</span>: <span style="color:#66d9ef">false</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">settings</span>:  
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">db-custom-1-3840  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">diskType</span>: <span style="color:#ae81ff">PD_SSD  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">diskSize</span>: <span style="color:#ae81ff">20</span>  
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">ipConfiguration</span>:  
+</span></span><span style="display:flex;"><span>                - <span style="color:#f92672">ipv4Enabled</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">authorizedNetworks</span>:  
+</span></span><span style="display:flex;"><span>                    - <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;0.0.0.0/0&#34;</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">userLabels</span>:  
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">creator</span>: <span style="color:#ae81ff">crossplane  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">owner</span>: <span style="color:#ae81ff">prune  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">writeConnectionSecretToRef</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">crossplane  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudsqlinstance  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">patches</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set diskSize based on the Claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;spec.parameters.storageGB&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.forProvider.settings[0].diskSize&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set the secret name to the claim name  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.name&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">transforms</span>:  
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">string</span>:  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fmt</span>: <span style="color:#e6db74">&#34;%s-pginstance&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># change secret namespace to the one of the claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-namespace]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.namespace&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set label app = name of the original claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/app]&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set the name of the external resource to be the name of the claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;metadata.annotations[crossplane.io/external-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set instance size to the one defined in the claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;spec.parameters.instanceSize&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.forProvider.settings[0].tier&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">transforms</span>:  
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">map  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">map</span>:  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">small</span>: <span style="color:#ae81ff">db-custom-1-3840  </span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">medium</span>: <span style="color:#ae81ff">db-custom-2-7680  </span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">large</span>: <span style="color:#ae81ff">db-custom-4-15360  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">policy</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">fromFieldPath</span>: <span style="color:#ae81ff">Required  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudsqldb  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">base</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">sql.gcp.jet.crossplane.io/v1alpha2  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Database  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">annotations</span>:   
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">crossplane.io/external-name</span>: <span style="color:#e6db74">&#34;crossplanesqldb&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">providerConfigRef</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">crossplane-provider-jet-gcp  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">deletionPolicy</span>: <span style="color:#ae81ff">Delete  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">forProvider</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">instanceSelector</span>:  
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">MatchControllerRef</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">writeConnectionSecretToRef</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">crossplane  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudsqldb  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">patches</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set the secret name to the claim name  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.name&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">transforms</span>:  
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">string</span>:  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fmt</span>: <span style="color:#e6db74">&#34;%s-pgdb&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># change secret namespace to the one of the claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-namespace]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.namespace&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set the name of the DB resource to be the name defined in the claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;spec.parameters.dbName&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;metadata.annotations[crossplane.io/external-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set app Label  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/app]&#34;</span>  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudsqldbuser  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">base</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">sql.gcp.jet.crossplane.io/v1alpha2  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">User  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">annotations</span>:   
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># set the name of the DB User, this is hardcoded for demo but should come from the CRD  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">crossplane.io/external-name</span>: <span style="color:#e6db74">&#34;existing-sa-for-db@my-project.iam&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">providerConfigRef</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">crossplane-provider-jet-gcp  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">deletionPolicy</span>: <span style="color:#ae81ff">Delete  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">forProvider</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">instanceSelector</span>:  
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">MatchControllerRef</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">type</span>: <span style="color:#ae81ff">CLOUD_IAM_SERVICE_ACCOUNT  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">writeConnectionSecretToRef</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">crossplane  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudsqluser  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">patches</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set the secret name to the claim name  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.name&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">transforms</span>:  
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">string</span>:  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fmt</span>: <span style="color:#e6db74">&#34;%s-pguser&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># change secret namespace to the one of the claim  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-namespace]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.namespace&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set the name of the DB User, this is hardcoded for demo but should come from the Claim CRD  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># - fromFieldPath: &#34;spec.parameters.dbName&#34;  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   toFieldPath: &#34;metadata.annotations[crossplane.io/external-name]&#34;  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># set app Label  </span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/app]&#34;</span>
+</span></span></code></pre></div><p>Here you can see that it’s not trivial either. A lot is going on here. Globally, you just list all the Provider’s Resources you want to instanciate, give default parameters you want to enforce, and patch some others from user-supplied values or other resources values.</p>
+<p>Let’s go back to the issue I had describing the DBs and Users: Let’s say I have a list of DBs, and each DB has a list of Users… Then I need to iterate over the values and create as many <code>Database.sql.gcp.jet.crossplane.io</code> and <code>User.sql.gcp.jet.crossplane.io</code> that is in the list. I would achieve that in TF using a <code>for_each</code> but here, in Crossplane… no idea (Help me if you know how).</p>
+<p>You can also see that each resource has <code>writeConnectionSecretToRef</code> which points to a secret <code>name</code> and <code>namespace</code> which in turn, should hold all the sensible values that the Resource may create (like DB password, SSL certs, maybe even URLs, and whatever you want to add into the secret).</p>
+<p>I’m still unsure if it’s the right way of doing it. Most examples are writing the secrets in the <code>crossplane</code> namespace, or at least in a namespace fixed in the composition… This does not make sense to me. I want the secret to be in the same <code>namespace</code> as the Developer’s claim that is creating the resource… This is making the <code>writeConnectionSecretsToNamespace</code> value that is set at the <code>Composition</code> <code>Spec</code> level (I commented it out).</p>
+<p>I guess it’s the moment to tell you about the Claims.</p>
+<h3 id="claims">Claims</h3>
+<p>The claim is the easiest, at first, as it’s the abstraction: it is really limited.<br>
+It’s meant to be created by your developers that will want a DB along their apps, or a Pub/Sub, or whatever resource you want them to have full control on.</p>
+<p>It is the only resource that is <em>namespaced</em>. This is made so you can define RBACs and allow this team (this namespace) to hold DBs, but no Pub/Sub, for example.</p>
+<p>Here’s mine:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">database.wk/v1alpha1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">JetPostgreSQL  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">test-namespace  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jet-db-claim  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">parameters</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">storageGB</span>: <span style="color:#ae81ff">25</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">dbName</span>: <span style="color:#ae81ff">xrdb  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">instanceSize</span>: <span style="color:#ae81ff">small</span> <span style="color:#75715e"># small, medium, large  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">writeConnectionSecretToRef</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jet-db-claim-details</span>
+</span></span></code></pre></div><p>Neat ! Simple ! Thanks abstractions ! Devs only specify what they care about, and you take care of all the boring stuff !</p>
+<p>Going back to Secrets, you see that I also defined which secret to write stuff into… but it seems this value is not an override of what is in the <code>Composition</code>. So I patched the composition to actually create the secret with a name derived from the <code>Claim</code> name and in the same <code>Namespace</code> as the <code>Claim</code> :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># set the secret name to reference the claim name</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-name]&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.name&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">transforms</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">string</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">fmt</span>: <span style="color:#e6db74">&#34;%s-pginstance&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># change secret namespace to the one of the claim</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">fromFieldPath</span>: <span style="color:#e6db74">&#34;metadata.labels[crossplane.io/claim-namespace]&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">toFieldPath</span>: <span style="color:#e6db74">&#34;spec.writeConnectionSecretToRef.namespace&#34;</span>
+</span></span></code></pre></div><p>I first tried to use <code>metadata.name</code> to get the claim name, but, in fact, the <code>Composition</code> is not templated from the <code>Claim</code> but from the intermediate <code>XR</code> that is created from the <code>Claim</code> . Refer to my schema above if needed. So, in the <code>XR</code> the only way to get back to the <code>Claim</code> metadata is by looking at some specific <code>labels</code> like <code>crossplane.io/claim-name</code>.</p>
+<h3 id="question-3-providers-execution">Question 3: Provider’s execution</h3>
+<p>Once you have all that, the Providers are going to start doing things: reconciling between what you created in K8s and the reality in the Cloud.</p>
+<p>For that, the official OSS Providers seems to do a great work without much surprise.<br>
+For the Jet provider, at least the GCP one I tested, it’s another story. I started mine with <code>--debug</code> to better understand.<br>
+It’s k8s native, so also <code>k describe</code> on the many resources (XRD, Composition, XR, Claim and intermediate CR) to get the logs and events attached to each.</p>
+<p>I would also suggest that you add the <code>--debug</code> option to Crossplane itself to fully understand when and where the problem is when rendering the Composition.</p>
+<p>Crossplane keeps reconcilling the resource, so you may end up with tons of logs.</p>
+<p>In the end, I wasn’t able to create a working DB user using Workload Identity. Not sure why, but once the user created, Crossplane was trying to change the <code>username</code> to the name of the claim… and I was constantly seeing the <code>crossplane.io/external-name</code> value being switched from what I asked in the Composition and the Claim name…</p>
+<p>I also wasn’t able to understand what kind of values was the Provider / the Resource returning that I could put in a Secret. I think this is a difference between the OSS Provider and the Jet Provider… with Jet, it’s like with TF: YOU have to create the secret and provide it to K8s… so maybe I only used resources that had nothing to return as a secret value ?</p>
+<h3 id="question-4-support">Question 4: Support</h3>
+<p>I asked many questions on Slack, I even opened an issue… and globally I had no answer. I also tried to participate and read through the other questions/bugs/PRs… and it does not feel the community is heavily active. Don’t get me wrong, I’m not saying the project is dead or whatever. Its more a feeling… Ask about TF and you’ll have 15 answers in the hour…</p>
+<p>I talked about docs and examples, and again it’s really limited at the moment.</p>
+<p>If i’m about to switch my whole IaC in a new tool, I want to be sure that it’s active and reactive.</p>
+<p>I just reached to <a href="https://www.upbound.io/">Upbound</a>, the company behind Crossplane, to see if the paid plan and support would help me solve my issues.<br>
+I’m really pleased to see that I had an answer quickly along with an appointment with an engineer. According to what I was told, the OSS Providers (and Jet) are way behind what Upbound offers to paid customers. Maybe it’s just the way to go ? After all, TF also have a paid subscription, which is far from cheap… and if I put all my IaC somewhere, maybe a little support is a good idea.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>My POC was really limited in time, and there’s so much more I wish I had time to cover…</p>
+<p>My conclusion is that I could use Crossplane for my Developer’s infra, IF the need is really small…</p>
+<p>For example, if you only create one DB and one User per DB Instance.</p>
+<p>Another way of doing would certainly be to not Compose multiple resources in one <code>Composition</code> but have one <code>Composition</code> per resource… we I will end up with one <code>MyDBInstance</code> , one <code>MyDB</code>, two or more <code>MyDbUser</code> in each namespace/dev project… I’m even not sure if this model would work… but at least, it would allow me to build an abstraction with limited levers that I can present to the Dev’s teams while still allowing flexibility.</p>
+<p>At the moment I would say that this POC just showed me that Crossplane is not an out-of-the-box easy replacement to TF.</p>
+<p>I will keep playing with Crossplane on the side, until I fully understand it. I will also investigate the GCP official tool.</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/devops/">devops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/gitops/">gitops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        3439 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2022-08-24 14:27
+        
+
+         
+          
+            
+              (Last updated: 2023-12-01 14:31)
+            
+          
+        
+      </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="1ab993c2d9f5b7b58edda6893280e093b620e8db" target="_blank" rel="noopener">1ab993c</a>
+          @ 2023-12-01
+        </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Playing%20with%20Crossplane%2c%20for%20real&amp;caption=Playing%20with%20Crossplane%2c%20for%20real&amp;canonicalUrl=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Playing%20with%20Crossplane%2c%20for%20real&amp;body=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f&amp;media=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f;description=Playing%20with%20Crossplane%2c%20for%20real" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f&amp;title=Playing%20with%20Crossplane%2c%20for%20real&amp;summary=Playing%20with%20Crossplane%2c%20for%20real&amp;source=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f&amp;resubmit=true&amp;title=Playing%20with%20Crossplane%2c%20for%20real" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f;title=Playing%20with%20Crossplane%2c%20for%20real" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Playing%20with%20Crossplane%2c%20for%20real%20https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f&amp;t=Playing%20with%20Crossplane%2c%20for%20real" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Playing%20with%20Crossplane%2c%20for%20real&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2022%2f08%2fplaying-with-crossplane-for-real%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Docker.io &amp; OpenSource Fail (and what to do instead)</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="https://piratemakers.ca/posts/2022/06/playing-with-dasel/">
+                    <span class="button__text">Playing with Dasel</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+      
+        <div id="comments">
+          <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "piratemakers-ca" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2023</span>
+            
+            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            <span>Pirate Makers™</span>
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.0931a358499291afca6f741478e9fc9fa973a9fbd7aeb3390f3b10463966dc8195daf98a0e33685a1fbfb9d7578631c3f31fc8e558eaf6e2c30c4c3e14df4931.js" integrity="sha512-CTGjWEmSka/Kb3QUeOn8n6lzqfvXrrM5DzsQRjlm3IGV2vmKDjNoWh&#43;/uddXhjHD8x/I5Vjq9uLDDEw&#43;FN9JMQ=="></script>
+
+
+
+
+    </body>
+</html>

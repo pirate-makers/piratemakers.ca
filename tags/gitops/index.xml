@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gitops on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/gitops/</link>
+    <description>Recent content in gitops on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 24 Aug 2022 18:27:29 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/gitops/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Playing with Crossplane, for real</title>
+      <link>https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/</link>
+      <pubDate>Wed, 24 Aug 2022 18:27:29 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/</guid>
+      <description>It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
+that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it.</description>
+    </item>
+    <item>
+      <title>Kubernetes tooling and shell setup</title>
+      <link>https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/</link>
+      <pubDate>Tue, 29 Mar 2022 16:54:21 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/</guid>
+      <description>How to be productive fast with Kubernetes
+Updates:
+20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes.</description>
+    </item>
+    <item>
+      <title>Prometheus-Operator and Istio Telemetry V2</title>
+      <link>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</link>
+      <pubDate>Fri, 07 Aug 2020 00:52:19 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/</guid>
+      <description>Starting Istio 1.4 and up, the way the Observability metrics are created, exchanged and scraped changed. Here is how I configure Prometheus-Operator resources to scrape metrics from Istio 1.6 and install latest Grafana Dashboards
+ServiceMonitor Prometheus-Operator is far more dynamic than the default Prometheus install. It adds some CRD to dynamically and transparently re-configure your Prometheus cluster.
+A ServiceMonitor is a resource describing which pods to scrape based on a Service.</description>
+    </item>
+    <item>
+      <title>Micro-Services deployment as Snapshots</title>
+      <link>https://piratemakers.ca/posts/2019/06/micro-services-deployment-as-snapshots/</link>
+      <pubDate>Tue, 04 Jun 2019 15:28:58 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2019/06/micro-services-deployment-as-snapshots/</guid>
+      <description>In this article you’ll learn how we bundle our Micro-Services in Snapshots, targeting deployment in Kubernetes.
+Micro-Services Now we have cut our old monolith into a lot of small micro-services, we need to deploy them.
+You think, well, your CI build the micro-service when someone commit a change, and your CD deploy it.
+Yeah.
+When your project start growing, you end up with a lot of micro-services. If you’re lucky and smart enough, your services API will not change, AT ALL, and all your micro-services are back and forth compatible with each others.</description>
+    </item>
+    <item>
+      <title>What nobody tells you about Kubernetes</title>
+      <link>https://piratemakers.ca/posts/2017/07/what-nobody-tells-you-about-kubernetes/</link>
+      <pubDate>Tue, 18 Jul 2017 12:03:59 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2017/07/what-nobody-tells-you-about-kubernetes/</guid>
+      <description>This is a first post in a long serie to come about what you never heard and maybe never thought about when using K8s (Kubernetes), and maybe other orchestration tools.
+I’ve been using Kubernetes for a long time. In fact, at some point, I decided not to use K8s for the company I was working for, because it was too new, unstable, not easy to deploy… At this time, I also decided not to use Marrathon, which was brand new and too linked to the (crappy) Mesos/Hadoop ecosystem (it’s better now with DC/OS).</description>
+    </item>
+  </channel>
+</rss>

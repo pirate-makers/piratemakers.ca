@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Prune">
+<meta name="description" content="Jsonnet is not a new tool but is not widely used. This is mostly due to the first impression you have when using it : too complex." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, devops, json, kubernetes" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/" />
+
+
+    <title>
+        
+            Using Jsonnet does not have to be complex :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Using Jsonnet does not have to be complex">
+<meta itemprop="description" content="Jsonnet is not a new tool but is not widely used. This is mostly due to the first impression you have when using it : too complex."><meta itemprop="datePublished" content="2019-06-04T19:25:40+00:00" />
+<meta itemprop="dateModified" content="2023-12-01T14:31:59-05:00" />
+<meta itemprop="wordCount" content="1655"><meta itemprop="image" content="https://piratemakers.ca/images/1.png"><meta itemprop="image" content="https://piratemakers.ca/images/2.png">
+<meta itemprop="keywords" content="devops,json,kubernetes," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://piratemakers.ca/images/1.png"/>
+
+<meta name="twitter:title" content="Using Jsonnet does not have to be complex"/>
+<meta name="twitter:description" content="Jsonnet is not a new tool but is not widely used. This is mostly due to the first impression you have when using it : too complex."/>
+
+
+
+    <meta property="og:title" content="Using Jsonnet does not have to be complex" />
+<meta property="og:description" content="Jsonnet is not a new tool but is not widely used. This is mostly due to the first impression you have when using it : too complex." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/" /><meta property="og:image" content="https://piratemakers.ca/images/1.png" /><meta property="og:image" content="https://piratemakers.ca/images/2.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-06-04T19:25:40+00:00" />
+<meta property="article:modified_time" content="2023-12-01T14:31:59-05:00" />
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2019-06-04 19:25:40 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        8 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/">Using Jsonnet does not have to be complex</a>
+      </h1>
+
+      
+        <div class="post-excerpt">Jsonnet is not a new tool but is not widely used. This is mostly due to the first impression you have when using it : too complex.</div>
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+<p>In this Post I’ll try to explain what I’ve set up to generate Kubernetes manifests for all my Micro-Services using <a href="https://jsonnet.org/">Jsonnet</a>.</p>
+<h3 id="kubernetes--jsonnet">Kubernetes / Jsonnet</h3>
+<p>The obvious gain you have when using Jsonnet is that you template JSON files instead of YAML.<br>
+While YAML is easier to read by humans, it is far less computational friendly. There’s a must read about that : <a href="http://leebriggs.co.uk/blog/2019/02/07/why-are-we-templating-yaml.html">Lee Briggs post about “Why the fuck are we templating YAML”</a></p>
+<p>Jsonnet is just “yet another templating tool” so you can use it to template your Kubernetes manifests. Many tools have been made to ease that, including (and not limited) to :</p>
+<ul>
+<li><a href="https://ksonnet.io/">Ksonnet</a>, which adds specific Kubenetes functions on top of Jsonnet</li>
+<li><a href="https://kr8.rocks/">Kr8</a></li>
+<li>more… check <a href="https://blog.argoproj.io/the-state-of-kubernetes-configuration-management-d8b06c1205">this article about Kubernetes deployment templating</a></li>
+</ul>
+<p>While the team behind Ksonnet stepped back, the <a href="https://github.com/ksonnet/ksonnet-lib">Ksonnet lib</a> is still maintained. It’s the only things that matters to us.<br>
+Ksonnet was supposed to be a tool that takes care of everything from templating to variable managements, but was really hard to apprehend.</p>
+<p>I decided to just do plain Jsonnet, with the addition of the Bitnami lib for Kubernetes.</p>
+<p><a href="https://jsonnet.org/">Jsonnet</a> is (was) a C++ project, which you can download/build/install… It was lately ported to Go (Golang), and it’s now the official build, the one where they will port new features and tuning first (according to comments in some issues).<br>
+From my own experience with my small templates, using the Go version shorted the build time to 1:45 to nearly 25 seconds. So, go Go :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>go get github.com/google/go-jsonnet/cmd/jsonnet  
+</span></span><span style="display:flex;"><span>$GOPATH/bin/jsonnet --version0
+</span></span></code></pre></div><h3 id="starting-point">Starting point</h3>
+<p>We are actually using a Mono-Repo to hold all our microservices, written in Go.<br>
+Because of that I decided to store the Jsonnet templates inside the same repo, and ensure the Dev team manage them when they change the commandline or options of the micro-services.</p>
+<p>Here is how it’s done :</p>
+<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p>Let’s dive in and re-create all this :</p>
+<p><code>jsonnet</code> directory holds all the Jsonnet stuff. Inside it, we have one directory for each application (micro-service) that is managed by Jsonnet. Let’s pretend we have a Helloworld application :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p jsonnet/helloworld  
+</span></span><span style="display:flex;"><span>cd jsonnet
+</span></span></code></pre></div><h3 id="defaults">Defaults</h3>
+<p>default-env.jsonnet contains some default global variables that apply to all apps. We have to define here ALL the variables that could be used inside our generic templates.<br>
+Later, those variables will be used as constants.<br>
+Don’t forget it’s a JSON file :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;app&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;commitId&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;namespace&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;repoUrl&#34;</span>: <span style="color:#e6db74">&#34;your.docker.repo:4567&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;labels&#34;</span>: {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;appgroup&#34;</span>: <span style="color:#e6db74">&#34;mycompany&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;metrics&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,  
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;command&#34;</span>: [],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;args&#34;</span>: [],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;env&#34;</span>: {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;LOGLEVEL&#34;</span>: <span style="color:#e6db74">&#34;WARN&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;LOGLEVELDEV&#34;</span>: <span style="color:#e6db74">&#34;DEBUG&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;LOGLEVELINTEGRATION&#34;</span>: <span style="color:#e6db74">&#34;INFO&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;HTTPPORT&#34;</span>: <span style="color:#e6db74">&#34;1080&#34;</span>,  
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;kubeconfig&#34;</span>: {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;replicas&#34;</span>: <span style="color:#ae81ff">1</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;mem_limit&#34;</span>: <span style="color:#e6db74">&#34;250Mi&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;mem_request&#34;</span>: <span style="color:#e6db74">&#34;100Mi&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;cpu_limit&#34;</span>: <span style="color:#e6db74">&#34;0.01&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;cpu_request&#34;</span>: <span style="color:#e6db74">&#34;0.1&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;istio&#34;</span>: <span style="color:#66d9ef">false</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;readOnlyRootFilesystem&#34;</span>: <span style="color:#66d9ef">true</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;liveness&#34;</span>: <span style="color:#66d9ef">true</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;readiness&#34;</span>: <span style="color:#66d9ef">true</span>,  
+</span></span><span style="display:flex;"><span>  },  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;volumeMounts&#34;</span>: {},  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;volumes&#34;</span>: {},
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;ports&#34;</span>: {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;http&#34;</span>: {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;containerPort&#34;</span>: <span style="color:#ae81ff">1080</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;protocol&#34;</span>: <span style="color:#e6db74">&#34;TCP&#34;</span>,  
+</span></span><span style="display:flex;"><span>    },  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;grpc&#34;</span>: {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;containerPort&#34;</span>: <span style="color:#ae81ff">1081</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;protocol&#34;</span>: <span style="color:#e6db74">&#34;TCP&#34;</span>,  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="templates">Templates</h3>
+<p>Now we have our Generic Templates, for Kubernetes Deployments and Services.<br>
+It uses the kube.libsonnet</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">kube</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#e6db74">&#34;kube.libsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">;</span>
+</span></span><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">config::</span> <span style="color:#960050;background-color:#1e0010">error</span> <span style="color:#f92672">&#34;this file assumes a config variable&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">labels+::</span> <span style="color:#960050;background-color:#1e0010">{</span>} <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">$.config.labels,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">deployment:</span> <span style="color:#960050;background-color:#1e0010">kube.Deployment(</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">labels+::</span> {} <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">$.config.labels,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">metadata+:</span> {  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">labels+:</span> <span style="color:#960050;background-color:#1e0010">$.labels,</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">namespace::</span> <span style="color:#960050;background-color:#1e0010">$.config.namespace,</span>  
+</span></span><span style="display:flex;"><span>    }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">spec+:</span> {  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">replicas:</span> <span style="color:#960050;background-color:#1e0010">2,</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">template+:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">spec+:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">volumes_+:</span> <span style="color:#960050;background-color:#1e0010">$.config.volumes,</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">containers_+:</span> <span style="color:#960050;background-color:#1e0010">{</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">default:</span> <span style="color:#960050;background-color:#1e0010">kube.Container($.config.app)</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">image:</span> <span style="color:#960050;background-color:#1e0010">$.config.image_path</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#f92672">&#34;:&#34;</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">$.config.commitId</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">resources:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">requests:</span> <span style="color:#960050;background-color:#1e0010">{</span>   
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">cpu:</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.cpu_request,</span>  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">memory:</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.mem_request</span>  
+</span></span><span style="display:flex;"><span>            }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">limits:</span> {  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">cpu:</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.cpu_limit,</span>  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">memory:</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.mem_limit</span>  
+</span></span><span style="display:flex;"><span>            }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">livenessProbe:</span> <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.liveness</span> <span style="color:#960050;background-color:#1e0010">then</span> {  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">httpGet:{</span>  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">path:</span> <span style="color:#f92672">&#34;/healthz&#34;</span>,  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">port:</span> <span style="color:#f92672">&#34;http&#34;</span>,  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">scheme:</span> <span style="color:#f92672">&#34;HTTP&#34;</span>  
+</span></span><span style="display:flex;"><span>            }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">initialDelaySeconds:</span> <span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">periodSeconds:</span> <span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">readinessProbe:</span> <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.readiness</span> <span style="color:#960050;background-color:#1e0010">then</span> {  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">httpGet:{</span>  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">path:</span> <span style="color:#f92672">&#34;/ready&#34;</span>,  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">port:</span> <span style="color:#f92672">&#34;http&#34;</span>,  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">scheme:</span> <span style="color:#f92672">&#34;HTTP&#34;</span>  
+</span></span><span style="display:flex;"><span>            }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">initialDelaySeconds:</span> <span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">periodSeconds:</span> <span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">}</span> <span style="color:#960050;background-color:#1e0010">else</span> <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">$.config.kubeconfig.liveness</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">then</span>{  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">httpGet:{</span>  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">path:</span> <span style="color:#f92672">&#34;/healthz&#34;</span>,  
+</span></span><span style="display:flex;"><span>              <span style="color:#960050;background-color:#1e0010">port:</span> <span style="color:#f92672">&#34;http&#34;</span>  
+</span></span><span style="display:flex;"><span>            }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">initialDelaySeconds:</span> <span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">periodSeconds:</span> <span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">args:</span> <span style="color:#960050;background-color:#1e0010">$.config.args,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">command:</span> <span style="color:#960050;background-color:#1e0010">$.config.command,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">env_:</span> <span style="color:#960050;background-color:#1e0010">$.config.env,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">ports_+:</span> <span style="color:#960050;background-color:#1e0010">$.config.ports,</span>  
+</span></span><span style="display:flex;"><span>          <span style="color:#960050;background-color:#1e0010">volumeMounts_+:</span> <span style="color:#960050;background-color:#1e0010">$.config.volumeMounts,</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">}}</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">}}</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">}</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">}}</span>
+</span></span></code></pre></div><p>All this is quite like a regular deployment, in JSON, with some $.variable replacement.</p>
+<p>Services are not really different :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">kube</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#e6db74">&#34;kube.libsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">;</span>
+</span></span><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">config::</span> <span style="color:#960050;background-color:#1e0010">error</span> <span style="color:#f92672">&#34;this file assumes a config variable&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">dep::</span> <span style="color:#960050;background-color:#1e0010">error</span> <span style="color:#f92672">&#34;this file assumes a deployment variable&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">portName::</span> <span style="color:#f92672">&#34;http&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">labels+::</span> <span style="color:#960050;background-color:#1e0010">{</span>} <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">$.config.labels,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// set the Service name to the app name when it&#39;s the GRPC port, else, add the port name  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">serviceName</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">if</span>  <span style="color:#960050;background-color:#1e0010">$.portName</span> <span style="color:#960050;background-color:#1e0010">==</span> <span style="color:#e6db74">&#34;grpc&#34;</span> <span style="color:#960050;background-color:#1e0010">then</span> <span style="color:#960050;background-color:#1e0010">$.config.app</span> <span style="color:#960050;background-color:#1e0010">else</span> <span style="color:#960050;background-color:#1e0010">$.config.app</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">$.portName,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// set the service type to enable external acces in minikube  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">serviceType</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">$.config.environment</span> <span style="color:#960050;background-color:#1e0010">==</span> <span style="color:#e6db74">&#34;minikube&#34;</span> <span style="color:#960050;background-color:#1e0010">then</span> <span style="color:#e6db74">&#34;NodePort&#34;</span> <span style="color:#960050;background-color:#1e0010">else</span> <span style="color:#e6db74">&#34;ClusterIP&#34;</span><span style="color:#960050;background-color:#1e0010">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">service:</span> <span style="color:#960050;background-color:#1e0010">kube.Service(serviceName)</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">metadata+:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">labels+:</span> <span style="color:#960050;background-color:#1e0010">$.labels,</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">namespace::</span> <span style="color:#960050;background-color:#1e0010">$.config.namespace,</span>  
+</span></span><span style="display:flex;"><span>    }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">target_pod:</span> <span style="color:#960050;background-color:#1e0010">$.dep.deployment.spec.template,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">spec:</span> {  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">ports:</span> <span style="color:#960050;background-color:#1e0010">[</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">name:</span> <span style="color:#960050;background-color:#1e0010">$.portName,</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">port:</span> <span style="color:#960050;background-color:#1e0010">$.config.ports[$.portName].containerPort,</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">targetPort:</span> <span style="color:#960050;background-color:#1e0010">$.config.ports[$.portName].containerPort,</span>  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">],</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">selector:</span> {  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">app:</span> <span style="color:#960050;background-color:#1e0010">$.config.app,</span>  
+</span></span><span style="display:flex;"><span>      }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">type:</span> <span style="color:#960050;background-color:#1e0010">serviceType,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span>
+</span></span></code></pre></div><h3 id="libsonnet">LibSonnet</h3>
+<p>This files comes from the Bitnami Labs, you can download it from <a href="https://github.com/bitnami-labs/kube-libsonnet/blob/master/kube.libsonnet">https://github.com/bitnami-labs/kube-libsonnet/blob/master/kube.libsonnet</a></p>
+<h3 id="applications">Applications</h3>
+<p>Now let’s dive in the specific files for each applications.
+<code>cd helloworld</code></p>
+<h4 id="defaultjsonnet">default.jsonnet</h4>
+<p>This file holds the variables that are global to all environments. For example, the application “helloworld” will have the same same whether you deploy in Dev or in Prod…</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">constant</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#f92672">&#34;../default-env.jsonnet&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">kubeconfig:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">replicas:</span> <span style="color:#960050;background-color:#1e0010">1,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">mem_limit:</span> <span style="color:#f92672">&#34;400Mi&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">mem_request:</span> <span style="color:#f92672">&#34;100Mi&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">cpu_limit:</span> <span style="color:#960050;background-color:#1e0010">1,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">cpu_request:</span> <span style="color:#f92672">&#34;10m&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">istio:</span> <span style="color:#f92672">&#34;true&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">readOnlyRootFilesystem:</span> <span style="color:#960050;background-color:#1e0010">true,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">liveness:</span> <span style="color:#960050;background-color:#1e0010">true,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">readiness:</span> <span style="color:#960050;background-color:#1e0010">true,</span>  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">labels:</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;main_path&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">affinity:</span> {}<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">env:</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">HTTPPORT:</span> <span style="color:#960050;background-color:#1e0010">constant.env.HTTPPORT,</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">LOGLEVEL:</span> <span style="color:#960050;background-color:#1e0010">constant.env.LOGLEVEL,</span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">TOKENPRIVKEY</span> <span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">secretKeyRef</span> <span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">name:</span> <span style="color:#f92672">&#34;helloword-keys&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">key:</span> <span style="color:#f92672">&#34;private_key&#34;</span>  
+</span></span><span style="display:flex;"><span>      }<span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">}</span>  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span>
+</span></span></code></pre></div><p>Here we create a constant variable which holds some values that we consider constants. Those values comes from the <strong>default-env.jsonnet</strong> file we created earlier.<br>
+For example, after this step, <strong>env.LOGLEVEL</strong> is set to the default <strong>LOGLEVEL</strong>, which is <em>WARN</em>.</p>
+<h4 id="devjsonnet">dev.jsonnet</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">default</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#f92672">&#34;./default.jsonnet&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">constant</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#f92672">&#34;../default-env.jsonnet&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">environment:</span> <span style="color:#f92672">&#34;dev&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">kubeconfig+:</span> <span style="color:#960050;background-color:#1e0010">default.kubeconfig</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">labels+:</span> <span style="color:#960050;background-color:#1e0010">default.labels</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">env+:</span> <span style="color:#960050;background-color:#1e0010">default.env</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">LOGLEVEL:</span> <span style="color:#960050;background-color:#1e0010">constant.env.LOGLEVELDEV,</span>  
+</span></span><span style="display:flex;"><span>  }  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span>
+</span></span></code></pre></div><p>This is where funny stuff happens</p>
+<p>first we “import” the defaut files from above and assign it to the <strong>default</strong> variable and we import the global default-env.jsonner, stored as <strong>constant</strong> variables.<br>
+Then we overload the <strong>kubeconfig</strong> and <strong>labels</strong> variables (with nothing at this time).<br>
+Next the <strong>env</strong> variable is also overloaded with values from the <strong>default</strong> variable and we set the LOGLEVEL to a constant, <strong>LOGLEVELDEV</strong>.</p>
+<h4 id="integrationjsonnet">integration.jsonnet</h4>
+<p>The prod file is not much different, except it sets few things differently :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">default</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#f92672">&#34;./default.jsonnet&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">constant</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#f92672">&#34;../default-env.jsonnet&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">environment:</span> <span style="color:#f92672">&#34;integration&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">kubeconfig+:</span> <span style="color:#960050;background-color:#1e0010">default.kubeconfig</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">replicas:</span> <span style="color:#960050;background-color:#1e0010">10,</span>  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">labels+:</span> <span style="color:#960050;background-color:#1e0010">default.labels</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">env+:</span> <span style="color:#960050;background-color:#1e0010">default.env</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">LOGLEVEL:</span> <span style="color:#960050;background-color:#1e0010">constant.env.LOGLEVELINTEGRATION,</span>  
+</span></span><span style="display:flex;"><span>  }  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span>
+</span></span></code></pre></div><p>Creating the manifests from this file will scale the deployment to 10 replicas and set the application logs to the <em>INFO</em> level (LOGLEVELINTEGRATION: “INFO” from default-env.jsonnet)</p>
+<h4 id="templatejsonnet">template.jsonnet</h4>
+<p>This is where everything gets mashed ups to define which manifests we need for this specific application.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">config</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#e6db74">&#34;../default-env.jsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">kube</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">import</span> <span style="color:#e6db74">&#34;../kube.libsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">environmentVars</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">std.extVar(&#39;env&#39;);</span>  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">commitId</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">std.extVar(&#39;commit&#39;);</span>  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">namespace</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">std.extVar(&#39;namespace&#39;);</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">localApp</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">config</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">environmentVars</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">app:</span> <span style="color:#f92672">&#34;helloworld&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">commitId:</span> <span style="color:#960050;background-color:#1e0010">commitId,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">namespace:</span> <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">namespace</span> <span style="color:#960050;background-color:#1e0010">!=</span> <span style="color:#f92672">&#34;&#34;</span> <span style="color:#960050;background-color:#1e0010">then</span> <span style="color:#960050;background-color:#1e0010">namespace</span> <span style="color:#960050;background-color:#1e0010">else</span> <span style="color:#66d9ef">null</span>,         <span style="color:#75715e">//Namespace is not used in templates for now  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">project:</span> <span style="color:#f92672">&#34;helloworld&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">group:</span> <span style="color:#f92672">&#34;servers&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// computed vars  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">deployment_name:</span> <span style="color:#f92672">&#34;%s&#34;</span> <span style="color:#960050;background-color:#1e0010">%</span> [<span style="color:#960050;background-color:#1e0010">self.app</span>],  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">repoPath:</span> <span style="color:#f92672">&#34;%s/%s&#34;</span><span style="color:#960050;background-color:#1e0010">%</span> [<span style="color:#960050;background-color:#1e0010">self.group</span>,<span style="color:#960050;background-color:#1e0010">self.project</span>],  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">image_path:</span> <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">environmentVars.environment</span> <span style="color:#960050;background-color:#1e0010">!=</span> <span style="color:#f92672">&#34;minikube&#34;</span> <span style="color:#960050;background-color:#1e0010">then</span> <span style="color:#e6db74">&#34;%s/%s/%s/%s&#34;</span> <span style="color:#960050;background-color:#1e0010">%</span> [<span style="color:#960050;background-color:#1e0010">self.repoUrl</span>, <span style="color:#960050;background-color:#1e0010">self.repoPath</span>, <span style="color:#960050;background-color:#1e0010">self.appGroup</span>, <span style="color:#960050;background-color:#1e0010">self.app</span>] <span style="color:#960050;background-color:#1e0010">else</span> <span style="color:#e6db74">&#34;%s/%s&#34;</span> <span style="color:#960050;background-color:#1e0010">%</span> [<span style="color:#960050;background-color:#1e0010">self.appGroup</span>, <span style="color:#960050;background-color:#1e0010">self.app</span>],
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// merge env and labels !!! don&#39;t remove  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#960050;background-color:#1e0010">env:</span> <span style="color:#960050;background-color:#1e0010">environmentVars.env,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">labels+:</span> <span style="color:#960050;background-color:#1e0010">config.labels</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">environmentVars.labels</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;app&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.app</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;group&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.group</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;project&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.project</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;commit&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.commitId</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.commitId</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;track&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.namespace</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;environment&#34;</span>: <span style="color:#960050;background-color:#1e0010">$.environment</span>  
+</span></span><span style="display:flex;"><span>  }<span style="color:#960050;background-color:#1e0010">,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">ports:</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">http:</span> <span style="color:#960050;background-color:#1e0010">{</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">containerPort:</span> <span style="color:#960050;background-color:#1e0010">std.parseInt($.env.HTTPPORT),</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">protocol:</span> <span style="color:#f92672">&#34;TCP&#34;</span>  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">},</span>  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">};</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// List of templates to generate  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">serviceHttp</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">(import</span> <span style="color:#e6db74">&#34;../generic-service.jsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">)</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">config:</span> <span style="color:#960050;background-color:#1e0010">localApp,</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">portName:</span> <span style="color:#f92672">&#34;http&#34;</span>  
+</span></span><span style="display:flex;"><span>}<span style="color:#960050;background-color:#1e0010">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">deployment</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">(import</span> <span style="color:#e6db74">&#34;../generic-deployment.jsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">)</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">config:</span> <span style="color:#960050;background-color:#1e0010">localApp,</span>  
+</span></span><span style="display:flex;"><span>}<span style="color:#960050;background-color:#1e0010">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// final list of all manifests  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">all</span> <span style="color:#960050;background-color:#1e0010">=</span> [<span style="color:#960050;background-color:#1e0010">deployment.deployment</span>, <span style="color:#960050;background-color:#1e0010">serviceHttp.service</span>]<span style="color:#960050;background-color:#1e0010">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// generate a K8s list  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">apiVersion:</span> <span style="color:#f92672">&#34;v1&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">kind:</span> <span style="color:#f92672">&#34;List&#34;</span>,  
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">items:</span> <span style="color:#960050;background-color:#1e0010">all,</span>  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Here we use some <em>std.extVar(‘’)</em> expressions. This tells Jsonnet that this value have to come from the command line. This is what we want : a way to define some variables at the time we generate the manifest.</p>
+<p>Then we create new variables with concatenated data.</p>
+<p>finally, we import the <em>generic-*.jsonnet</em> files, which will create the manifests and store the result in variables.</p>
+<p>The last part is to put all those variables in a <em>JSON List</em> manifest.</p>
+<p>Note that there may be some smarter ways to do this. I’m not a Jsonnet expert, and sometimes there are many ways of doing things. <a href="https://github.com/coreos/kube-prometheus">Prometheus-Operator</a> Jsonnet is one of the best, and hardest, I’ve seen. It makes a huge usage of Mixins. That may be something I’ll use in the next iteration.</p>
+<p>Back to our files here.</p>
+<p>So we’re creating a <strong>serviceHttp</strong> that is using the <em>../generic-service.jsonnet</em> file, and a <strong>deployment</strong> using the <em>../generic-deployment.jsonnet</em></p>
+<h3 id="usage">Usage</h3>
+<p>So, how do you generate your helloworld manifest ?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd jsonnet/helloworld
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>jsonnet --ext-code-file env<span style="color:#f92672">=</span>dev.jsonnet <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        --ext-str commit<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>git describe  --always --tags --long --abbrev<span style="color:#f92672">=</span>8<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        --ext-str namespace<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> template.jsonnet
+</span></span></code></pre></div><ul>
+<li><code>ext-code-file</code> is the file to load as the environment file and is stores into the variable env</li>
+<li><code>ext-str</code> allows to set a variable from the command line</li>
+</ul>
+<p>the cool this is that this command does NOT depend on the application you’re trying to build. Just <em>cd ../app-2</em> and use the same command to build your template.</p>
+<h3 id="customization">Customization</h3>
+<p>Let’s say you want a GRPC port along your HTTP port for the Helloworld application ?</p>
+<p>Let’s change the jsonnet/helloworld/template.jsonnet file :</p>
+<ul>
+<li>
+<p>add the code to marshal the generic-service.jsonnet again, with a different port name (add)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">serviceGrpc</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">(import</span> <span style="color:#e6db74">&#34;../generic-service.jsonnet&#34;</span><span style="color:#960050;background-color:#1e0010">)</span> <span style="color:#960050;background-color:#1e0010">+</span> {  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">config:</span> <span style="color:#960050;background-color:#1e0010">localApp,</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">portName:</span> <span style="color:#f92672">&#34;grpc&#34;</span>  
+</span></span><span style="display:flex;"><span>    }<span style="color:#960050;background-color:#1e0010">;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>add this now port to the list of things you want to dump (replace old line):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#75715e">// final list of all manifests
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">local</span> <span style="color:#960050;background-color:#1e0010">all</span> <span style="color:#960050;background-color:#1e0010">=</span> [<span style="color:#960050;background-color:#1e0010">deployment.deployment</span>, <span style="color:#960050;background-color:#1e0010">serviceGrpc.service</span>, <span style="color:#960050;background-color:#1e0010">serviceHttp.service</span>]<span style="color:#960050;background-color:#1e0010">;</span>
+</span></span></code></pre></div></li>
+</ul>
+<h3 id="conclusion">Conclusion</h3>
+<p>I think that whatever I do/say, Jsonnet will always be complicated. I’ve been doing a lot of Go Templates and Jinja2 (Ansible), and, sadly, yes, Jsonnet is less interesting to read.</p>
+<p>But when it comes to Kubernetes, where the alternatives are Helm and Kustomize, you quickly understant that Jsonnet have tons of benefits.</p>
+<p>I hope you’ll give a try to Jsonnet and won’t blame me for pushing you about it :)</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/devops/">devops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/json/">json</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        1655 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2019-06-04 15:25
+        
+
+         
+          
+            
+              (Last updated: 2023-12-01 14:31)
+            
+          
+        
+      </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="1ab993c2d9f5b7b58edda6893280e093b620e8db" target="_blank" rel="noopener">1ab993c</a>
+          @ 2023-12-01
+        </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex&amp;caption=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex&amp;canonicalUrl=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex&amp;body=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f&amp;media=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f;description=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f&amp;title=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex&amp;summary=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex&amp;source=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f&amp;resubmit=true&amp;title=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f;title=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex%20https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f&amp;t=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Using%20Jsonnet%20does%20not%20have%20to%20be%20complex&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2019%2f06%2fusing-jsonnet-does-not-have-to-be-complex%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">BanzaiCloud Kafka Operator tour</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="https://piratemakers.ca/posts/2019/06/micro-services-deployment-as-snapshots/">
+                    <span class="button__text">Micro-Services deployment as Snapshots</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+      
+        <div id="comments">
+          <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "piratemakers-ca" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2023</span>
+            
+            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            <span>Pirate Makers™</span>
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.0931a358499291afca6f741478e9fc9fa973a9fbd7aeb3390f3b10463966dc8195daf98a0e33685a1fbfb9d7578631c3f31fc8e558eaf6e2c30c4c3e14df4931.js" integrity="sha512-CTGjWEmSka/Kb3QUeOn8n6lzqfvXrrM5DzsQRjlm3IGV2vmKDjNoWh&#43;/uddXhjHD8x/I5Vjq9uLDDEw&#43;FN9JMQ=="></script>
+
+
+
+
+    </body>
+</html>

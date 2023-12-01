@@ -1,0 +1,665 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on Pirate Makers</title>
+        <link>https://piratemakers.ca/fr/posts/</link>
+        <description>Recent content in Posts on Pirate Makers</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>fr</language>
+        <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+        <lastBuildDate>Tue, 29 Nov 2022 14:31:56 +0000</lastBuildDate>
+        <atom:link href="https://piratemakers.ca/fr/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Ratés avec Docker.io &amp; OpenSource (et quoi faire à la place...)</title>
+            <link>https://piratemakers.ca/fr/posts/2022/11/rat%C3%A9s-avec-docker.io-opensource-et-quoi-faire-%C3%A0-la-place.../</link>
+            <pubDate>Tue, 29 Nov 2022 14:31:56 +0000</pubDate>
+            
+            <guid>https://piratemakers.ca/fr/posts/2022/11/rat%C3%A9s-avec-docker.io-opensource-et-quoi-faire-%C3%A0-la-place.../</guid>
+            <description>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…
+After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.
+Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</description>
+            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="Docker Fail"></p>
+<p>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…</p>
+<p>After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.</p>
+<p>Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</p>
+<p>Archy and I talked about it, too much, during our KubeCon NA 2022 session, that <a href="https://youtu.be/TKYAEjNg4Hw">you can see on Youtube</a> or <a href="https://cloud-native-canada.github.io/k8s_setup_tools/">read on our companion website</a>.</p>
+<p>To name a few, <a href="https://github.com/abiosoft/colima">Colima</a>, <a href="https://rancherdesktop.io/">Rancher Desktop</a>, <a href="https://iongion.github.io/podman-desktop-companion/">PodMan</a>… Check <a href="https://cloud-native-canada.github.io/k8s_setup_tools/local_cluster/options/colima/">here</a>, <a href="https://cloud-native-canada.github.io/k8s_setup_tools/local_cluster/options/rancher/">here</a> and <a href="https://cloud-native-canada.github.io/k8s_setup_tools/local_cluster/podman/">here</a> for install examples, and learn a lot more. OK, we’re done with advertising :)</p>
+<p>Kubernetes itself <a href="https://kubernetes.io/blog/2022/02/17/dockershim-faq/">moved away from the Docker Shim</a> (another docker component) in the latest versions.</p>
+<p>Going back to Docker… When building my KubeCon talk, I realized that one of my favorite project, <a href="https://cloud-native-canada.github.io/k8s_setup_tools/kubectl_tooling/kubecolor/">KubeColor</a>, was mostly un-maintained for almost 2 years. As a good OpenSource user (and after many tries to reach the creator, through all means possible), I decided to “fork” it and start maintaining it.</p>
+<p>Lucky for me, the <code>kubecolor</code> Github Org wasn’t existing yet. I ended up creating <a href="https://github.com/kubecolor/kubecolor">https://github.com/kubecolor/kubecolor</a> !</p>
+
+    <img src="images/2.jpg"  alt="KubeColor"  class="center"  style="border-radius: 0px; background-color: #eeeeee;"  />
+
+
+<p>That allowed me to also offer KubeColor install through <code>brew</code> with a cool command line, <code>brew install kubecolor/tap/kubecolor</code> .</p>
+<p>But an OpenSource project is not complete until you have a docker image available !</p>
+<h3 id="docker-oss">Docker OSS</h3>
+<p>Back in the time, Docker Hub was free. stop.</p>
+<p>It was easy to create an org and publish OSS projects. Really few clicks away.</p>
+<p>Today, well, there’s a specific program for that: <a href="https://www.docker.com/community/open-source/application/">Docker-Sponsored Open Source Program</a>.</p>
+<p><img src="images/3.jpeg#layoutTextWidth" alt="image"></p>
+<p>What you get with that is:</p>
+<ul>
+<li>free autobuilds</li>
+<li>rate-limit removal for all users pulling public images from your project namespace</li>
+<li>special badging on Docker Hub (this will be visible within two weeks)</li>
+</ul>
+<p>So I applied to this program, somewhere in <strong>September</strong>.</p>
+<p>And I waited…</p>
+<p>Waited…</p>
+<p>I finally got an answer on <strong>November 23</strong>:</p>
+<blockquote>
+<p>Congratulations! Your project has been approved for the Docker-Sponsored Open Source program</p>
+</blockquote>
+<p>Well, I don’t have the exact timeline, but oh man, OpenSource is moving fast… but I was waiting…</p>
+<blockquote>
+<p>A Docker Team subscription will be allocated to the project organization Docker ID specified in your application within the next 3 weeks</p>
+</blockquote>
+<p>3 weeks ?</p>
+<h3 id="docker-miss">Docker Miss</h3>
+<p>So, 3 days later, <strong>November 26</strong>, I received another email:</p>
+<blockquote>
+<p>We have been trying to get in touch with you, please provide us with the requested information. If we don’t hear back from you in 5 days, this case will be automatically marked as ‘Closed’.</p>
+</blockquote>
+<p>Wait, what ? 5 days ?</p>
+<p>November 26 is the ThanksGiving week-end, right ?</p>
+<p>And of course, <strong>November 28</strong>, the deadline was over, I missed my turn:</p>
+<blockquote>
+<p>Thank you for submitting your request. Since we have not heard back from you in 5 days, your case has been automatically marked as ‘Closed’.</p>
+</blockquote>
+<h3 id="what-to-do-to-not-waste-your-time">What to do to not waste your time</h3>
+<p>I told you, OpenSource is moving fast.</p>
+<p>Do you really think I waited all this time ? OF COURSE NOT !</p>
+<p>As soon as my apply to Docker OSS program was done, I started looking for alternatives… and I didn’t had to look far away…</p>
+<h3 id="github-"><strong>GITHUB !</strong></h3>
+<p>I already had a Github Org for the project. Github (like other companies supporting OSS) started to add new features to their offer as soon as Docker shifted to a “paid product”. <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry">Including “Docker” Images registries</a>.</p>
+<p>And <a href="https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions">Github offers Actions for free</a> (with limited CPU time) !</p>
+<p>How long did it took me to port everything to Github ?</p>
+<p>Answer is: not much</p>
+<h4 id="releasing-binaries">Releasing Binaries</h4>
+<p>Because KubeColor is a Go program, I used the <code>goreleaser/goreleaser-action</code> to build the Release. This includes multi-OS binaries, package and so on. It’s all the stuff you fine in <a href="https://github.com/kubecolor/kubecolor/releases">the Release section of the project</a>.</p>
+<p>Just create a <code>.github/workflows/release.yml</code> file in your repo and add:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">goreleaser</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tags</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">goreleaser</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Checkout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">fetch-depth</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">run</span>: <span style="color:#ae81ff">git fetch --force --tags</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Set up Go</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-go@v3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">go-version</span>: <span style="color:#e6db74">&#39;&gt;=1.19.1&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">cache</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Run GoReleaser</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">goreleaser/goreleaser-action@v3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">distribution</span>: <span style="color:#ae81ff">goreleaser</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">version</span>: <span style="color:#ae81ff">latest</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>: <span style="color:#ae81ff">release --rm-dist</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">GITHUB_TOKEN</span>: <span style="color:#ae81ff">${{ secrets.GITHUB_TOKEN }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">GLOBAL_GITHUB_TOKEN</span>: <span style="color:#ae81ff">${{ secrets.GLOBAL_GITHUB_TOKEN }}</span>
+</span></span></code></pre></div><p>The <code>GITHUB_TOKEN</code> secret is auto-provided by the Github Action pipeline.</p>
+<p>The <code>GLOBAL_GITHUB_TOKEN</code> is one I created with more privileges.</p>
+<p><strong>GoReleaser</strong> actually use a config file, in the root of your project, named <code>.goreleaser.yml</code>. Here’s mine:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">release</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">before</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hooks</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">go mod tidy</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">make testshort</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">builds</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">id</span>: <span style="color:#ae81ff">kubecolor</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">main</span>: <span style="color:#ae81ff">./cmd/kubecolor/main.go</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">binary</span>: <span style="color:#ae81ff">kubecolor</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ldflags</span>:
+</span></span><span style="display:flex;"><span>    - -<span style="color:#ae81ff">s -w</span>
+</span></span><span style="display:flex;"><span>    - -<span style="color:#ae81ff">X main.Version={{.Version}}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">goos</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">windows</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">darwin</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">linux</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">goarch</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">arm64</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">amd64</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ppc64le</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">archives</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">builds</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">kubecolor</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replacements</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">darwin</span>: <span style="color:#ae81ff">Darwin</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">linux</span>: <span style="color:#ae81ff">Linux</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">windows</span>: <span style="color:#ae81ff">Windows</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">amd64</span>: <span style="color:#ae81ff">x86_64</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">format</span>: <span style="color:#ae81ff">tar.gz</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">format_overrides</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">goos</span>: <span style="color:#ae81ff">windows</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">format</span>: <span style="color:#ae81ff">zip</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">brews</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kubecolor</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tap</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">owner</span>: <span style="color:#ae81ff">kubecolor</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">homebrew-tap</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">token</span>: <span style="color:#e6db74">&#34;{{ .Env.GLOBAL_GITHUB_TOKEN }}&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">homepage</span>: <span style="color:#e6db74">&#34;https://github.com/kubecolor/kubecolor&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;Colorize your kubectl output&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">license</span>: <span style="color:#e6db74">&#34;MIT&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">folder</span>: <span style="color:#ae81ff">Formula</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">install</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    bin.install &#34;kubecolor&#34;</span>    
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">checksum</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name_template</span>: <span style="color:#e6db74">&#39;checksums.txt&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">changelog</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sort</span>: <span style="color:#ae81ff">asc</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">exclude</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#39;^docs:&#39;</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#39;^test:&#39;</span>
+</span></span></code></pre></div><p>As you can see, the <code>GLOBAL_GITHUB_TOKEN</code> is used to “publish” the needed files into another GitHub project, <code>homebrew-tap</code>.</p>
+<p>So before running this action, you have to create another Github project: <a href="https://github.com/kubecolor/homebrew-tap">https://github.com/kubecolor/homebrew-tap</a></p>
+<p>You don’t have to put anything in there. The GoReleaser will do that for you.</p>
+<p>The <code>GLOBAL_GITHUB_TOKEN</code> is actually a <a href="https://github.com/settings/tokens">Personnal Token</a> from my user, with sufficient privileges to manager both repos.</p>
+<h4 id="kubecolor-docker-image">KubeColor Docker Image</h4>
+<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p>While having a docker image for KubeColor is not strictly needed, well, people will ask for it if there’s none…</p>
+<p>Again, we’re going to use a Github Action for that. Create the file <code>.github/workflows/publish_docker_image.yml</code> :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish docker image</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#39;main&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tags</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push_to_registry_on_merge</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Push docker image on merge to main</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">if</span>: <span style="color:#ae81ff">(!contains(github.event.head_commit.message, &#39;skip ci&#39;) &amp;&amp; !startsWith(github.ref, &#39;refs/tags/&#39;))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Check out the repo</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v3</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Set up Docker Buildx</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/setup-buildx-action@v1</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Login to GitHub Container Registry</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/login-action@v1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">registry</span>: <span style="color:#ae81ff">ghcr.io</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">username</span>: <span style="color:#ae81ff">prune998</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">password</span>: <span style="color:#ae81ff">${{ secrets.GH_CONTAINER_REGISTRY_PUSHER }}</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build and push</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/build-push-action@v2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">push</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">tags</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            ghcr.io/${{ github.repository }}:${{ github.sha }}</span>            
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push_to_registry_on_tag</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Push docker image to GitHub Container Registry on tag</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">if</span>: <span style="color:#ae81ff">startsWith(github.ref, &#39;refs/tags/v&#39;)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Check out the repo</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v3</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Set up Docker Buildx</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/setup-buildx-action@v1</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Login to GitHub Container Registry</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/login-action@v1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">registry</span>: <span style="color:#ae81ff">ghcr.io</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">username</span>: <span style="color:#ae81ff">prune998</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">password</span>: <span style="color:#ae81ff">${{ secrets.GH_CONTAINER_REGISTRY_PUSHER }}</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build and push</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">docker/build-push-action@v2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">push</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">tags</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            ghcr.io/${{ github.repository }}:${{ github.ref_name}}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            ghcr.io/${{ github.repository }}:latest</span>            
+</span></span></code></pre></div><p>Here, we are using the <code>ghcr.io</code> Container (Docker) Registry. It’s as simple as that…</p>
+<p>I have two different steps to tag the image differently if I merge to main branch or tag a release.</p>
+<p>I’m no GH Actions expert, let me know if there’s a better (DRY-er) way for that. I just had to move fast…</p>
+<p>Here, I’m using another Secret, <code>GH_CONTAINER_REGISTRY_PUSHER</code>, which allows this pipeline to push into the registry.</p>
+<p>The registry lives at the ORG level. The <strong>GHCR</strong> is actually called <code>Packages</code> in the Org Setup at <code>https://github.com/organizations/&lt;your org&gt;/settings/packages</code> . You have to set it to Public so it’s a public repo.</p>
+<p>You can then access your <code>packages</code> at <code>https://github.com/orgs/&lt;your org&gt;/packages</code></p>
+<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p>There’s not much to see about it:</p>
+<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p>When you click on the <code>Package Settings</code> at the right here, you can then change the visibility (public/private):</p>
+<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
+<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<h3 id="wrap-up">Wrap-up</h3>
+<p>To me, Docker is gone. We hopefully have alternatives for everything that was docker before.</p>
+<p>I’m not sure what’s going to happen to docker in the future. I know a lot of big companies are paying so their docker images has no download or bandwidth limits, so I guess they will keep on for some time.</p>
+<p>I’m really happy of this GitHub alternative though, which is really fast to setup, free and more secure as everything stays at the same place.</p>
+<p>Note: All docker related images were generated using StableDiffusion at <a href="https://huggingface.co/spaces/lnyan/stablediffusion-infinity">https://huggingface.co/spaces/lnyan/stablediffusion-infinity</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Comment se faire vacciner au Quebec</title>
+            <link>https://piratemakers.ca/fr/posts/2021/04/comment-se-faire-vacciner-au-quebec/</link>
+            <pubDate>Thu, 29 Apr 2021 21:05:54 +0000</pubDate>
+            
+            <guid>https://piratemakers.ca/fr/posts/2021/04/comment-se-faire-vacciner-au-quebec/</guid>
+            <description>Il y a deux semaines le Quebec a ouvert la vaccination aux personnes de 45 ans et plus, avec le vaccin AstraZeneca.
+Apres plusieurs essais, IMPOSSIBLE d’avoir une place. Impossible de remplir le formulaire assez vite.
+Un ami a donc crée un bot pour être le plus rapide. Voila comment.
+Disclamer Cette publication est faite à titre purement informatif et éducatif.
+C’est une analyse du fonctionnement du site de reservation de vaccin faite uniquement avec les outils qui se trouvent dans tous les navigateurs.</description>
+            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image">
+Il y a deux semaines le Quebec a ouvert la vaccination aux personnes de 45 ans et plus, avec le vaccin AstraZeneca.</p>
+<p>Apres plusieurs essais, IMPOSSIBLE d’avoir une place. Impossible de remplir le formulaire assez vite.</p>
+<p>Un ami a donc crée un bot pour être le plus rapide. Voila comment.</p>
+<h3 id="disclamer">Disclamer</h3>
+<p>Cette publication est faite à titre purement informatif et éducatif.<br>
+C’est une analyse du fonctionnement du site de reservation de vaccin faite uniquement avec les outils qui se trouvent dans tous les navigateurs.</p>
+<p>Aucune informations autres que celles publiquement disponibles n’est divulguée.</p>
+<p>Je n’encourage personne à répliquer ce qui est fait ici ni à utiliser les informations contenuent dans ce post pour attaquer ou harceller le site de reservation.</p>
+<p>Je ne saurais en aucun cas etre tenu responsable d’un quelconque agissement des lecteurs. Si cela ne vous convient pas, arrêtez de lire immédiatement.</p>
+<h3 id="la-procedure-standard">La procedure standard</h3>
+<p>Elle est plutôt simple:</p>
+<ul>
+<li>
+<p>aller sur le site <a href="https://portal3.clicsante.ca/">https://portal3.clicsante.ca/</a></p>
+</li>
+<li>
+<p>entrer son code postal</p>
+</li>
+<li>
+<p>sélectionner un centre de vaccin ou une pharmacie
+<img src="images/2.png#layoutTextWidth" alt="image"></p>
+</li>
+<li>
+<p>sélectionner la date souhaité (en general, on a pas le choix), puis l’heure
+<img src="images/3.png#layoutTextWidth" alt="image"></p>
+</li>
+<li>
+<p>remplir un lonnnng formulaire, ce qui prend en general au moins 30s si vous tapez vite, voir plus
+<img src="images/4.png#layoutTextWidth" alt="image"></p>
+</li>
+</ul>
+<p>Note: votre No d’assurance maladie, c’est <strong>PAS VOTRE N.A.S</strong>, mais le code en bas de votre carte soleil, qui commence par les 3 lettres de votre nom et la 1ere lettre de votre prénom, puis votre age (ex: FOOJ 740712..)</p>
+<p>En general quand vous en êtes la, vous cliquez sur “SOUMETTRE” en bas de page et ca vous dit que votre choix n’est plus disponible.</p>
+<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<h3 id="2eme-tentative">2eme tentative</h3>
+<p>Vous recommencez le process du debut, et encore une fois, le temps de remplir le formulaire, votre place n’est plus dispo…</p>
+<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p>Voila pourquoi, quand vous réservez une place de spectacle sur TicketMaster™ ou autres, on vous laisse un gros 5 minutes pour finaliser votre transaction. Pendent ce temps la, votre place est bloquée et on ne peut pas vous la prendre. Passé les 5 minutes, elle revient dans le pool.</p>
+<p>Mais bon, ca demande un peu plus de travail. J’imagine que le ministère de la santé ne pensait pas que le monde se battrait pour avoir le vaccin… Ou ils ont sous-traités, a fort prix, sans se préoccuper de l’experience utilisateur ?</p>
+<h3 id="décomposition">Décomposition</h3>
+<p>Un “Ingenieur Informatique” comme moi ne peux pas se laisser faire comme ca par des ordinateurs !</p>
+<p>Et je ne suis pas le seul dans ce cas la.</p>
+<p>C’est un ami que je ne nommerais pas, appelons le <strong>Emmanuel</strong> pour la suite de l’histoire, qui est arrivé avec une solution. Il a fais un bout de code en <a href="https://go.dev/">Go</a> pour scanner le site de vaccination. Une sorte de bot qui, a chaque execution, donne la liste des lieux ou se faire vacciner. Donc, en le lançant toutes les 10 secondes, on a une info fraiche et rapide. Il ne reste ensuite plus qu’a clicker sur le lien pour ouvrir la page dans le navigateur et… remplir le maudit formulaire (on y reviendra).</p>
+<p>Donc, comment fonctionne le site de reservation de vaccination ?</p>
+<p>Comme beaucoup de sites de nos jours, c’est une single page application (SPA) et une API REST. On va donc la détailler.</p>
+<h4 id="pre-requis">Pre-requis</h4>
+<p>Le site vous demande votre code-postal.</p>
+<p>En cachette, il vous cree aussi une “clé d’authentification”, un Token comme on dit. Dans notre cas, il est possible de le récupérer en allant sur le site et en utilisant la fonction “Inspection” pour regarder les headers de communication de la requête:
+<code>authorization: Basic cHVibGljQHRyaW1vei5jb206MTIzNDU2Nzgh</code></p>
+<p>En general le Token est propre a chaque utilisateur et il faut donc le passer a chaque requête sur le site. Votre navigateur fait ca pour vous.</p>
+<p>Ce Token est un message encodé en Base64, un format compatible avec le web et ne contenant pas de caractères spéciaux.</p>
+<p>Dans notre cas, on peut voir le contenu reel du token:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo cHVibGljQHRyaW1vei5jb206MTIzNDU2Nzgh |base64 -D
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>public@trimoz.com<span style="color:#f92672">](</span>mailto:public@trimoz.com<span style="color:#f92672">)</span>:12345678!
+</span></span></code></pre></div><p>Surprise: le Token est le meme pour tout le monde, et semble contenir le nom du “produit” (le site web):</p>
+<p><a href="http://trimoz.com">http://trimoz.com</a> -&gt; <a href="https://clichealth.net/">https://clichealth.net/</a> -&gt; <a href="https://emsolutions.ca/">https://emsolutions.ca/</a></p>
+<p>Bref, meme si ce n’est pas grave et que ce site ne contient (pour le moment) aucune donnée sensible, je dis un grand bravo au(x) champion(s) qui ont fait ca.<br>
+En tout cas moi j’ai ri.<br>
+C’est sympa pour nous, car du coup on peut le mettre “en dur” dans notre bot.</p>
+<p>Donc, une fois qu’on a le code-postal et le Token, on peut commencer à taper dans l’API du site.</p>
+<h4 id="geocoding">Geocoding</h4>
+<p>Le site vous présente la liste des lieux de vaccination les plus proches. Il utilise donc votre code postal pour définir le centre de la zone de recherche. Pour faire simple, il utilise vos coordonnées GPS et une bounding-box.</p>
+<p>Le 1er appel est donc l’API de geocoding:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET</span> <span style="color:#960050;background-color:#1e0010">https:</span><span style="color:#75715e">//api3.clicsante.ca/v3/geocode?address=h1a0a1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;results&#34;</span>: [  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;address_components&#34;</span>: [  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;long_name&#34;</span>: <span style="color:#e6db74">&#34;H1A 0A1&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;short_name&#34;</span>: <span style="color:#e6db74">&#34;H1A 0A1&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;postal_code&#34;</span>  
+</span></span><span style="display:flex;"><span>          ]  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;long_name&#34;</span>: <span style="color:#e6db74">&#34;Riviere-des-Prairies—Pointe-aux-Trembles&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;short_name&#34;</span>: <span style="color:#e6db74">&#34;Riviere-des-Prairies—Pointe-aux-Trembles&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;political&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;sublocality&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;sublocality_level_1&#34;</span>  
+</span></span><span style="display:flex;"><span>          ]  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;long_name&#34;</span>: <span style="color:#e6db74">&#34;Montreal&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;short_name&#34;</span>: <span style="color:#e6db74">&#34;Montreal&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;locality&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;political&#34;</span>  
+</span></span><span style="display:flex;"><span>          ]  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;long_name&#34;</span>: <span style="color:#e6db74">&#34;Montreal&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;short_name&#34;</span>: <span style="color:#e6db74">&#34;Montreal&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;administrative_area_level_2&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;political&#34;</span>  
+</span></span><span style="display:flex;"><span>          ]  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;long_name&#34;</span>: <span style="color:#e6db74">&#34;Quebec&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;short_name&#34;</span>: <span style="color:#e6db74">&#34;QC&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;administrative_area_level_1&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;political&#34;</span>  
+</span></span><span style="display:flex;"><span>          ]  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;long_name&#34;</span>: <span style="color:#e6db74">&#34;Canada&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;short_name&#34;</span>: <span style="color:#e6db74">&#34;CA&#34;</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;country&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;political&#34;</span>  
+</span></span><span style="display:flex;"><span>          ]  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>      ],  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;formatted_address&#34;</span>: <span style="color:#e6db74">&#34;Montreal, QC H1A 0A1, Canada&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;**geometry**&#34;</span>: {  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;bounds&#34;</span>: {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;northeast&#34;</span>: {  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lat&#34;</span>: <span style="color:#ae81ff">45.652886</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lng&#34;</span>: <span style="color:#ae81ff">-73.5001424</span>  
+</span></span><span style="display:flex;"><span>          },  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;southwest&#34;</span>: {  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lat&#34;</span>: <span style="color:#ae81ff">45.6519153</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lng&#34;</span>: <span style="color:#ae81ff">-73.50257289999999</span>  
+</span></span><span style="display:flex;"><span>          }  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;**location**&#34;</span>: {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;lat&#34;</span>: <span style="color:#ae81ff">45.6524306</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;lng&#34;</span>: <span style="color:#ae81ff">-73.5012086</span>  
+</span></span><span style="display:flex;"><span>        },  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;location_type&#34;</span>: <span style="color:#e6db74">&#34;APPROXIMATE&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;viewport&#34;</span>: {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;northeast&#34;</span>: {  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lat&#34;</span>: <span style="color:#ae81ff">45.65374963029149</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lng&#34;</span>: <span style="color:#ae81ff">-73.50000866970849</span>  
+</span></span><span style="display:flex;"><span>          },  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;southwest&#34;</span>: {  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lat&#34;</span>: <span style="color:#ae81ff">45.65105166970849</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;lng&#34;</span>: <span style="color:#ae81ff">-73.5027066302915</span>  
+</span></span><span style="display:flex;"><span>          }  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>      },  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;place_id&#34;</span>: <span style="color:#e6db74">&#34;ChIJA91J-y_iyEwRvgm6PIfurds&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;types&#34;</span>: [  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;postal_code&#34;</span>  
+</span></span><span style="display:flex;"><span>      ]  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  ],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;OK&#34;</span>  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Nous avons besoin de <strong>results[0].geometry.location</strong> pour faire notre recherche.</p>
+<h4 id="la-recherche">La recherche</h4>
+<p>La, ça se complique. On va décortiquer l’URL:</p>
+<pre tabindex="0"><code>GET https://api3.clicsante.ca/v3/availabilities?dateStart=2021-04-29&amp;dateStop=2021-08-27&amp;latitude=45.6524306&amp;longitude=-73.5012086&amp;maxDistance=1000&amp;serviceUnified=237&amp;postalCode=H1A%200A1&amp;page=0
+</code></pre><ul>
+<li><a href="https://api3.clicsante.ca/v3/availabilities?">https://api3.clicsante.ca/v3/availabilities</a><br>
+ca c’est le endpoint</li>
+<li><strong>dateStart</strong>=2021–04–29<br>
+OK, ca c’est aujourd’hui</li>
+<li><strong>dateStop</strong>=2021–08-27<br>
+Ca c’est… dans 1 mois</li>
+<li><strong>latitude</strong>=45.6524306&amp;<strong>longitude</strong>=-73.5012086<br>
+Ah, voila les coord GPS !</li>
+<li><strong>maxDistance</strong>=1000<br>
+C’est le rayon du cercle, en Kilometres. Qui veut prendre un rendez-vous au Havre-Saint-Pierre ? Je l’ai réduit à 10KM pour Montreal, mais 30KM est préférable dans la région de Quebec/Levis si vous voulez un rdv rapidement</li>
+<li><strong>serviceUnified</strong>=237<br>
+Ca, je sais pas trop, mais ca change jamais</li>
+<li><strong>postalCode</strong>=H1A%200A1<br>
+Le code postal, avec un espace entre les 2 champs, encodé en HTML. Dans le bot on le passe sans espace et ca fonctionne aussi, heureusement</li>
+<li><strong>page</strong>=0<br>
+Ca c’est la petite nouveauté, il me semble: la recherche est paginée. On va voir plus tard comment ca marche.</li>
+</ul>
+<p>La réponse est encore un gros JSON (que je simplifie ici) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;establishments&#34;</span>: [  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">60093</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;CIUSSS de lEst-de-lÎle-de-Montréal  - Centre Machin- Citoyens - Vaccin COVID-19&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;phone&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;125 Rue Notre-Dame Est, Pointe-aux-Trembles, QC H2B 2Y2&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;public_url&#34;</span>: <span style="color:#e6db74">&#34;[https://clients3.clicsante.ca/60093](https://clients3.clicsante.ca/60093)&#34;</span>  
+</span></span><span style="display:flex;"><span>    },  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">61047</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;Accès Pharma/Wal-Mart - Jean  Le Tong Le pharmaciennes SENC - Vaccin COVID-19 Citoyen&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;phone&#34;</span>: <span style="color:#e6db74">&#34;(514) 555-6505&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;126, SHERBROOKE, POINTE-AUX-TREMBLES, H2A 2V9&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;public_url&#34;</span>: <span style="color:#e6db74">&#34;[https://clients3.clicsante.ca/61047](https://clients3.clicsante.ca/61047)&#34;</span>  
+</span></span><span style="display:flex;"><span>    },  
+</span></span><span style="display:flex;"><span>  ],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;places&#34;</span>: [  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">6062</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;establishment&#34;</span>: <span style="color:#ae81ff">73215</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name_fr&#34;</span>: <span style="color:#e6db74">&#34;Jean Messier - AstraZeneca&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name_en&#34;</span>: <span style="color:#e6db74">&#34;Jean Messier - AstraZeneca&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;formatted_address&#34;</span>: <span style="color:#e6db74">&#34;100, BOUL. SAINT-JEAN-BAPTISTE, POINTE-AUX-TREMBLES, H2B 2A5&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;latitude&#34;</span>: <span style="color:#ae81ff">45.2414221</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;longitude&#34;</span>: <span style="color:#ae81ff">-73.2026806</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;is_virtual&#34;</span>: <span style="color:#ae81ff">0</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;availabilities&#34;</span>: {  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;su237&#34;</span>: {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;t07&#34;</span>: <span style="color:#ae81ff">255</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;ta7&#34;</span>: <span style="color:#ae81ff">0</span>  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>      }  
+</span></span><span style="display:flex;"><span>    },  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">2017</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;establishment&#34;</span>: <span style="color:#ae81ff">60093</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name_fr&#34;</span>: <span style="color:#e6db74">&#34;Centre Rouseay&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name_en&#34;</span>: <span style="color:#e6db74">&#34;Centre Rouseay&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;formatted_address&#34;</span>: <span style="color:#e6db74">&#34;121 Rue Notre-Dame Est Montréal H2B2Y4 Canada&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;latitude&#34;</span>: <span style="color:#ae81ff">45.6409872</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;longitude&#34;</span>: <span style="color:#ae81ff">-73.4902212</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;is_virtual&#34;</span>: <span style="color:#ae81ff">0</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;availabilities&#34;</span>: {  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;su237&#34;</span>: {  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;t07&#34;</span>: <span style="color:#ae81ff">2520</span>,  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;ta7&#34;</span>: <span style="color:#ae81ff">54745</span>  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>      }  
+</span></span><span style="display:flex;"><span>    },  
+</span></span><span style="display:flex;"><span>  ],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;distanceByPlaces&#34;</span>: {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3357&#34;</span>: <span style="color:#ae81ff">1</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3168&#34;</span>: <span style="color:#ae81ff">1</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;6062&#34;</span>: <span style="color:#ae81ff">1</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3390&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3381&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;6688&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;6182&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3427&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3174&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;6301&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;2017&#34;</span>: <span style="color:#ae81ff">2</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;4373&#34;</span>: <span style="color:#ae81ff">6</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3812&#34;</span>: <span style="color:#ae81ff">6</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;3770&#34;</span>: <span style="color:#ae81ff">6</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;4349&#34;</span>: <span style="color:#ae81ff">6</span>  
+</span></span><span style="display:flex;"><span>  },  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;serviceIdsByPlaces&#34;</span>: []  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Donc on a:</p>
+<ul>
+<li>des <strong>établissements</strong> qui offrent la vaccination</li>
+<li>des <strong>places</strong> ou chaque établissement dispense la vaccination</li>
+<li>la <strong>distance</strong></li>
+<li>le type de <strong>service</strong> pour chaque place.<br>
+Depuis une semaine ce champs est vide. Pour avoir la liste des services il faut maintenant faire une nouvelle requête (a suivre). C’est un des changements que j’ai apporté au bot d’<strong>Emmanuel</strong>.</li>
+</ul>
+<h4 id="pagination">Pagination</h4>
+<p>Comme on a pu le voir, l’URL comporte un paramètre <code>page=0</code>. Ca c’est nouveau par rapport au bot d’<strong>Emmanuel</strong> de la semaine dernière. Il faut donc faire une requête sur <code>page=1</code>, <code>page=2</code> , etc.</p>
+<p>Quand on est sur le site, c’est le javascript qui s’occupe de faire une nouvelle requête quand on scroll la page jusqu’en bas.</p>
+<p>Dans le bot, j’ai donc ajouté une boucle <code>for</code> qui incrémente le numero de page. Quand il n’y a plus de donnée le site répond avec un code <code>204</code> au lieu du standard <code>200 OK</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// on commence a la page 0  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">nextPage</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// on entre dans la boucle  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// on cree l&#39;URL pour la page courante  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">newGetRequest</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s&amp;page=%d&#34;</span>, <span style="color:#a6e22e">url</span>, <span style="color:#a6e22e">nextPage</span>))  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>  
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// on execute la requete HTTP  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">resp</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">DefaultClient</span>.<span style="color:#a6e22e">Do</span>(<span style="color:#a6e22e">req</span>)  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>  
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// so on recoit un code 204, on arrete  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">resp</span>.<span style="color:#a6e22e">StatusCode</span> <span style="color:#f92672">!=</span> <span style="color:#ae81ff">200</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;done\n, &#34;</span>)  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">resp</span>.<span style="color:#a6e22e">Body</span>.<span style="color:#a6e22e">Close</span>()  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">break</span>  
+</span></span><span style="display:flex;"><span>  }  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span>
+</span></span></code></pre></div><h4 id="filtrage">Filtrage</h4>
+<p>Une requête sur Montreal peut facilement donner 8 a 16 pages, car ce sont tous les lieux a proximité sans regarder si il y a de la place ou pas.</p>
+<p>Heureusement pour nous, enfin, pour mon ami <strong>Emmanuel</strong> et moi, qui sommes des 45+ et qui ne peuvent recevoir QUE le AstraZeneca, tous les lieux compatibles sont suffixés avec <code>— AstraZeneca</code> . On peut donc facilement éliminer les lieux indésirables de la liste.</p>
+<p>Il y a aussi un champs “availabilities” dans les <strong>Places</strong>, qui semble indiquer la dispo mais pas si c’est du AstraZeneca… donc on ne l’utilise pas pour le moment.</p>
+<h4 id="service">Service</h4>
+<p>Chaque <code>etablissement</code> a son propre numero de <code>service</code> . On doit donc faire une nouvelle requête pour chaque:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET</span> <span style="color:#960050;background-color:#1e0010">https:</span><span style="color:#75715e">//api3.clicsante.ca/v3/establishments/73215/services
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>[  
+</span></span><span style="display:flex;"><span>  {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">6563</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;establishment&#34;</span>: <span style="color:#ae81ff">73215</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;service_template&#34;</span>: {  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">159</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;1st_dose_COVID_19_vaccine_astrazeneca&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;descriptionFr&#34;</span>: <span style="color:#e6db74">&#34;1ère dose - Vaccin contre la COVID-19 - AstraZeneca&#34;</span>,  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;descriptionEn&#34;</span>: <span style="color:#e6db74">&#34;1st dose - COVID-19 vaccine AstraZeneca&#34;</span>  
+</span></span><span style="display:flex;"><span>    },  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;module&#34;</span>: <span style="color:#ae81ff">20</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;name_fr&#34;</span>: <span style="color:#e6db74">&#34;AstraZeneca - 1ère dose - Vaccin contre la COVID-19&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;name_en&#34;</span>: <span style="color:#e6db74">&#34;AstraZeneca - 1st dose - COVID-19 vaccine&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;description_fr&#34;</span>: <span style="color:#e6db74">&#34;&lt;p&gt;Vaccin contre la COVID-19 - AstraZeneca.&lt;/p&gt;&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;description_en&#34;</span>: <span style="color:#e6db74">&#34;&lt;p&gt;COVID-19 Vaccine - AstraZeneca.&lt;/p&gt;&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;enable_personal_description&#34;</span>: <span style="color:#66d9ef">true</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;length&#34;</span>: <span style="color:#ae81ff">5</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;interval&#34;</span>: <span style="color:#ae81ff">5</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;document_fr&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;document_en&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;price&#34;</span>: <span style="color:#ae81ff">0</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;price_description_fr&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;price_description_en&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,  
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">...</span>
+</span></span></code></pre></div><p>La seule chose qui nous concerne c’est le <code>id: 6563</code>du debut. Le reste semble être la config et le message d’alerte a afficher lorsque la page s’ouvre.</p>
+<h4 id="dispo">Dispo</h4>
+<p>Maintenant qu’on a une liste épurée, on peut valider si le site a de la place, et quand:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET</span> <span style="color:#960050;background-color:#1e0010">https:</span><span style="color:#75715e">//api3.clicsante.ca/v3/establishments/73215/schedules/public?dateStart=2021-04-27&amp;dateStop=2021-05-30&amp;service=6563&amp;timezone=America/Toronto&amp;places=60626&amp;filter1=1&amp;filter2=0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;availabilities&#34;</span>: [  
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;2021-05-04&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;2021-05-05&#34;</span>  
+</span></span><span style="display:flex;"><span>  ],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;daysComplete&#34;</span>: [],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;upcomingAvailabilities&#34;</span>: [],  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;pastAvailabilities&#34;</span>: []  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>On a donc de la place le 4 et le 5 mai.</p>
+<p>On peut donc afficher les URLs pour rapidement joindre le site de reservation sans se taper toute la recherche.</p>
+<p>L’URL ressemble a:</p>
+<pre tabindex="0"><code>https://clients3.clicsante.ca/&lt;etablissement_id&gt;/take-appt?unifiedService=237&amp;portalPlace=&lt;place_id&gt;&amp;portalPostalCode=G6J%201Y7&amp;lang=fr
+</code></pre><p>Voila un exemple de ce que retourne le bot d’<strong>Emmanuel</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>go run covid.go  -postal-code H1A0A1 -distance <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>gathering page 0, 1, 2, 3, <span style="color:#66d9ef">done</span>  
+</span></span><span style="display:flex;"><span>Parsed <span style="color:#ae81ff">36</span> places in total
+</span></span><span style="display:flex;"><span>Name: Jean Messier - AstraZeneca  
+</span></span><span style="display:flex;"><span>  Address: 5500, BOUL. SAINT-JEAN-BAPTISTE, POINTE-AUX-TREMBLES, H2B 2A2  
+</span></span><span style="display:flex;"><span>  Distance: 1Km  
+</span></span><span style="display:flex;"><span>  Available: <span style="color:#f92672">[</span>2021-05-04 2021-05-05<span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>  Upcoming: <span style="color:#f92672">[]</span>  
+</span></span><span style="display:flex;"><span>  Rendez-vous: <span style="color:#f92672">[</span>https://clients3.clicsante.ca/73215/take-appt?unifiedService<span style="color:#f92672">=</span>237&amp;portalPlace<span style="color:#f92672">=</span>6062&amp;portalPostalCode<span style="color:#f92672">=</span>G6J%201Y7&amp;lang<span style="color:#f92672">=</span>fr<span style="color:#f92672">](</span>https://clients3.clicsante.ca/73215/take-appt?unifiedService<span style="color:#f92672">=</span>237&amp;portalPlace<span style="color:#f92672">=</span>6062&amp;portalPostalCode<span style="color:#f92672">=</span>G6J%201Y7&amp;lang<span style="color:#f92672">=</span>fr<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>Name: Centre Machin- AstraZeneca  
+</span></span><span style="display:flex;"><span>  Address: <span style="color:#ae81ff">12</span> Rue Notre-Dame Est Montréal H2B2Y2 Canada  
+</span></span><span style="display:flex;"><span>  Distance: 2Km  
+</span></span><span style="display:flex;"><span>  Available: <span style="color:#f92672">[</span>2021-04-29 2021-04-30<span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>  Upcoming: <span style="color:#f92672">[]</span>  
+</span></span><span style="display:flex;"><span>  Rendez-vous: <span style="color:#f92672">[</span>https://clients3.clicsante.ca/70021/take-appt?unifiedService<span style="color:#f92672">=</span>237&amp;portalPlace<span style="color:#f92672">=</span>6301&amp;portalPostalCode<span style="color:#f92672">=</span>G6J%201Y7&amp;lang<span style="color:#f92672">=</span>fr<span style="color:#f92672">](</span>https://clients3.clicsante.ca/70021/take-appt?unifiedService<span style="color:#f92672">=</span>237&amp;portalPlace<span style="color:#f92672">=</span>6301&amp;portalPostalCode<span style="color:#f92672">=</span>G6J%201Y7&amp;lang<span style="color:#f92672">=</span>fr<span style="color:#f92672">)</span><span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#### Loop</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>En lançant le bot dans une boucle, on peut verifier la dispo presque en temps reel:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>bash
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true ; <span style="color:#66d9ef">do</span> date ; go run covid.go  -postal-code H1A0A1 -distance <span style="color:#ae81ff">10</span> ; sleep <span style="color:#ae81ff">10</span> ; <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p>Mais dépêchez-vous… tant que la même place re-apparait toutes les 10 secondes, c’est que la place est encore dispo, mais des quelle part, c’est perdu, meme si vous avez presque fini de remplir la page.</p>
+<h3 id="autofill">Autofill</h3>
+<p>J’ai bien essayé de faire un bout de javascript pour remplir les champs du formulaire, mais bon, tous ces trucs en react avec un DOM dynamique… Pi j’ai une vie, et un metier aussi…<br>
+On ne peut pas non plus tout automatiser car if y a un re-captcha à la fin de la page, justement pour nous empêcher d’utiliser un bot. C’est con, on aurait pu reserver tous les slots et les revendre sur eBay, comme le font les scalpers avec les concerts 😐<br>
+Restons serieux.<br>
+Donc, votre navigateur a lui meme une fonction qui permet de pre-remplir les champs de formulaires. Malheureusement dans ce cas, il ne fonctionne pas car les champs ont un nom dynamique.</p>
+<p>L’extension <a href="https://addons.mozilla.org/en-CA/firefox/addon/autofill-quantum/">autofill</a> pour Firefox et un peu plus configurable. Elle permet de définir précisément comment reconnaitre chaque champs du formulaire.<br>
+Ici, on utilise <code>clients3.clicsante.ca/.*/take-appt</code> ce qui a pour effet de matcher les champs meme si la clé dynamique change.</p>
+<p>Voila la config que j’ai utilisé. Attention de bien respecter une majuscule pour les noms et les autres formatages spéciaux:</p>
+<pre tabindex="0"><code>### AUTOFILL RULES ###,,,,,,  
+Rule ID,Type,Name,Value,Site,Mode,Profile  
+r1,0,&#34;^first_name$&#34;,&#34;Change_me&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r2,0,&#34;^last_name$&#34;,&#34;Change_me&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r3,0,&#34;^email$&#34;,&#34;[change_me@ici.net](mailto:change_me@ici.net)&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r4,0,&#34;^Confirmation du courriel$&#34;,&#34;[change_me@ici.net](mailto:change_me@ici.net)&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r5,0,&#34;^phone$&#34;,&#34;(123) 456 - 1234&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r6,0,&#34;^cellphone$&#34;,&#34;(123) 456 - 1234&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r7,0,&#34;^nam$&#34;,&#34;ABCD 7504 2110&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r8,0,&#34;^mother_first_name$&#34;,&#34;Change_me&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r9,0,&#34;^mother_last_name$&#34;,&#34;Change_me&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r10,0,&#34;^father_first_name$&#34;,&#34;Change_me&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r11,0,&#34;^father_last_name$&#34;,&#34;Change_me&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r12,3,&#34;^v-radio-243$&#34;,&#34;010&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r13,3,&#34;^v-radio-253$&#34;,&#34;010&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r14,3,&#34;^v-radio-263$&#34;,&#34;010&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r15,3,&#34;^v-radio-273$&#34;,&#34;010&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r16,3,&#34;^v-radio-283$&#34;,&#34;010&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r17,3,&#34;^v-radio-293$&#34;,&#34;010&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r18,3,&#34;^Recevoir la confirmation par SMS$&#34;,&#34;1&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r19,3,&#34;^Avertissez-moi lorsque de nouveaux services sont disponibles dans ma région$&#34;,&#34;1&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r20,3,&#34;^tosAndGDPRAgreement$&#34;,&#34;1&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,  
+r21,0,&#34;^birthday$&#34;,&#34;1975-04-21&#34;,&#34;clients3.clicsante.ca/.*/take-appt&#34;,0,
+</code></pre><h3 id="conclusion">Conclusion</h3>
+<p>Le code du bot n’est pas dispo, pas la peine de demander, car c’est un outil pédagogique.</p>
+<p>Même si je suis heureux qu’il y ai un site de reservation au Quebec et qu’on ai pas à faire la file pendant des heures, je voudrais quand même dire au gouvernement qu’il pourrait faire mieux.</p>
+<p>Ce genre de site procure beaucoup de frustrations, surtout pour les personnes qui ne sont pas habiles avec les ordinateurs ou ceux qui doivent utiliser un telephone cellulaire. Au final le risque c’est de décourager les gens de s’enregistrer, ou de saturer les lignes téléphoniques des pharmacies.</p>
+<p>Pourtant, ca fait un an qu’on sait que les vaccins arrivent et qu’on a besoin d’un site comme celui ci. Et TicketMaster™ sait comment reserver temporairement ne place depuis peut-etre 30 ou 40 ans, avant internet. Alors pourquoi pas le gouvernement ?</p>
+<p>Bon, vous me direz, de toute manière on a pas assez de vaccins pour tout le monde pour le moment, OK. Mais c’est le genre de site qui me donne envie de défoncer mon ordinateur a coup de pieds. Heureusement que je n’ai pas de hache à portée de main…</p>
+<p>Perso, j’ai réussi à avoir mon vaccin, alors bonne chance !</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Prune">
+<meta name="description" content="A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
+Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
+What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, devops, servicemesh, kubernetes" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/" />
+
+
+    <title>
+        
+            Istio 0.8.0 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Istio 0.8.0 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS">
+<meta itemprop="description" content="A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
+Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
+What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part."><meta itemprop="datePublished" content="2018-06-26T18:57:13+00:00" />
+<meta itemprop="dateModified" content="2023-12-01T14:31:59-05:00" />
+<meta itemprop="wordCount" content="1693"><meta itemprop="image" content="https://piratemakers.ca/images/1.jpeg"><meta itemprop="image" content="https://piratemakers.ca/images/2.png">
+<meta itemprop="keywords" content="devops,servicemesh,kubernetes," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://piratemakers.ca/images/1.jpeg"/>
+
+<meta name="twitter:title" content="Istio 0.8.0 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS"/>
+<meta name="twitter:description" content="A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
+Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
+What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part."/>
+
+
+
+    <meta property="og:title" content="Istio 0.8.0 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS" />
+<meta property="og:description" content="A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
+Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
+What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/" /><meta property="og:image" content="https://piratemakers.ca/images/1.jpeg" /><meta property="og:image" content="https://piratemakers.ca/images/2.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-06-26T18:57:13+00:00" />
+<meta property="article:modified_time" content="2023-12-01T14:31:59-05:00" />
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2018-06-26 18:57:13 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        8 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://piratemakers.ca/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/">Istio 0.8.0 (Envoy) + Cert-Manager + Let’s Encrypt for TLS</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+<p>A few months back I wrote a blog post on <a href="https://medium.com/@prune998/istio-envoy-cert-manager-lets-encrypt-for-tls-14b6a098f289">how to use Cert-Manager to provide SSL certificates for Istio</a>.</p>
+<p>Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Kubernetes Custom Resources</a>. It is called the Route Rules v1alpha3.</p>
+<h3 id="what-have-changed-">What have changed ?</h3>
+<p>Istio had a great blog post about it <a href="https://istio.io/blog/2018/v1alpha3-routing/">here</a>. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the <strong>Layer 4</strong> configuration, and a VirtualService which is the <strong>Layer 6/7</strong> part.</p>
+<p>You can go strait to the docs <a href="https://istio.io/docs/tasks/traffic-management/ingress/">here</a> and the reference <a href="https://istio.io/docs/reference/config/istio.networking.v1alpha3/">here</a>.</p>
+<p>So, what does that implies to our old (pre 0.8.0) setup ?<br>
+Well, let’s start from scratch and we’ll see…</p>
+<h3 id="setup-istio">Setup Istio</h3>
+<p>Setting up Istio is almost straightforward… do it the way you want, using the Helm chart with Tiller, without it or go with the Demo manifest that you may have (or not) depending on where you got Istio from.</p>
+<p>My personal flavour is to use the Helm binary to create a static Deployment Manifest and use Kubectl to apply it. It goes something like :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm template install/kubernetes/helm/istio --name istio <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set tracing.enabled<span style="color:#f92672">=</span>false --set ingress.enabled<span style="color:#f92672">=</span>false <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set servicegraph.enabled<span style="color:#f92672">=</span>false --set prometheus.enabled<span style="color:#f92672">=</span>false <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set global.proxy.policy<span style="color:#f92672">=</span>disabled --set grafana.enabled<span style="color:#f92672">=</span>false <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --namespace istio-system &gt; install/kubernetes/generated.yaml
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  kubectl create namespace istio-system
+</span></span><span style="display:flex;"><span>  kubectl apply -n istio-system -f install/kubernetes/generated.yaml
+</span></span></code></pre></div><h3 id="setup-cert-manager">Setup Cert-Manager</h3>
+<p>It’s almost the same for cert-manager. Just clone it and apply the Manifest :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/jetstack/cert-manager.git
+</span></span><span style="display:flex;"><span>cd cert-manager
+</span></span><span style="display:flex;"><span>kubectl apply -f cert-manager/contrib/manifests/cert-manager/with-rbac.yaml
+</span></span></code></pre></div><p>If it goes well you should see a pod started :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n cert-manager get pods
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                            READY     STATUS    RESTARTS   AGE  
+</span></span><span style="display:flex;"><span>cert-manager-794b55b96d-9b9zh   1/1       Running   <span style="color:#ae81ff">0</span>          3h
+</span></span></code></pre></div><h3 id="setup-aws-route53">Setup AWS Route53</h3>
+<p>Since the beginning my DNS was hosted on AWS using Route53. Still, my previous blog post was about using the HTTP01 provider, which requires to setup a website which can answer to the Let’s Encrypt handshake.</p>
+<p>Cert-Manager is not (yet) compatible with how Istio 0.8.0 setup the Ingress. So it would be a real pain to use the HTTP provider again.</p>
+<p>I decided to use the DNS01 provider, which is supported by both Cert-Manager and AWS Route53, and is far easier to setup that I thought.</p>
+<h4 id="setup-policy">Setup Policy</h4>
+<p>go to the AWS Dashboard -&gt; IAM -&gt; policies (<a href="https://console.aws.amazon.com/iam/home?#/policies">https://console.aws.amazon.com/iam/home?#/policies</a>) and create a Policy like :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>  {  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Version&#34;: </span><span style="color:#e6db74">&#34;2012-10-17&#34;</span>,  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Statement&#34;: </span>[  
+</span></span><span style="display:flex;"><span>        {  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Effect&#34;: </span><span style="color:#e6db74">&#34;Allow&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Action&#34;: </span>[  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:GetHostedZone&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:ListHostedZones&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:ListHostedZonesByName&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:GetHostedZoneCount&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:ChangeResourceRecordSets&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:ListResourceRecordSets&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;route53:GetChange&#34;</span>  
+</span></span><span style="display:flex;"><span>            ],  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Resource&#34;: </span><span style="color:#e6db74">&#34;*&#34;</span>  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>    ]  
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>Here is mine :</p>
+<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<h4 id="setup-user">Setup User</h4>
+<p>Go to the <code>user</code> tab and create a new user, applying the above policy to it. Select the <strong>Programmatic access checkbox.</strong> On the last page you will find the Access Key and the Secret Key. Note them down.</p>
+<p>You will need to set the Secret Key in a Kubernetes Secret so the Cert-Manager can use it. This can be done by a single shell command using, again, kubectl :
+<code>kubectl -n cert-manager create secret generic prod-route53-credentials-secret --from-literal=secret-access-key=&lt;your secret key here&gt;</code></p>
+<p>This way the key is securely usable by your K8s cluster.</p>
+<h3 id="create-your-certificate">Create your certificate</h3>
+<p>As before, you need to create an Issuer and a Certificate. In this example we’ll use a ClusterIssuer, which is an Issuer not tied to a specific Namespace. This way you can create some certificates in any namespace. Stick to regular Issuers if you need more control.</p>
+<h4 id="clusterissuer">ClusterIssuer</h4>
+<p>This ClusterIssuer is using the <code>acme-v02</code> API.</p>
+<p>Set the <code>privateKeySecretRef</code> to the name of the secret you want Cert-Manager to use. It have to be a new secret as it will be used to elect the <code>master</code> Cert-Manager instance in case you start many of them.</p>
+<p><code>secretAccessKeySecretRef</code> is the name of the secret we just created before.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">certmanager.k8s.io/v1alpha1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterIssuer  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">letsencrypt-prod  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">cert-manager  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">acme</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">server</span>: <span style="color:#ae81ff">https://acme-v02.api.letsencrypt.org/directory</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">email</span>: <span style="color:#ae81ff">me@ici.com  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">privateKeySecretRef</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">letsencrypt-prod  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">dns01</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">providers</span>:  
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">aws-dns-prod  </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">route53</span>:  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">region</span>: <span style="color:#ae81ff">ca-central-1  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">accessKeyID</span>: <span style="color:#ae81ff">&lt;your access key from AWS&gt;  </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">secretAccessKeySecretRef</span>:  
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">prod-route53-credentials-secret  </span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">secret-access-key</span>
+</span></span></code></pre></div><h4 id="certificate">Certificate</h4>
+<p>You will need to create a <code>Certificate Manifest</code> so Cert-Manager can perform the request using the ACME API.</p>
+<p>Before that, ensure that all the domain names you are requesting for are properly setup in your DNS server, in this cas, route53.</p>
+<p>Here is where we also <strong>have a choice to make</strong>.</p>
+<p>Beeing an admin (sysops, devops or SRE, you name it) for 20 years now, I would go to create an SSL certificate for every website, ie, for every FQDN that serves a different purpose. This way it’s easier to manage, expire (revoke) or split.</p>
+<p>In fact, two things here almost prevent us from doing so :</p>
+<ul>
+<li>using Let’s Encrypt you programatically manage your certificates so you don’t have to care how you renew or revoke them (almost) as Cert-Manager will do that for you.</li>
+<li>Istio does not (really) support Ingresses with multiple certificates. To be clearer, in Istio version 0.8.0 and the new IngressGateway, only one <code>Kubernetes Secret</code> is mounted inside the IngressGateway Pod.
+Someone started a discussion about that <a href="https://github.com/istio/istio/issues/6486#issuecomment-400367378">there</a>, which I commented.</li>
+</ul>
+<p>So, for now, I recommend going with only one Certificate with all your FQDNs in it. Like :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">certmanager.k8s.io/v1alpha1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Certificate  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">domain-ingress-certs  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">acme</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">config</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">dns01</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">provider</span>: <span style="color:#ae81ff">aws-dns-prod  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">domains</span>:  
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">subnet.domain.com  </span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">www.otherdomain.com  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">commonName</span>: <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">dnsNames</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">subnet.domain.com  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">www.otherdomain.com  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">issuerRef</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterIssuer  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">letsencrypt-prod  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">istio-ingressgateway-certs</span>
+</span></span></code></pre></div><p>Let’s break this down :</p>
+<ul>
+<li>the <code>Certificate</code> will be created in the secret called <code>istio-ingressgateway-certs</code> in the namespace <code>istio-system</code>. This is needed as the Istio Ingress Gateway is looking for this specific secret in it’s own namespace. DON’T MESS WITH IT, the <code>secretName</code> IS HARDCODED ! (see comments :) )</li>
+<li>the issuer is named <code>letsencrypt-prod</code> and its kind is <code>ClusterIssuer</code></li>
+<li>we are using the DNS-01 <code>provider</code> which is called <code>aws-dns-prod</code>, as defined, again, in the <code>ClusterIssuer</code></li>
+<li>the 3 domains will use the DNS-01 challenge, as they are all listed under the <code>domains</code> list of the <code>dns01</code> provider. We could also have decided to use another provider for some of them… This is really agile !</li>
+<li>The SSL certificate will have <code>my.domain.com</code> as CommonName and will also be valid for all the 3 domain names listed under the <code>dnsNames</code> line.</li>
+</ul>
+<p>When you push that using <code>kubectl</code>, Cert-Manager will connect to your AWS account and create some TXT records that will be used by Let’sEncrypt to ensure that you own the right to update the DNS.<br>
+They will look like :
+<code>_acme-challenge.my.domain.com TXT &quot;some value here&quot;</code></p>
+<p>Once the DNS propagated and the Domain Ownership validated, Cert-Manager will create your <strong>istio-ingressgateway-certs</strong> secret, with two files in it : <code>tls.crt</code>and <code>tls.key</code></p>
+<h3 id="configuring-the-istio-ingress-gateway">Configuring the Istio Ingress Gateway</h3>
+<p>The final step for this setup is to configure Istio to use use the certificate.</p>
+<p>With the new API starting from version 0.8.0, you have two resources to setup : the Gateway and the Virtual Service.</p>
+<h4 id="gateway">Gateway</h4>
+<p>The gateway is your OSI Layer 4 configuration. It tells Istio (Envoy) to listen on a port and, if needed, activate SSL. (ok, ssl is not layer4, but…well, it’s complicated :) )</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Gateway  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">web-gateway  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">test  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">istio</span>: <span style="color:#ae81ff">ingressgateway  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">servers</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">number</span>: <span style="color:#ae81ff">80</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">HTTP  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">my.domain.com:443  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">subnet.domain.com  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">subnet.domain.com:443  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">https  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">number</span>: <span style="color:#ae81ff">443</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">HTTPS  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tls</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">SIMPLE  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">privateKey</span>: <span style="color:#ae81ff">/etc/istio/ingressgateway-certs/tls.key  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">serverCertificate</span>: <span style="color:#ae81ff">/etc/istio/ingressgateway-certs/tls.crt</span>
+</span></span></code></pre></div><p>So, we define here a <code>Gateway</code> name <code>web-gateway</code>, answering <code>my.domain.com</code> on both HTTP and HTTPS and <code>subnet.domain.com</code> and HTTPS.<br>
+For HTTPS, I had to double the DNS names with the <code>:port</code> extension. I still don’t know if it’s a bug or a feature, but I opened another issue for that <a href="https://github.com/istio/istio/issues/6469">here</a>.</p>
+<p>As a side note here, DON’T create another gateway for port 443 or 80 in the cluster, as they will both try to bind the same IP/port. Instead, either :</p>
+<ul>
+<li>add more FQDN to the domain list or</li>
+<li>create another <code>server</code> entry and use the same port</li>
+</ul>
+<h3 id="update-20180822-">UPDATE 2018/08/22 !</h3>
+<p>I don’t know if I was mistaken or if something changed with Istio 1.0.0, but you CAN create multiple gateways on the same port. Just use different names and use the SAME certificate file, as Istio IngressGateway still only use one Secret for now.<br>
+Ex :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Gateway  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gateway-mydomain  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">test  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">istio</span>: <span style="color:#ae81ff">ingressgateway  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">servers</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">my.domain.com:443  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">https-mydomain  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">number</span>: <span style="color:#ae81ff">443</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">HTTPS  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tls</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">SIMPLE  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">privateKey</span>: <span style="color:#ae81ff">/etc/istio/ingressgateway-certs/tls.key  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">serverCertificate</span>: <span style="color:#ae81ff">/etc/istio/ingressgateway-certs/tls.crt  </span>
+</span></span><span style="display:flex;"><span>---  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Gateway  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gateway-otherdomain  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">test  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">istio</span>: <span style="color:#ae81ff">ingressgateway  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">servers</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">other.domain.com  </span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">other.domain.com:443  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">https-otherdomain  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">number</span>: <span style="color:#ae81ff">443</span>  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">HTTPS  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tls</span>:  
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">SIMPLE  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">privateKey</span>: <span style="color:#ae81ff">/etc/istio/ingressgateway-certs/tls.key  </span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">serverCertificate</span>: <span style="color:#ae81ff">/etc/istio/ingressgateway-certs/tls.crt</span>
+</span></span></code></pre></div><h4 id="virtualservice">VirtualService</h4>
+<p>In fact, we’ve done everything we needed to get an SSL cert via Let’s Encrypt.<br>
+The VirtualService is the layer 6/7 configuration, which will split the traffic to your Kubernetes Services.</p>
+<p>Since we’re here anyway, let me show you one possible config :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">VirtualService  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">domain-http  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">test  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">gateways</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">web-gateway  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">my.domain.com  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">my.domain.com:443  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">http</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">match</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">uri</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prefix</span>: <span style="color:#ae81ff">/  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">route</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">destination</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">host</span>: <span style="color:#ae81ff">my-http-service  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">number</span>: <span style="color:#ae81ff">1080</span>
+</span></span></code></pre></div><p>You can also create another one for the subdomain if you want it to go to another website :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">VirtualService  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">subnet-http  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">test  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">gateways</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">web-gateway  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">subnet.domain.com  </span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">subnet.domain.com:443  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">http</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">match</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">uri</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prefix</span>: <span style="color:#ae81ff">/  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">route</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">destination</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">host</span>: <span style="color:#ae81ff">subnet-http-service  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">number</span>: <span style="color:#ae81ff">1081</span>
+</span></span></code></pre></div><h3 id="conslusion">Conslusion</h3>
+<p>I find this solution far better than the previous one with HTTP-01 challenge. No more ingress or services to remove.</p>
+<p>Of course this implies using a supported DNS provider, as of today, one of Google cloud, AWS Route53, Clouflare, Akamai (<a href="https://cert-manager.readthedocs.io/en/latest/reference/issuers/acme/dns01.html#supported-dns01-providers">https://cert-manager.readthedocs.io/en/latest/reference/issuers/acme/dns01.html#supported-dns01-providers</a>)</p>
+<p>Also, as mentioned, you have to use only one certificate for all your domains. Now that Let’s Encrypt also support star certificates (<code>*.domain.com</code> ) there may some good reasons to do so, but still I don’t like it.</p>
+<p>Also, as of today (20180626), I see no way for the Istio IngressGateway to automatically reload it’s configuration when the certificate, so the <code>Kubernetes Secret</code>, changes.<br>
+From my point of view, the <code>Istio Pilot</code> service should monitor the secret and send a kind of <code>SIGHUP</code> signal the the Ingressgateway Envoy when needed…</p>
+<p>Stay tuned :)</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/devops/">devops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/servicemesh/">servicemesh</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        1693 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2018-06-26 14:57
+        
+
+         
+          
+            
+              (Last updated: 2023-12-01 14:31)
+            
+          
+        
+      </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="1ab993c2d9f5b7b58edda6893280e093b620e8db" target="_blank" rel="noopener">1ab993c</a>
+          @ 2023-12-01
+        </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS&amp;caption=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS&amp;canonicalUrl=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS&amp;body=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f&amp;media=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f;description=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f&amp;title=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS&amp;summary=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS&amp;source=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f&amp;resubmit=true&amp;title=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f;title=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS%20https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f&amp;t=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Istio%200.8.0%20%28Envoy%29%20%2b%20Cert-Manager%20%2b%20Let%e2%80%99s%20Encrypt%20for%20TLS&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2018%2f06%2fistio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Istio 1.0.2 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS &#43; Certificate Merge</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="https://piratemakers.ca/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/">
+                    <span class="button__text">Istio (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+      
+        <div id="comments">
+          <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "piratemakers-ca" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2023</span>
+            
+            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            <span>Pirate Makers™</span>
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.0931a358499291afca6f741478e9fc9fa973a9fbd7aeb3390f3b10463966dc8195daf98a0e33685a1fbfb9d7578631c3f31fc8e558eaf6e2c30c4c3e14df4931.js" integrity="sha512-CTGjWEmSka/Kb3QUeOn8n6lzqfvXrrM5DzsQRjlm3IGV2vmKDjNoWh&#43;/uddXhjHD8x/I5Vjq9uLDDEw&#43;FN9JMQ=="></script>
+
+
+
+
+    </body>
+</html>

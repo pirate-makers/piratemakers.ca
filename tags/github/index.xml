@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>github on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/github/</link>
+    <description>Recent content in github on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Tue, 29 Nov 2022 14:31:56 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker.io &amp; OpenSource Fail (and what to do instead)</title>
+      <link>https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/</link>
+      <pubDate>Tue, 29 Nov 2022 14:31:56 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/</guid>
+      <description>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…
+After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.
+Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</description>
+    </item>
+  </channel>
+</rss>

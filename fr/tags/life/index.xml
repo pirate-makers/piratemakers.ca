@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>life on Pirate Makers</title>
+    <link>https://piratemakers.ca/fr/tags/life/</link>
+    <description>Recent content in life on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Thu, 29 Apr 2021 21:05:54 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/fr/tags/life/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Comment se faire vacciner au Quebec</title>
+      <link>https://piratemakers.ca/fr/posts/2021/04/comment-se-faire-vacciner-au-quebec/</link>
+      <pubDate>Thu, 29 Apr 2021 21:05:54 +0000</pubDate>
+      <guid>https://piratemakers.ca/fr/posts/2021/04/comment-se-faire-vacciner-au-quebec/</guid>
+      <description>Il y a deux semaines le Quebec a ouvert la vaccination aux personnes de 45 ans et plus, avec le vaccin AstraZeneca.
+Apres plusieurs essais, IMPOSSIBLE d’avoir une place. Impossible de remplir le formulaire assez vite.
+Un ami a donc crée un bot pour être le plus rapide. Voila comment.
+Disclamer Cette publication est faite à titre purement informatif et éducatif.
+C’est une analyse du fonctionnement du site de reservation de vaccin faite uniquement avec les outils qui se trouvent dans tous les navigateurs.</description>
+    </item>
+  </channel>
+</rss>

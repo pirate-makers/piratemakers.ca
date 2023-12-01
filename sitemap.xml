@@ -1,53 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
-  <url>
-    <loc>https://piratemakers.ca/tags/cnc/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
+  <sitemap>
+    <loc>https://piratemakers.ca/en/sitemap.xml</loc>
+    
+      <lastmod>2023-12-01T14:31:59-05:00</lastmod>
+    
+  </sitemap>
   
-  <url>
-    <loc>https://piratemakers.ca/tags/fusion360/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
+  <sitemap>
+    <loc>https://piratemakers.ca/fr/sitemap.xml</loc>
+    
+      <lastmod>2023-12-01T14:31:59-05:00</lastmod>
+    
+  </sitemap>
   
-  <url>
-    <loc>https://piratemakers.ca/tags/laser/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/posts/laserpostprocess/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/posts/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/tags/shapeoko/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/tags/</loc>
-    <lastmod>2020-04-11T18:29:43+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/about/</loc>
-  </url>
-  
-  <url>
-    <loc>https://piratemakers.ca/categories/</loc>
-  </url>
-  
-</urlset>
+</sitemapindex>

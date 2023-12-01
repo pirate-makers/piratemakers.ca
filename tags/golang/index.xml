@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>golang on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/golang/</link>
+    <description>Recent content in golang on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 07 Nov 2018 17:38:31 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Istio 1.0.2 (Envoy) &#43; Cert-Manager &#43; Let’s Encrypt for TLS &#43; Certificate Merge</title>
+      <link>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</link>
+      <pubDate>Wed, 07 Nov 2018 17:38:31 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</guid>
+      <description>Recap I already talked about Istio + Cert-Manager in part one and part two. In the meantime Istio went to release 1.0, lastly 1.0.3.
+While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.
+Let me remind you :
+Cert-Manager only create TLS Secrets, which are a kind of Secret that only contains a crt and key file.</description>
+    </item>
+  </channel>
+</rss>

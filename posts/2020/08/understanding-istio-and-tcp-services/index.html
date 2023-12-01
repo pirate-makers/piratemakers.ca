@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Prune">
+<meta name="description" content="By using a real use-case scenario, we explore how Istio routes TCP traffic and how to get past some common pitfalls we’ve encountered firsthand." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, devops, kubernetes, servicemesh" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/" />
+
+
+    <title>
+        
+            Understanding Istio and TCP services :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Understanding Istio and TCP services">
+<meta itemprop="description" content="By using a real use-case scenario, we explore how Istio routes TCP traffic and how to get past some common pitfalls we’ve encountered firsthand."><meta itemprop="datePublished" content="2020-08-06T23:41:53+00:00" />
+<meta itemprop="dateModified" content="2023-12-01T14:31:59-05:00" />
+<meta itemprop="wordCount" content="2700"><meta itemprop="image" content="https://piratemakers.ca/images/1.jpeg"><meta itemprop="image" content="https://piratemakers.ca/images/2.png"><meta itemprop="image" content="https://piratemakers.ca/images/3.png"><meta itemprop="image" content="https://piratemakers.ca/images/4.png"><meta itemprop="image" content="https://piratemakers.ca/images/5.png"><meta itemprop="image" content="https://piratemakers.ca/images/6.png">
+<meta itemprop="keywords" content="devops,kubernetes,servicemesh," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://piratemakers.ca/images/1.jpeg"/>
+
+<meta name="twitter:title" content="Understanding Istio and TCP services"/>
+<meta name="twitter:description" content="By using a real use-case scenario, we explore how Istio routes TCP traffic and how to get past some common pitfalls we’ve encountered firsthand."/>
+
+
+
+    <meta property="og:title" content="Understanding Istio and TCP services" />
+<meta property="og:description" content="By using a real use-case scenario, we explore how Istio routes TCP traffic and how to get past some common pitfalls we’ve encountered firsthand." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/" /><meta property="og:image" content="https://piratemakers.ca/images/1.jpeg" /><meta property="og:image" content="https://piratemakers.ca/images/2.png" /><meta property="og:image" content="https://piratemakers.ca/images/3.png" /><meta property="og:image" content="https://piratemakers.ca/images/4.png" /><meta property="og:image" content="https://piratemakers.ca/images/5.png" /><meta property="og:image" content="https://piratemakers.ca/images/6.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-08-06T23:41:53+00:00" />
+<meta property="article:modified_time" content="2023-12-01T14:31:59-05:00" />
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2020-08-06 23:41:53 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        13 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/">Understanding Istio and TCP services</a>
+      </h1>
+
+      
+        <div class="post-excerpt">By using a real use-case scenario, we explore how Istio routes TCP traffic and how to get past some common pitfalls we’ve encountered firsthand.</div>
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+<h3 id="overview">overview</h3>
+<p>I lately came across an Istio setup where both the downstream (client) and the upstream (server) were using the same sets of ports:</p>
+<ul>
+<li>port <em>8080</em> for HTTP protocol</li>
+<li>port <em>5701</em> for <a href="https://hazelcast.com/">Hazelcast</a> protocol, a Java based memory database embedded in the pod’s workload, using TCP</li>
+</ul>
+<p>The setup is presented here:</p>
+<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p>In theory, two types of communications happens:</p>
+<ul>
+<li>each Hazelcast database (the red and purple cylinders) talk to each other on port <em>5701</em> using TCP protocol.<br>
+Cluster is discovered using the <a href="https://github.com/hazelcast/hazelcast-kubernetes">Hazelcast Kubernetes plugin</a> which calls the API to get the Pod IPs.<br>
+Then connections are made at TCP level using the IP:port of the pod</li>
+<li>the <code>manager</code> calls the <code>app</code> on the http port <em>8080</em></li>
+</ul>
+<p>We’re going to focus on the first connexion for now, specifically the one happening between the <code>manager</code> pods as they are going through the Istio Proxy.</p>
+<p>Let’s first leverage the <code>istioctl</code> CLI to get the configuration of the listeners on one of the pods:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc listeners manager-c844dbb5f-ng5d5.manager --port <span style="color:#ae81ff">5701</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ADDRESS         PORT     TYPE  
+</span></span><span style="display:flex;"><span>10.12.0.11      <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>10.0.23.154     <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>10.0.18.143     <span style="color:#ae81ff">5701</span>     TCP
+</span></span></code></pre></div><p>We have 3 entries for port <em>5701</em>. They are all of type<code>TCP</code> which is what we defined.</p>
+<p>We clearly see we have one entry for our local IP (<code>10.12.0.11</code>) and one for each service which is using the <em>5701</em> port, the <code>manager</code> (<code>10.0.23.154</code>) and the <code>app</code> (<code>10.0.18.143</code>) services.</p>
+<h3 id="inbound-connections">Inbound connections</h3>
+<p>The first one, for address <code>10.12.0.11</code> is an <code>INBOUND</code>listener that is used when connections enters into the Pod. As we are on a TCP service, it does not have a route, but directly point to a cluster:<br>
+<code>inbound|5701|tcp-hazelcast|manager.manager.svc.cluster.local</code></p>
+<p>If we check all clusters on port <em>5701</em> we have:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc clusters manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SERVICE FQDN                          PORT     SUBSET            DIRECTION     TYPE  
+</span></span><span style="display:flex;"><span>app.app.svc.cluster.local             <span style="color:#ae81ff">5701</span>     -                 outbound      EDS  
+</span></span><span style="display:flex;"><span>manager.manager.svc.cluster.local     <span style="color:#ae81ff">5701</span>     -                 outbound      EDS  
+</span></span><span style="display:flex;"><span>manager.manager.svc.cluster.local     <span style="color:#ae81ff">5701</span>     tcp-hazelcast     inbound       STATIC
+</span></span></code></pre></div><p>The last one is our <code>INBOUND</code> , let’s check it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc clusters manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span> --direction inbound -o json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;inbound|5701|tcp-hazelcast|manager.manager.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;STATIC&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;connectTimeout&#34;</span>: <span style="color:#e6db74">&#34;1s&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;loadAssignment&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;clusterName&#34;</span>: <span style="color:#e6db74">&#34;inbound|5701|tcp-hazelcast|manager.manager.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;endpoints&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;lbEndpoints&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;endpoint&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                                    <span style="color:#e6db74">&#34;socketAddress&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                                        <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>,  
+</span></span><span style="display:flex;"><span>                                        <span style="color:#e6db74">&#34;portValue&#34;</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;circuitBreakers&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;thresholds&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;maxConnections&#34;</span>: 4294967295,  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;maxPendingRequests&#34;</span>: 4294967295,  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;maxRequests&#34;</span>: 4294967295,  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;maxRetries&#34;</span>: <span style="color:#ae81ff">4294967295</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>This can’t be simpler… check the <code>lbEndpoints</code> definition: just forward the connection to the <code>localhost</code> (<code>127.0.0.1</code>) port <em>5701</em>, our app.</p>
+<h3 id="outbound-connections">Outbound connections</h3>
+<p>Outbound connections are originating from inside the pod to reach external resources.</p>
+<p>From what we saw above, we have two known endpoints that defined the port <em>5701</em>: <code>manager.manger</code> service and <code>app.app</code> service.</p>
+<p>Let’s check the content of the <code>manager</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc listeners manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span> --address 10.0.23.154 -o json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;10.0.23.154_5701&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;socketAddress&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;10.0.23.154&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;portValue&#34;</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;filterChains&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;filters&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;envoy.tcp_proxy&#34;</span>,  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;typedConfig&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;[@type](http://twitter.com/type)&#34;</span>: <span style="color:#e6db74">&#34;type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;statPrefix&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||manager.manager.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;cluster&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||manager.manager.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;accessLog&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;deprecatedV1&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;bindToPort&#34;</span>: false  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;trafficDirection&#34;</span>: <span style="color:#e6db74">&#34;OUTBOUND&#34;</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>I removed some of the values here so we better understand. It’s not that complicated.</p>
+<p>First, we match on the destination IP and port</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;address&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;socketAddress&#34;</span>: {  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;10.0.23.154&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;portValue&#34;</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>            }  
+</span></span><span style="display:flex;"><span>        }<span style="color:#960050;background-color:#1e0010">,</span>
+</span></span></code></pre></div><p>Then we have a <code>filterChain</code> and an <code>envoy.tcp.proxy</code> filter.<br>
+Here again, the proxy points us to cluster named <code>outbound|5701||manager.manager.svc.cluster.local</code> .<br>
+Envoy is not using any route as we are using a TCP protocol and we have nothing to base the routing on anyways.</p>
+<p>Let’s see inside the cluster:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc clusters manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span> --fqdn manager.manager.svc.cluster.local --direction outbound -o json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;transportSocketMatches&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;tlsMode-istio&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;match&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;tlsMode&#34;</span>: <span style="color:#e6db74">&#34;istio&#34;</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;tlsMode-disabled&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;match&#34;</span>: <span style="color:#f92672">{}</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;transportSocket&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;envoy.transport_sockets.raw_buffer&#34;</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||manager.manager.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;EDS&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;edsClusterConfig&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;edsConfig&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ads&#34;</span>: <span style="color:#f92672">{}</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;serviceName&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||manager.manager.svc.cluster.local&#34;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;connectTimeout&#34;</span>: <span style="color:#e6db74">&#34;1s&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;circuitBreakers&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;filters&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>I also removed some parts here to focus on the important stuff:</p>
+<ul>
+<li>first two blocks: Envoy will check if it can do SSL (TLS) and set the certificate if we can. Else, use plain TCP.</li>
+<li>find the destination’s pod using the <code>EDS</code> protocol. This stands for <code>E</code>ndpoint <code>D</code>iscovery <code>S</code>ervice.
+Envoy will look up its list of endpoints for the service named <code>outbound|5701||manager.manager.svc.cluster.local </code>These endpoints are selected based on the Kubernetes service endpoint list (<code>kubectl get endpoints -n manager manager</code>).</li>
+</ul>
+<p>We can also check the list of endpoints configured in Istio:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc endpoints manager-7948dffbdd-p44xx.manager --cluster <span style="color:#e6db74">&#34;outbound|5701||manager.manager.svc.cluster.local&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ENDPOINT            STATUS      OUTLIER CHECK     CLUSTER  
+</span></span><span style="display:flex;"><span>10.12.0.12:5701     HEALTHY     OK                outbound|5701<span style="color:#f92672">||</span>manager.manager.svc.cluster.local  
+</span></span><span style="display:flex;"><span>10.12.1.6:5701      HEALTHY     OK                outbound|5701<span style="color:#f92672">||</span>manager.manager.svc.cluster.local
+</span></span></code></pre></div><p>All this sounds pretty good.</p>
+<h3 id="testing-the-setup">Testing the setup</h3>
+<p>To demonstrate the whole thing, let’s connect to one of the manager’s pod and call the service on port <em>5701</em>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>k -n manager exec -ti manager-7948dffbdd-p44xx -c manager sh
+</span></span><span style="display:flex;"><span>telnet manager.manager <span style="color:#ae81ff">5701</span>
+</span></span></code></pre></div><p>You should get the following answer after pushing the enter key some times:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>Connected to manager.manager
+</span></span><span style="display:flex;"><span>Connection closed by foreign host
+</span></span></code></pre></div><p>The server we are using is in fact an HTTPS web server, expecting a TLS handshake… but whatever, we just want to connect to a TCP port here. So, the connection is working fine.</p>
+<p>Repeat this command multiple times.</p>
+<p>Let’s look at the logs from the Istio-Proxy sidecars, using the K8s log tailer <a href="https://github.com/wercker/stern">Stern</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>stern -n manager manager -c istio-proxy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>manager-7948dffbdd-p44xx istio-proxy <span style="color:#f92672">[</span>2020-07-23T14:26:27.081Z<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;- - -&#34;</span> <span style="color:#ae81ff">0</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#ae81ff">6</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">506</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;10.12.0.12:5701&#34;</span> outbound|5701<span style="color:#f92672">||</span>manager.manager.svc.cluster.local 10.12.0.12:51100 10.0.23.154:5701 10.12.0.12:47316 - -  
+</span></span><span style="display:flex;"><span>manager-7948dffbdd-p44xx istio-proxy <span style="color:#f92672">[</span>2020-07-23T14:26:27.081Z<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;- - -&#34;</span> <span style="color:#ae81ff">0</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#ae81ff">6</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">506</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;127.0.0.1:5701&#34;</span> inbound|5701|tcp-hazelcast|manager.manager.svc.cluster.local 127.0.0.1:59430 10.12.0.12:5701 10.12.0.12:51100 outbound_.5701_._.manager.manager.svc.cluster.local -
+</span></span><span style="display:flex;"><span>manager-7948dffbdd-p44xx istio-proxy <span style="color:#f92672">[</span>2020-07-23T14:26:08.632Z<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;- - -&#34;</span> <span style="color:#ae81ff">0</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#ae81ff">6</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">521</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;10.12.1.6:5701&#34;</span> outbound|5701<span style="color:#f92672">||</span>manager.manager.svc.cluster.local 10.12.0.12:49150 10.0.23.154:5701 10.12.0.12:47258 - -  
+</span></span><span style="display:flex;"><span>manager-7948dffbdd-sh7rx istio-proxy <span style="color:#f92672">[</span>2020-07-23T14:26:08.634Z<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;- - -&#34;</span> <span style="color:#ae81ff">0</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#ae81ff">6</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">519</span> - <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#e6db74">&#34;127.0.0.1:5701&#34;</span> inbound|5701|tcp-hazelcast|manager.manager.svc.cluster.local 127.0.0.1:57844 10.12.1.6:5701 10.12.0.12:49150 outbound_.5701_._.manager.manager.svc.cluster.local -
+</span></span></code></pre></div><p>I grouped the requests by two, and I have two different pairs:</p>
+<ol>
+<li>an <code>outbound</code> connection to <code>manager.manager.svc</code></li>
+<li>an inbound connection to ourselves</li>
+<li>an <code>outbound</code> connection to <code>manager.manager.svc</code></li>
+<li>an inbound connection on the second manager’s Pod (<code>10.12.2.8:5701</code>)</li>
+</ol>
+<p>Of course, Istio is using the round-robin load-balancing algo by default, so it totally explain what is going on here. Each consecutive request go to a different pod.</p>
+<p>Here, blue link is <code>outbound</code> while pink is <code>inbound</code></p>
+<p><img src="images/3.png#layoutTextWidth" alt="image"></p>
+<p>OK, this is not really what’s going on ! I tricked you !!</p>
+<p>Istio (Envoy) does NOT send traffic to the Kubernetes Service. Services are used by Pilot (Istiod) to build the mesh topology, then the informations is sent to each Istio-proxy, which then send traffic to the Pods. It finally look more like that:</p>
+<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p>But that’s not how Hazelcast server works either !</p>
+<h3 id="hazelcast-cluster-communication">Hazelcast cluster communication</h3>
+<p>The truth is, Hazelcast does no use the service name for its communications.</p>
+<p>In fact, the <a href="https://github.com/hazelcast/hazelcast-kubernetes">Hazelcast Kubernetes plugin</a> leverage the Kubernetes API (or a Headless service) to learn about all the pods play in the Hazelcast cluster. It’s unclear to me if it’s then using the Pod’s FQDN or it’s IP. In fact it does not matter to us.</p>
+<p>As with every application using a “smart” client, like Kafka, each instance needs to talk directly to each of the other instances that are part of the cluster.</p>
+<p>So, what’s happening if we try to call the second manager’s Pod using it’s IP ?</p>
+<p>Client pod:<br>
+<code>manager-7948dffbdd-p44xx istio-proxy [2020-07-23T14:39:12.587Z] &quot;- - -&quot; 0 - &quot;-&quot; &quot;-&quot; 6 0 2108 - &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;10.12.2.8:5701&quot; PassthroughCluster 10.12.0.11:51428 10.12.2.8:5701 10.12.0.11:51426 - -</code></p>
+<p>Server pod:<br>
+<code>manager-7948dffbdd-sh7rx istio-proxy [2020-07-23T14:39:13.590Z] &quot;- - -&quot; 0 - &quot;-&quot; &quot;-&quot; 6 0 1113 - &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;127.0.0.1:5701&quot; inbound|5701|tcp-hazelcast|manager.manager.svc.cluster.local 127.0.0.1:59986 10.12.2.8:5701 10.12.0.11:51428 - -</code></p>
+<ol>
+<li>the outbound connection is using the Passthrough cluster as the destination IP (<code>10.12.2.8</code>) is not known inside the mesh</li>
+<li>the upstream connection uses the <code>inbound</code> cluster as before</li>
+</ol>
+<p>Here’s a schema of this situation. In red, the Hazelcast DB nodes (the red cylinder) calls the API (the red-dot arrow) to get all the pods that are part of the cluster. Once done, the first pod calls the IP of the next pod (blue line).</p>
+<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p>This is not perfect, but at least, it’s working</p>
+<h3 id="things-can-go-bad">Things can go bad</h3>
+<p>Later on I was called as something strange was going on in the cluster.</p>
+<p>At some point, when the manager application tried to connect to the Hazelcast port, the connection was routed to the <code>idle</code> pod in the manager namespace.<br>
+How possible ? This pod even don’t expose the port <em>5701</em> !</p>
+<p>Here’s an overview:</p>
+<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p>Nothing changed in the <code>manager</code> Namespace, but looking at the services inside the <code>app</code> namespace, I saw an <code>ExternalName</code> service was later added:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>k get svc  -n app
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME      TYPE           CLUSTER-IP    EXTERNAL-IP                      PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>             AGE  
+</span></span><span style="display:flex;"><span>app       ClusterIP      10.0.18.143   &lt;none&gt;                           8080/TCP,5701/TCP   18h  
+</span></span><span style="display:flex;"><span>app-ext   ExternalName   &lt;none&gt;        idle.manager.svc.cluster.local   8080/TCP,5701/TCP   117s
+</span></span></code></pre></div><p>An <code>ExternalName</code> service type is one that, instead of defining an internal load-balancer that holds the list of the active target pods, is only a <em>CNAME</em> to another service.</p>
+<p>Here’s its definition:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app.dmp/name</span>: <span style="color:#ae81ff">app  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">app-ext  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">app  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http-app  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">8080</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">8080</span>  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">tcp-hazelcast  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">externalName</span>: <span style="color:#ae81ff">idle.manager.svc.cluster.local  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sessionAffinity</span>: <span style="color:#ae81ff">None  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">ExternalName</span>
+</span></span></code></pre></div><p>This specific definition makes the name <code>app-ext.app.svc.cluster.local</code> resolve to <code>idle.manager.svc.cluster.local</code> (well, CNAME, then resolve to the IP of the service, <code>10.0.23.221</code>)</p>
+<p>Let’s look again at our Listeners on the <code>manager</code> pod:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc listeners manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ADDRESS         PORT     TYPE  
+</span></span><span style="display:flex;"><span>10.12.0.12      <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>10.0.18.143     <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>10.0.23.154     <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>0.0.0.0         <span style="color:#ae81ff">5701</span>     TCP
+</span></span></code></pre></div><p>we now have a new <code>0.0.0.0</code> entry !<br>
+Let’s look at the config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc listeners manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span> --address 0.0.0.0 -o json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;0.0.0.0_5701&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;socketAddress&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;0.0.0.0&#34;</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;portValue&#34;</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;filterChains&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;filterChainMatch&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;prefixRanges&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;10.12.0.11&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;prefixLen&#34;</span>: <span style="color:#ae81ff">32</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;filters&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;envoy.filters.network.wasm&#34;</span>,  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;envoy.tcp_proxy&#34;</span>,  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;typedConfig&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;[@type](http://twitter.com/type)&#34;</span>: <span style="color:#e6db74">&#34;type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;statPrefix&#34;</span>: <span style="color:#e6db74">&#34;BlackHoleCluster&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;cluster&#34;</span>: <span style="color:#e6db74">&#34;BlackHoleCluster&#34;</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;filters&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;envoy.filters.network.wasm&#34;</span>,  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;envoy.tcp_proxy&#34;</span>,  
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;typedConfig&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;[@type](http://twitter.com/type)&#34;</span>: <span style="color:#e6db74">&#34;type.googleapis.com/envoy.config.filter.network.tcp_proxy.v2.TcpProxy&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;statPrefix&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||app-ext.app.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;cluster&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||app-ext.app.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;accessLog&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>...  
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;deprecatedV1&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;bindToPort&#34;</span>: false  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;trafficDirection&#34;</span>: <span style="color:#e6db74">&#34;OUTBOUND&#34;</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Suddenly it’s a little more complicated.</p>
+<ul>
+<li>first, we accept any destination IP for port <em>5701</em></li>
+<li>then we enter the <em><em>filterChains</em></em>_
+<ul>
+<li>if the real destinations is ourselves (the pod IP, <code>10.12.0.11</code>), drop the request (send it to the <em>B_lackHoleCluster_</em>)</li>
+<li>else use cluster <code>outbound|5701||app-ext.app.svc.cluster.local </code>to find the forwarding address</li>
+</ul>
+</li>
+</ul>
+<p>Let’s check this cluster:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc clusters manager-7948dffbdd-p44xx.manager  --fqdn app-ext.app.svc.cluster.local --port <span style="color:#ae81ff">5701</span> -o json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||app-ext.app.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;STRICT_DNS&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;connectTimeout&#34;</span>: <span style="color:#e6db74">&#34;1s&#34;</span>,  
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;loadAssignment&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;clusterName&#34;</span>: <span style="color:#e6db74">&#34;outbound|5701||app-ext.app.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;endpoints&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;locality&#34;</span>: <span style="color:#f92672">{}</span>,  
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;lbEndpoints&#34;</span>: <span style="color:#f92672">[</span>  
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;endpoint&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                                <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                                    <span style="color:#e6db74">&#34;socketAddress&#34;</span>: <span style="color:#f92672">{</span>  
+</span></span><span style="display:flex;"><span>                                        <span style="color:#e6db74">&#34;address&#34;</span>: <span style="color:#e6db74">&#34;idle.manager.svc.cluster.local&#34;</span>,  
+</span></span><span style="display:flex;"><span>                                        <span style="color:#e6db74">&#34;portValue&#34;</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">}</span>  
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">}</span>,
+</span></span></code></pre></div><p>Once again, this cluster is pretty simple, it just forward the traffic to the server <code>idle.manager.svc.cluster.local</code> using the DNS to get the real IP.</p>
+<p>Let’s do a telnet again to the second manager’s Pod and check the logs:
+<code>manager-7948dffbdd-p44xx istio-proxy [2020-07-23T14:47:24.040Z] &quot;- - -&quot; 0 UF,URX &quot;-&quot; &quot;-&quot; 0 0 1000 - &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;10.0.23.221:5701&quot; outbound|5701||app-ext.app.svc.cluster.local - 10.12.1.6:5701 10.12.0.12:52852 - -</code></p>
+<ol>
+<li>request is in error: <code>0 UF,URX</code><br>
+From the <a href="https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#configuration">Envoy doc</a>, UF is <em>Upstream connection failure</em> and URX is <a href="https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/network/tcp_proxy/v3/tcp_proxy.proto#envoy-v3-api-field-extensions-filters-network-tcp-proxy-v3-tcpproxy-max-connect-attempts"><em>maximum connect attempts (TCP)</em></a> <em>was reached</em>.<br>
+This is perfectly normal as the <code>idle</code> service does not expose the port <em>5701</em> (nor the Pod binds it)</li>
+<li>request was forwarded to the <code>outbound|5701||app-ext.app.svc.cluster.local</code> cluster
+<img src="images/7.png#layoutTextWidth" alt="image"></li>
+</ol>
+<p>Wait, <em>WHAAAAT</em> ?<br>
+A <code>service</code> created in another Namespace just broke our Hazelcast cluster ?</p>
+<p>The explanation is easy here… before this service was created, the second Pod’s IP was unknown and Envoy was using the <code>Passthrough</code> cluster. Now, the IP is still unknown but is matched by the catchall <code>0.0.0.0:5710</code> listener.</p>
+<p>The explanation is easy here… before this service was created, the real Pod’s IP was <em>unknown</em> in the mesh and Envoy was using the <code>Passthrough</code> cluster to send the request directly to it.<br>
+Now, the IP is still <em>unknown</em> but is matched by the catchall <code>0.0.0.0:5710 </code>Listener and forwarded to a known Cluster, <code>outbound|5701||app-ext.app.svc.cluster.local</code>, which is pointing to the <code>idle</code> Service.</p>
+<h3 id="solving-the-issue">Solving the issue</h3>
+<p>What can we do to recover our Hazelcast cluster ?</p>
+<h4 id="no-5701-port">no 5701 port</h4>
+<p>One of the solutions would be to <em>NOT</em> expose the port <em>5701</em> in the <code>ExternalName</code> service. Then, no <code>0.0.0.0:5701 </code>Listener, and traffic will flow through the <code>Passthrough</code> Cluster as before. Not ideal to track our Mesh traffic, but working fine.</p>
+<h4 id="no-externalname">no ExternalName</h4>
+<p>Another solution would be to not use <code>ExternalName</code> at all…</p>
+<p>The <code>Externalname</code> was in fact a new service that was added in certain circumstances where we want all the calls going to the <code>app</code> service to be forwarded to the <code>idle.manager</code> service.<br>
+Beside the fact that it broke our Hazelcast cluster, it also means that we had to delete the <code>ClusterIP</code> service then re-create it as an <code>ExternalName</code> type. Both of these actions forced Istiod (Pilot) to re-build the complete mesh config and update all the proxies in the mesh, including a change in the Listeners that caused a drain of all opened connexions, twice !<br>
+This is one of the worst pattern you can have when using a service mesh.</p>
+<p>Instead of playing with <code>Service</code> resource, one possible pattern would be to add a <code>VirtualService</code>for the <code>app</code> application that will send traffic to the <code>idle.manager</code>service only when we need. This would not create or delete any listener and will only update the route:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1beta1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">VirtualService  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">app-idle  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hosts</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">app.app.svc.cluster.local  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">http</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">to-idle  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">route</span>:  
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">destination</span>:  
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">host</span>: <span style="color:#ae81ff">idle.manager.svc.cluster.local  </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">port</span>:  
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div><p>This is saying that all traffic for Service <code>app.app.svc.cluster.local</code> must be send to <code>idle.manager.svc.cluster.local:8080</code>.</p>
+<p>When we want the traffic to effectively go to the <code>app</code> application, just update the <code>VirtualService</code> and set the <code>destination</code> to <code>app.app.svc.cluster.local</code>, or simply delete it.</p>
+<h4 id="sidecars">Sidecars</h4>
+<p>With recent Istio, we can also leverage the use of <code>Sidecar</code> resource to limit what the <code>manager</code> Pod can see inside the mesh.<br>
+Specifically in this case, we could use an annotation on the <code>ExternalName</code> service to only make it visible in the <code>app</code> namespace:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app/name</span>: <span style="color:#ae81ff">app  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">networking.istio.io/exportTo</span>: <span style="color:#e6db74">&#34;.&#34;</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">app-ext  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">app  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http-app  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">8080</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">8080</span>  
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">tcp-hazelcast  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">5701</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">externalName</span>: <span style="color:#ae81ff">idle.manager.svc.cluster.local  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sessionAffinity</span>: <span style="color:#ae81ff">None  </span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">ExternalName</span>
+</span></span></code></pre></div><p>By adding the annotation <code>networking.istio.io/exportTo: “.”</code> the service is not seen by the managers Pods. No more <code>0.0.0.0:5701</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>istioctl pc listeners manager-7948dffbdd-p44xx.manager --port <span style="color:#ae81ff">5701</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ADDRESS         PORT     TYPE  
+</span></span><span style="display:flex;"><span>10.0.18.143     <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>10.12.0.12      <span style="color:#ae81ff">5701</span>     TCP  
+</span></span><span style="display:flex;"><span>10.0.25.229     <span style="color:#ae81ff">5701</span>     TCP
+</span></span></code></pre></div><h4 id="different-tcp-ports">different TCP ports</h4>
+<p>If we’re willing to update our application, there’s a few other solutions we could use as well.</p>
+<p>We could use different ports for different TCP services. This is the hardest to put in place when you’re already dealing with complex applications like databases, but it’s been the only option available in Istio for a long time.</p>
+<p>We could also update our applications to use TLS and populate the Server Name Indication (SNI). Envoy/Istio can use SNI to route traffic for TCP services on the same port because Istio treats the SNI for routing TLS/TCP traffic just like it treats the Host header for HTTP traffic.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>First I want to note that no <em>Hazelcast</em> cluster were damaged during this demo 😄</p>
+<p>The problem here is not linked to Hazelcast at all and can happen with any set of services using the same TCP ports.</p>
+<p>Istio and Envoy have very limited way to play with TCP or unknown protocols. When the only thing you have to inspect is the IP and the port, there’s not much to do.</p>
+<p>Always keep in mind the best practices to configure your clusters:</p>
+<ul>
+<li>try to avoid using the same port number for different TCP services where you can</li>
+<li>always prefix the protocol inside port names (<code>tcp-hazelcast</code>, <code>http-frontend</code>, <code>grpc-backend</code>)  —  see <a href="https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/">protocol selection</a> docs</li>
+<li>add <code>Sidecar</code> resources as early as possible to restrict the sprawl of configuration, and set the default <code>exportTo</code> to namespace local in your Istio installation</li>
+<li>configure your applications to communicate by names (FQDN), not IPs</li>
+<li>always configure FQDN (including <code>svc.cluster.local</code>) in Istio Resources</li>
+</ul>
+<p>Note: This blog post is a re-post of the original article I wrote for <a href="https://www.tetrate.io/blog/understanding-istio-and-tcp-services/"><em>Tetrate.io blog</em></a>.</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/devops/">devops</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/servicemesh/">servicemesh</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        2700 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2020-08-06 19:41
+        
+
+         
+          
+            
+              (Last updated: 2023-12-01 14:31)
+            
+          
+        
+      </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="1.05" y1="12" x2="7" y2="12"></line>
+            <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+          </svg>
+
+          <a href="1ab993c2d9f5b7b58edda6893280e093b620e8db" target="_blank" rel="noopener">1ab993c</a>
+          @ 2023-12-01
+        </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Understanding%20Istio%20and%20TCP%20services&amp;caption=Understanding%20Istio%20and%20TCP%20services&amp;canonicalUrl=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Understanding%20Istio%20and%20TCP%20services&amp;body=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f&amp;media=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f;description=Understanding%20Istio%20and%20TCP%20services" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f&amp;title=Understanding%20Istio%20and%20TCP%20services&amp;summary=Understanding%20Istio%20and%20TCP%20services&amp;source=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f&amp;resubmit=true&amp;title=Understanding%20Istio%20and%20TCP%20services" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f;title=Understanding%20Istio%20and%20TCP%20services" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Understanding%20Istio%20and%20TCP%20services%20https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f&amp;t=Understanding%20Istio%20and%20TCP%20services" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Understanding%20Istio%20and%20TCP%20services&amp;url=https%3a%2f%2fpiratemakers.ca%2fposts%2f2020%2f08%2funderstanding-istio-and-tcp-services%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://piratemakers.ca/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Prometheus-Operator and Istio Telemetry V2</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="https://piratemakers.ca/posts/2020/04/laser-post-processor-for-fusion-360-that-works-on-shapeoko/">
+                    <span class="button__text">Laser Post-Processor for Fusion 360 that works on Shapeoko</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+      
+        <div id="comments">
+          <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "piratemakers-ca" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2023</span>
+            
+            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            <span>Pirate Makers™</span>
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.0931a358499291afca6f741478e9fc9fa973a9fbd7aeb3390f3b10463966dc8195daf98a0e33685a1fbfb9d7578631c3f31fc8e558eaf6e2c30c4c3e14df4931.js" integrity="sha512-CTGjWEmSka/Kb3QUeOn8n6lzqfvXrrM5DzsQRjlm3IGV2vmKDjNoWh&#43;/uddXhjHD8x/I5Vjq9uLDDEw&#43;FN9JMQ=="></script>
+
+
+
+
+    </body>
+</html>
