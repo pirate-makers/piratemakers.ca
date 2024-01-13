@@ -14,8 +14,7 @@
       <link>https://piratemakers.ca/posts/2020/04/laser-post-processor-for-fusion-360-that-works-on-shapeoko/</link>
       <pubDate>Sat, 11 Apr 2020 18:29:43 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2020/04/laser-post-processor-for-fusion-360-that-works-on-shapeoko/</guid>
-      <description>bought a 10W+ Endurance Laser last year. This is an addon to mount on my Shapeoko3 CNC. It&amp;rsquo;s really easy to setup as you only have to attach it on your spindle and connect it to the PWM port of the Shapeoko controler. Don&amp;rsquo;t forget to unplug your spindle :)
-I mostly use Autodesk Fusion 360 when I create my CNC projects, and sadly, I found no post-processor that could create Gcode files compatible with the Shapeoko 3 (GRBL).</description>
+      <description>bought a 10W+ Endurance Laser last year. This is an addon to mount on my Shapeoko3 CNC. It&amp;rsquo;s really easy to setup as you only have to attach it on your spindle and connect it to the PWM port of the Shapeoko controler. Don&amp;rsquo;t forget to unplug your spindle :)&#xA;I mostly use Autodesk Fusion 360 when I create my CNC projects, and sadly, I found no post-processor that could create Gcode files compatible with the Shapeoko 3 (GRBL).</description>
     </item>
   </channel>
 </rss>

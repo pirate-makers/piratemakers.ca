@@ -14,9 +14,7 @@
       <link>https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/</link>
       <pubDate>Tue, 29 Mar 2022 16:54:21 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/</guid>
-      <description>How to be productive fast with Kubernetes
-Updates:
-20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes.</description>
+      <description>How to be productive fast with Kubernetes&#xA;Updates:&#xA;20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes.</description>
     </item>
   </channel>
 </rss>

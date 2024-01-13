@@ -14,20 +14,14 @@
       <link>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/</link>
       <pubDate>Thu, 03 Oct 2019 16:34:43 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/</guid>
-      <description>The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.
-In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
-EDIT also check my previous article on the Banzaicloud Kafka Operator
-EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers.</description>
+      <description>The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.&#xA;In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.&#xA;EDIT also check my previous article on the Banzaicloud Kafka Operator&#xA;EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers.</description>
     </item>
     <item>
       <title>BanzaiCloud Kafka Operator tour</title>
       <link>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/</link>
       <pubDate>Tue, 01 Oct 2019 19:29:00 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2019/10/banzaicloud-kafka-operator-tour/</guid>
-      <description>Welcome to the Kafka Operator (Magical) Mystery tour ! I’m sure the Beatles would have rebranded the song if they were still here to see how BanzaiCloud team finally rocked the Kafka Operator world !
-They also did a good job of branding it, so I won’t dive into “why this another Kafka Operator is better than the others”. I can assure it is !
-Just check :
-https://banzaicloud.com/products/kafka-operator/ https://banzaicloud.</description>
+      <description>Welcome to the Kafka Operator (Magical) Mystery tour ! I’m sure the Beatles would have rebranded the song if they were still here to see how BanzaiCloud team finally rocked the Kafka Operator world !&#xA;They also did a good job of branding it, so I won’t dive into “why this another Kafka Operator is better than the others”. I can assure it is !&#xA;Just check :&#xA;https://banzaicloud.com/products/kafka-operator/ https://banzaicloud.</description>
     </item>
   </channel>
 </rss>

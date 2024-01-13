@@ -14,19 +14,14 @@
       <link>https://piratemakers.ca/posts/2022/06/playing-with-dasel/</link>
       <pubDate>Thu, 30 Jun 2022 15:19:54 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2022/06/playing-with-dasel/</guid>
-      <description>Lately I worked on deprecated and deleted APIS from Kubernetes cluster for migration from version 1.20 and 1.21 to 1.22 (or 1.23).
-To do so, I used the famous KubePug tool, specifically the Krew plugin.
-As I have a bunch of clusters I used some dirty for loops , but here’s the global KubePug usage:
-kubectl deprecations --k8s-version=v1.23.0 --format json --context ${my_cluster_name} | jq &amp;#39;.&amp;#39; &amp;gt; kubepug_output.json The output file, PrettyPrinted, look something like:</description>
+      <description>Lately I worked on deprecated and deleted APIS from Kubernetes cluster for migration from version 1.20 and 1.21 to 1.22 (or 1.23).&#xA;To do so, I used the famous KubePug tool, specifically the Krew plugin.&#xA;As I have a bunch of clusters I used some dirty for loops , but here’s the global KubePug usage:&#xA;kubectl deprecations --k8s-version=v1.23.0 --format json --context ${my_cluster_name} | jq &amp;#39;.&amp;#39; &amp;gt; kubepug_output.json The output file, PrettyPrinted, look something like:</description>
     </item>
     <item>
       <title>Using Jsonnet does not have to be complex</title>
       <link>https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/</link>
       <pubDate>Tue, 04 Jun 2019 19:25:40 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/</guid>
-      <description>In this Post I’ll try to explain what I’ve set up to generate Kubernetes manifests for all my Micro-Services using Jsonnet.
-Kubernetes / Jsonnet The obvious gain you have when using Jsonnet is that you template JSON files instead of YAML.
-While YAML is easier to read by humans, it is far less computational friendly. There’s a must read about that : Lee Briggs post about “Why the fuck are we templating YAML”</description>
+      <description>In this Post I’ll try to explain what I’ve set up to generate Kubernetes manifests for all my Micro-Services using Jsonnet.&#xA;Kubernetes / Jsonnet The obvious gain you have when using Jsonnet is that you template JSON files instead of YAML.&#xA;While YAML is easier to read by humans, it is far less computational friendly. There’s a must read about that : Lee Briggs post about “Why the fuck are we templating YAML”</description>
     </item>
   </channel>
 </rss>

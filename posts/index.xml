@@ -6,8 +6,347 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Tue, 29 Nov 2022 14:31:56 +0000</lastBuildDate>
+        <lastBuildDate>Wed, 10 Jan 2024 14:31:56 +0000</lastBuildDate>
         <atom:link href="https://piratemakers.ca/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>ArgoCD Appset-of-Appset Pattern</title>
+            <link>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</link>
+            <pubDate>Wed, 10 Jan 2024 14:31:56 +0000</pubDate>
+            
+            <guid>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</guid>
+            <description>We all know the App-of-Apps pattern, where one repo contains many other ArgoCD Applications.
+While testing how to add my Kubernetes Cluster&amp;rsquo;s Addons using ArgoCD, which represents all the apps mandatory in all clustets, like crossplane, prometheus (victoriaMetrics), exporters&amp;hellip;, I came to test a &amp;ldquo;new&amp;rdquo; pattern: AppSet-Of-AppSet.
+This is a quick post going over my experiements. It is not a howto, or a suggestion to go this route, it&amp;rsquo;s just a test.</description>
+            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="Docker Fail"></p>
+<p>We all know the App-of-Apps pattern, where one repo contains many other <code>ArgoCD Applications</code>.</p>
+<p>While testing how to add my Kubernetes Cluster&rsquo;s Addons using ArgoCD, which represents all the apps mandatory in all clustets, like crossplane, prometheus (victoriaMetrics), exporters&hellip;, I came to test a &ldquo;new&rdquo; pattern: <code>AppSet-Of-AppSet</code>.</p>
+<p>This is a quick post going over my experiements. It is <strong>not</strong> a howto, or a suggestion to go this route, it&rsquo;s just a test.</p>
+<h2 id="directory-structure">Directory Structure</h2>
+<pre tabindex="0"><code>├── deployments
+│   ├── argocd
+│   │   └── qa.yaml
+│   └── k8s
+│       ├── addons
+│       │   └── qa
+│       │       └── qa-us-central-cluster
+│       │           └── crossplane
+│       │               └── kustomization.yaml
+│       ├── base
+│       │   ├── configmaps
+│       │   │   ├── cm.yaml
+│       │   │   └── kustomization.yaml
+│       │   └── crossplane
+│       │       ├── kustomization.yaml
+│       │       ├── namespaces.yaml
+│       │       ├── providers.yaml
+│       │       └── values.yaml
+│       ├── config.yaml
+│       └── overlays
+│           └── qa
+│               └── qa-us-central-cluster
+│                   └── crossplane.yaml
+</code></pre><h2 id="original-appset">Original AppSet</h2>
+<p>This is the AppSet scanning all my Git repos (Gitlab in this example) and generating Apps. This is classic, using a <code>Matrix</code> to create one app per cluster. It is not linked to deploying my Cluster Addons, it could also deploy any other apps, fron any repo.</p>
+<p>In this case it is named <code>devops</code> as it will scann all the repos under <code>/devops</code> subgroup of my Gitlab Server. It will only track the <code>deployment</code> branch and will only pick repod with a <code>deployments/argocd/qa.yaml</code> file.<br>
+If will then matrix the selected repos with two <code>git</code> generators:</p>
+<ul>
+<li>one <code>directory</code> looking for <code>deployments/k8s/overlays/qa/*</code> where <code>*</code> will be the cluster to target by the Application (<code>qa-us-central-cluster</code> from the tree above).</li>
+<li>one <code>deployments/k8s/config.yaml</code> file, global to the repo, with some MANDATORY values in it. It is mandatory as the AppsetController WILL NOT pick the repo if the file does not contains certain valued needed by the template.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">argoproj.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ApplicationSet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">devops</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">generators</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">generators</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">scmProvider</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">cloneProtocol</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">branchMatch</span>: <span style="color:#ae81ff">^deployment$</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">pathsExist</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">deployments/argocd/qa.yaml</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">gitlab</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allBranches</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">api</span>: <span style="color:#ae81ff">https://gitlab.mycompany.net/</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">group</span>: <span style="color:#ae81ff">devops</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">includeSubgroups</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">tokenRef</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">token</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">gitlab-token</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">generators</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">git</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">directories</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">deployments/k8s/overlays/qa/*</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">pathParamPrefix</span>: <span style="color:#ae81ff">repo</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">repoURL</span>: <span style="color:#e6db74">&#39;{{ .url }}&#39;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">requeueAfterSeconds</span>: <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">revision</span>: <span style="color:#e6db74">&#39;{{ .branch }}&#39;</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">git</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">files</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">deployments/k8s/config.yaml</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">pathParamPrefix</span>: <span style="color:#ae81ff">config</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">repoURL</span>: <span style="color:#e6db74">&#39;{{ .url }}&#39;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">requeueAfterSeconds</span>: <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">revision</span>: <span style="color:#e6db74">&#39;{{ .branch }}&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">goTemplate</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">preservedFields</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">environment</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">syncPolicy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">preserveResourcesOnDeletion</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;{{ $name := (printf &#34;%s-%s-%s&#34; .organization .repository .repo.path.basename)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }}{{ $name | normalize }}&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">destination</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;{{ .repo.path.basename }}&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">namespace</span>: <span style="color:#e6db74">&#39;{{ .repository }}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">info</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Owner</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{.metadata.owner}}&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Team</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{.metadata.team}}&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Environment</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#ae81ff">qa</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Description</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{.metadata.description}}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">project</span>: <span style="color:#e6db74">&#39;{{.metadata.team}}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">source</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">path</span>: <span style="color:#ae81ff">deployments/k8s/overlays/qa/{{ .repo.path.basename }}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">repoURL</span>: <span style="color:#e6db74">&#39;{{ .url }}&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">targetRevision</span>: <span style="color:#e6db74">&#39;{{ .branch }}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">syncPolicy</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">automated</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">allowEmpty</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">prune</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">selfHeal</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">managedNamespaceMetadata</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">managedBy</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">origin</span>: <span style="color:#ae81ff">devops_cicd_argocd</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">syncOptions</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">CreateNamespace=true</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">ServerSideApply=true</span>
+</span></span></code></pre></div><p>The <code>deployments/k8s/config.yaml</code> must contain something like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">owner</span>: <span style="color:#e6db74">&#34;infra&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">team</span>: <span style="color:#e6db74">&#34;infrastructure&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;This is part of the GKE Cluster Addons&#34;</span>
+</span></span></code></pre></div><p>And the <code>team</code> value must reflect an existing <code>App Project</code> that already exist in ArgoCD. In my case:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">argoproj.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">AppProject</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">meta.helm.sh/release-name</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">meta.helm.sh/release-namespace</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">finalizers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">resources-finalizer.argocd.argoproj.io</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">infrastructure</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">clusterResourceWhitelist</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">group</span>: <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kind</span>: <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">description</span>: <span style="color:#ae81ff">projects for Infrastructure Team</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">destinations</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">namespace</span>: <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">server</span>: <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">roles</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Project Admin privileges to infrastructure project</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">groups</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">infrastructure@company.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">project-admin-infrastructure</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">policies</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, applicationsets, get, infrastructure/*,</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">allow</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, applications, get, infrastructure/*, allow</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, applications, sync, infrastructure/*,</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">allow</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, clusters, get, infrastructure/*, allow</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, repositories, get, infrastructure/*, allow</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, projects, get, infrastructure/*, allow</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">p, proj:infrastructure:project-admin, logs, get, infrastructure/*, allow</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sourceRepos</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#e6db74">&#39;*&#39;</span>
+</span></span></code></pre></div><p>Once deployed, a new <code>Application</code> will be created, and will deploy the content of the <code>deployments/overlays/qa/qa-us-central-cluster</code>, in our case, the <code>crossplane.yaml</code> file.</p>
+<h2 id="the-appset-of-appset">The Appset of Appset</h2>
+<p>The <code>crossplane.yaml</code> file contains another <code>ApplicationSet</code> that will be deployed, and generate new apps for each of the addons.</p>
+<p>This Appset contains static values, because it is tied to this specific repo. This sounds a little dumb, but we&rsquo;ll discuss that at the end :)</p>
+<p>So this time the cluster is a static list that I can manage for my addons. For example, this AppSet will only target the current repo, so we &ldquo;hardcode&rdquo; the URL&hellip;</p>
+<p>Also, because this AppSet should only be deployed in the ArgoCD clusters, and not all of the clusters of your platform, we also grab the cluster names from the file&rsquo;s path.<br>
+So the Git Generator is looking for <code>deployments/k8s/addons/qa/*/crossplane</code> so we explicitelly discover two folders:</p>
+<ul>
+<li>the name of the cluster</li>
+<li>the name of the Addon (crossplane)</li>
+</ul>
+<p>The template also set a <code>ignoreDifferences</code> which is specific to Crossplane (as of today but PRed a change that was merged in the Helm Chart). This is the main reason I went to test this Appset-of-Appset pattern in the first place: Have each addons be configured with different values.</p>
+<p>In theory, this Appset should only be used for Crossplane deployment. Let&rsquo;s say we want to deploy <code>VictoriaMetrics</code>, then we would have another Appset <code>victoriametrics.yaml</code> with hardcoded values for it. The Appset here is only used to auto-generate apps per cluster.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">argoproj.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ApplicationSet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">addon-crossplane</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">generators</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">generators</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">list</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">elements</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">url</span>: <span style="color:#ae81ff">https://gitlab.mycompany.net/devops/argocd-infrastructure-addons.git</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">branch</span>: <span style="color:#ae81ff">deployment</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">env</span>: <span style="color:#ae81ff">qa</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">generators</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">git</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">directories</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">deployments/k8s/addons/qa/*/crossplane</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">pathParamPrefix</span>: <span style="color:#ae81ff">repo</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">repoURL</span>: <span style="color:#e6db74">&#39;{{ .url }}&#39;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">requeueAfterSeconds</span>: <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">revision</span>: <span style="color:#e6db74">&#39;{{ .branch }}&#39;</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">git</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">files</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">deployments/k8s/config.yaml</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">pathParamPrefix</span>: <span style="color:#ae81ff">config</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">repoURL</span>: <span style="color:#e6db74">&#39;{{ .url }}&#39;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">requeueAfterSeconds</span>: <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">revision</span>: <span style="color:#e6db74">&#39;{{ .branch }}&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">goTemplate</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">preservedFields</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">environment</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">syncPolicy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">preserveResourcesOnDeletion</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;{{ $name := (printf &#34;addons-%s-%s-%s&#34; .repo.path.basename .env (index .repo.path.segments 4))}}{{ $name | normalize }}&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">destination</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;{{ index .repo.path.segments 4 }}&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">namespace</span>: <span style="color:#e6db74">&#39;{{ .repo.path.basename }}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ignoreDifferences</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">group</span>: <span style="color:#ae81ff">apps</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">jqPathExpressions</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">.spec.template.spec.containers[].env[].valueFrom.resourceFieldRef.divisor</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">.spec.template.spec.initContainers[].env[].valueFrom.resourceFieldRef.divisor</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">info</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Owner</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{.metadata.owner}}&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Team</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{.metadata.team}}&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Environment</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#ae81ff">qa</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Description</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{.metadata.description}}&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">val4</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{ index .repo.path.segments 4 }}&#39;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">val5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#39;{{ index .repo.path.segments 5 }}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">project</span>: <span style="color:#e6db74">&#39;{{.metadata.team}}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">source</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">path</span>: <span style="color:#ae81ff">deployments/k8s/addons/{{ .env }}/{{ index .repo.path.segments 4 }}/{{ .repo.path.basename }}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">repoURL</span>: <span style="color:#e6db74">&#39;{{ .url }}&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">targetRevision</span>: <span style="color:#e6db74">&#39;{{ .branch }}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">syncPolicy</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">automated</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">allowEmpty</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">prune</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">selfHeal</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">managedNamespaceMetadata</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">wk/managedBy</span>: <span style="color:#ae81ff">argocd</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">wk/origin</span>: <span style="color:#ae81ff">devops_cicd_argocd</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">syncOptions</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">CreateNamespace=true</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">ServerSideApply=true</span>
+</span></span></code></pre></div><h2 id="the-crossplane-kustomization">The Crossplane Kustomization</h2>
+<p>The previous AppSet will, in turn, create an application that will deploy the content of <code>deployments/k8s/addons/qa/qa-us-central-cluster/crossplane/kustomization.yaml</code>.<br>
+This file contains something like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kustomize.config.k8s.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Kustomization</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">../../../../base/crossplane</span>
+</span></span></code></pre></div><p>And just as a hint, here&rsquo;s how I inflates the Crossplane Helm chart:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># kustomization.yaml from https://medium.com/@tharukam/generate-kubernetes-manifests-with-helm-charts-using-kustomize-2f82ab5c5f11</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># https://kubectl.docs.kubernetes.io/references/kustomize/builtins/#_helmchartinflationgenerator_</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kustomize.config.k8s.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Kustomization</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">helmCharts</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># https://github.com/crossplane/crossplane/tree/master/cluster/charts/crossplane</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># TODO to have it working:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># - enable helm in the argocd-cm ConfigMap by adding to the data: `kustomize.buildOptions: --load-restrictor LoadRestrictionsNone --enable-helm`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># - enable some resources to be tracked by ArgoCD: &#34;Service&#34; and &#34;pkg.crossplane.io/*&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># - Update the projects application to not track some fields:</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># ignoreDifferences:</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#   - group: apps</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#     kind: Deployment</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#     jqPathExpressions:</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#       - .spec.template.spec.containers[].env[].valueFrom.resourceFieldRef.divisor</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#       - .spec.template.spec.initContainers[].env[].valueFrom.resourceFieldRef.divisor</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">crossplane</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">repo</span>: <span style="color:#ae81ff">https://charts.crossplane.io/stable</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">releaseName</span>: <span style="color:#ae81ff">crossplane</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">crossplane</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># version: 0.1.0 # use latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">valuesFile</span>: <span style="color:#ae81ff">values.yaml</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">includeCRDs</span>: <span style="color:#66d9ef">false</span> <span style="color:#75715e">#no CRD in the chart, they are created by crossplane Operator</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">namespaces.yaml</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">providers.yaml</span>
+</span></span></code></pre></div><p>Providers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">pkg.crossplane.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Provider</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">provider-gcp-storage</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">argocd.argoproj.io/sync-wave</span>: <span style="color:#e6db74">&#34;2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">package</span>: <span style="color:#ae81ff">xpkg.upbound.io/upbound/provider-gcp-storage:v0.41.0</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">pkg.crossplane.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Provider</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">provider-gcp-sql</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">argocd.argoproj.io/sync-wave</span>: <span style="color:#e6db74">&#34;2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">package</span>: <span style="color:#ae81ff">xpkg.upbound.io/upbound/provider-gcp-sql:v0.41.0</span>
+</span></span></code></pre></div><p>Namespace:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Namespace</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">argocd.argoproj.io/sync-options</span>: <span style="color:#ae81ff">ServerSideApply=true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">argocd.argoproj.io/sync-wave</span>: <span style="color:#e6db74">&#34;0&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubernetes.io/metadata.name</span>: <span style="color:#ae81ff">crossplane</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">crossplane</span>
+</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
+<p>Is it worth it ?</p>
+<p>Yes and No&hellip;</p>
+<p>Yes as a testing solution, and a way to further customize your Apps while still automating your setup.</p>
+<p>No, as it is overly complicated and needs hardcoded values.</p>
+<p>Of course, this is a specific case of Infrastructure buildup, not a pattern to give to Developers.<br>
+While I tested this solution to go around an issue with the specific case of the Crossplane Helm Chart needing to ignore some part of the generated yaml, there&rsquo;s a new feature in the (upcoming) ArgoCD 2.10: <a href="https://blog.argoproj.io/argo-cd-v2-10-release-candidate-f69ba7bf9e06#0504">ApplicationSet Template Patch</a> !<br>
+And if you read down to <code>Argo CD Server-Side Diff</code>, there&rsquo;s also a new diff algorythm that should prevent the issue with the Crossplane Helm Chart, without doing anything&hellip;</p>
+<p>My conclusion: AppSet-of-AppSet works and could be used in some strange situations.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Docker.io &amp; OpenSource Fail (and what to do instead)</title>

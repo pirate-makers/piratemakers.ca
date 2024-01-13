@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>argocd on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/argocd/</link>
+    <description>Recent content in argocd on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 10 Jan 2024 14:31:56 +0000</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/argocd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ArgoCD Appset-of-Appset Pattern</title>
+      <link>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</link>
+      <pubDate>Wed, 10 Jan 2024 14:31:56 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</guid>
+      <description>We all know the App-of-Apps pattern, where one repo contains many other ArgoCD Applications.&#xA;While testing how to add my Kubernetes Cluster&amp;rsquo;s Addons using ArgoCD, which represents all the apps mandatory in all clustets, like crossplane, prometheus (victoriaMetrics), exporters&amp;hellip;, I came to test a &amp;ldquo;new&amp;rdquo; pattern: AppSet-Of-AppSet.&#xA;This is a quick post going over my experiements. It is not a howto, or a suggestion to go this route, it&amp;rsquo;s just a test.</description>
+    </item>
+  </channel>
+</rss>

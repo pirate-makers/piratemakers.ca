@@ -14,10 +14,7 @@
       <link>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</link>
       <pubDate>Wed, 07 Nov 2018 17:38:31 +0000</pubDate>
       <guid>https://piratemakers.ca/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/</guid>
-      <description>Recap I already talked about Istio + Cert-Manager in part one and part two. In the meantime Istio went to release 1.0, lastly 1.0.3.
-While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.
-Let me remind you :
-Cert-Manager only create TLS Secrets, which are a kind of Secret that only contains a crt and key file.</description>
+      <description>Recap I already talked about Istio + Cert-Manager in part one and part two. In the meantime Istio went to release 1.0, lastly 1.0.3.&#xA;While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.&#xA;Let me remind you :&#xA;Cert-Manager only create TLS Secrets, which are a kind of Secret that only contains a crt and key file.</description>
     </item>
   </channel>
 </rss>
