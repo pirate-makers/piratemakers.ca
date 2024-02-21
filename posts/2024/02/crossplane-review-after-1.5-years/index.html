@@ -41,8 +41,8 @@
 
 <meta itemprop="name" content="Crossplane: review after 1.5 years">
 <meta itemprop="description" content="How is Crossplane handling one and a half year after my `Playing with Crossplane, for real` blog post ?"><meta itemprop="datePublished" content="2024-02-20T20:05:56+00:00" />
-<meta itemprop="dateModified" content="2024-02-21T14:56:38-05:00" />
-<meta itemprop="wordCount" content="3137"><meta itemprop="image" content="https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/images/1.png" />
+<meta itemprop="dateModified" content="2024-02-21T15:37:58-05:00" />
+<meta itemprop="wordCount" content="3143"><meta itemprop="image" content="https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/images/1.png" />
 <meta itemprop="keywords" content="devops,gitops,kubernetes,crossplane,cncf," />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/images/1.png" /><meta name="twitter:title" content="Crossplane: review after 1.5 years"/>
@@ -55,7 +55,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/images/1.png" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-02-20T20:05:56+00:00" />
-<meta property="article:modified_time" content="2024-02-21T14:56:38-05:00" />
+<meta property="article:modified_time" content="2024-02-21T15:37:58-05:00" />
 
 
 
@@ -137,6 +137,21 @@
 
     <div class="post-info">
       <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+            Published 2024-02-20
+  
+           
+            
+              (Last updated: 2024-02-21)
+            
+          
+      </p>
+      <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
@@ -163,9 +178,9 @@
       <div class="post-content">
         <p><img src="images/1.png#layoutTextWidth" alt="image"></p>
 <p>So, a year and a half ago, I wrote <a href="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/">Playing with Crossplane, for real</a> blog post (<a href="https://medium.com/p/f591e66065ae">link to the Medium original version</a>).</p>
-<p>This blog post was relating a real POC I did for my company, where *<em>I</em> was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.</p>
-<p>As you can read, the outcome wasn&rsquo;t exactly what I thought.</p>
-<p>I got contacted by Crossplane CEO, who shared my blog post to the team and I discussed many of my pain points with Crossplane Developers during the KubeCon North America 2022 (where I was a speaker, check out the <a href="https://cloud-native-canada.github.io/k8s_setup_tools/">blog</a> and <a href="https://www.youtube.com/watch?v=TKYAEjNg4Hw">video</a>).
+<p>This blog post was relating a real POC I did for my company, where <strong>I</strong> was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.</p>
+<p>As you may have read, the outcome wasn&rsquo;t exactly what I thought.</p>
+<p>I got contacted by Crossplane CEO, who shared my blog post to the Upbound team. I had the chance to discussed many of my pain points with Crossplane Developers during the KubeCon North America 2022 (where I was a speaker, check out the <a href="https://cloud-native-canada.github.io/k8s_setup_tools/">blog</a> and <a href="https://www.youtube.com/watch?v=TKYAEjNg4Hw">video</a>).
 Upbound, as a company, stand behind its product and was willing to make it work. At that time they shared that they would release more of their internal providers soon, which would solve most of my problems.</p>
 <p>I wish I had a chance to do the POC once again before that, but.. meh&hellip; life, I guess&hellip; it&rsquo;s happening now !</p>
 <p>So let&rsquo;s dive in, trying to follow the same agenda as the last blog post.</p>
@@ -349,7 +364,7 @@ provider-gcp-sql-ac45452bc4d2              True      1          xpkg.upbound.io/
 provider-gcp-storage-23793d298dec          True      2          xpkg.upbound.io/upbound/provider-gcp-storage:v0.41.1         Active     1           1               16h
 provider-gcp-storage-70a994bdf770          True      1          xpkg.upbound.io/upbound/provider-gcp-storage:v0.41.0         Inactive   1           1               39d
 upbound-provider-family-gcp-d0f27e03505b   True      1          xpkg.upbound.io/upbound/provider-family-gcp:v0.41.0          Active                                 39d
-</code></pre><p>The other problem was on the quality of the providers. We&rsquo;ll dive in later.</p>
+</code></pre><p>The other problem was on the quality of the providers. We&rsquo;ll dive into it later.</p>
 <h2 id="docs">Docs</h2>
 <p>Everything changed, so did the docs.</p>
 <p>The provider&rsquo;s docs changed a lot, but is it for the better ?</p>
@@ -839,7 +854,7 @@ DEBUG	provider-gcp	Observing the external resource	{&#34;uid&#34;: &#34;f13fe9c3
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        3137 Words
+        3143 Words
       </p>
 
       <p>
@@ -856,7 +871,7 @@ DEBUG	provider-gcp	Observing the external resource	{&#34;uid&#34;: &#34;f13fe9c3
          
           
             
-              (Last updated: 2024-02-21 14:56)
+              (Last updated: 2024-02-21 15:37)
             
           
         
@@ -868,7 +883,7 @@ DEBUG	provider-gcp	Observing the external resource	{&#34;uid&#34;: &#34;f13fe9c3
             <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
           </svg>
 
-          <a href="289cb0b0bfc3505aa8b581239fa0ba61b50081ee" target="_blank" rel="noopener">289cb0b</a>
+          <a href="8b18e34861e0b25a034790016501488a3a7b50e5" target="_blank" rel="noopener">8b18e34</a>
           @ 2024-02-21
         </p>
     </div>

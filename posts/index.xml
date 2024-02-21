@@ -16,14 +16,14 @@
             
             <guid>https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/</guid>
             <description>So, a year and a half ago, I wrote Playing with Crossplane, for real blog post (link to the Medium original version).
-This blog post was relating a real POC I did for my company, where *I was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.
-As you can read, the outcome wasn&amp;rsquo;t exactly what I thought.
-I got contacted by Crossplane CEO, who shared my blog post to the team and I discussed many of my pain points with Crossplane Developers during the KubeCon North America 2022 (where I was a speaker, check out the blog and video).</description>
+This blog post was relating a real POC I did for my company, where I was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.
+As you may have read, the outcome wasn&amp;rsquo;t exactly what I thought.
+I got contacted by Crossplane CEO, who shared my blog post to the Upbound team.</description>
             <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
 <p>So, a year and a half ago, I wrote <a href="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/">Playing with Crossplane, for real</a> blog post (<a href="https://medium.com/p/f591e66065ae">link to the Medium original version</a>).</p>
-<p>This blog post was relating a real POC I did for my company, where *<em>I</em> was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.</p>
-<p>As you can read, the outcome wasn&rsquo;t exactly what I thought.</p>
-<p>I got contacted by Crossplane CEO, who shared my blog post to the team and I discussed many of my pain points with Crossplane Developers during the KubeCon North America 2022 (where I was a speaker, check out the <a href="https://cloud-native-canada.github.io/k8s_setup_tools/">blog</a> and <a href="https://www.youtube.com/watch?v=TKYAEjNg4Hw">video</a>).
+<p>This blog post was relating a real POC I did for my company, where <strong>I</strong> was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.</p>
+<p>As you may have read, the outcome wasn&rsquo;t exactly what I thought.</p>
+<p>I got contacted by Crossplane CEO, who shared my blog post to the Upbound team. I had the chance to discussed many of my pain points with Crossplane Developers during the KubeCon North America 2022 (where I was a speaker, check out the <a href="https://cloud-native-canada.github.io/k8s_setup_tools/">blog</a> and <a href="https://www.youtube.com/watch?v=TKYAEjNg4Hw">video</a>).
 Upbound, as a company, stand behind its product and was willing to make it work. At that time they shared that they would release more of their internal providers soon, which would solve most of my problems.</p>
 <p>I wish I had a chance to do the POC once again before that, but.. meh&hellip; life, I guess&hellip; it&rsquo;s happening now !</p>
 <p>So let&rsquo;s dive in, trying to follow the same agenda as the last blog post.</p>
@@ -207,7 +207,7 @@ provider-gcp-sql-ac45452bc4d2              True      1          xpkg.upbound.io/
 provider-gcp-storage-23793d298dec          True      2          xpkg.upbound.io/upbound/provider-gcp-storage:v0.41.1         Active     1           1               16h
 provider-gcp-storage-70a994bdf770          True      1          xpkg.upbound.io/upbound/provider-gcp-storage:v0.41.0         Inactive   1           1               39d
 upbound-provider-family-gcp-d0f27e03505b   True      1          xpkg.upbound.io/upbound/provider-family-gcp:v0.41.0          Active                                 39d
-</code></pre><p>The other problem was on the quality of the providers. We&rsquo;ll dive in later.</p>
+</code></pre><p>The other problem was on the quality of the providers. We&rsquo;ll dive into it later.</p>
 <h2 id="docs">Docs</h2>
 <p>Everything changed, so did the docs.</p>
 <p>The provider&rsquo;s docs changed a lot, but is it for the better ?</p>
