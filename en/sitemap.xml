@@ -2,20 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://piratemakers.ca/tags/argocd/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <loc>https://piratemakers.ca/categories/</loc>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="fr"
+                href="https://piratemakers.ca/fr/categories/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://piratemakers.ca/categories/"
+                />
   </url><url>
-    <loc>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <loc>https://piratemakers.ca/tags/cncf/</loc>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
+  </url><url>
+    <loc>https://piratemakers.ca/tags/crossplane/</loc>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
+  </url><url>
+    <loc>https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/</loc>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
   </url><url>
     <loc>https://piratemakers.ca/tags/devops/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
+  </url><url>
+    <loc>https://piratemakers.ca/categories/devops/</loc>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
   </url><url>
     <loc>https://piratemakers.ca/tags/gitops/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
+  </url><url>
+    <loc>https://piratemakers.ca/tags/kubernetes/</loc>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
   </url><url>
     <loc>https://piratemakers.ca/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
@@ -28,7 +50,7 @@
                 />
   </url><url>
     <loc>https://piratemakers.ca/posts/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
@@ -41,7 +63,7 @@
                 />
   </url><url>
     <loc>https://piratemakers.ca/tags/</loc>
-    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="fr"
@@ -52,6 +74,12 @@
                 hreflang="en"
                 href="https://piratemakers.ca/tags/"
                 />
+  </url><url>
+    <loc>https://piratemakers.ca/tags/argocd/</loc>
+    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
+  </url><url>
+    <loc>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</loc>
+    <lastmod>2024-01-10T10:38:08-05:00</lastmod>
   </url><url>
     <loc>https://piratemakers.ca/tags/docker/</loc>
     <lastmod>2023-12-01T14:31:59-05:00</lastmod>
@@ -72,11 +100,8 @@
     <loc>https://piratemakers.ca/tags/github/</loc>
     <lastmod>2023-12-01T14:31:59-05:00</lastmod>
   </url><url>
-    <loc>https://piratemakers.ca/tags/kubernetes/</loc>
-    <lastmod>2023-12-01T14:31:59-05:00</lastmod>
-  </url><url>
     <loc>https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/</loc>
-    <lastmod>2023-12-01T14:31:59-05:00</lastmod>
+    <lastmod>2024-02-21T14:56:38-05:00</lastmod>
   </url><url>
     <loc>https://piratemakers.ca/tags/json/</loc>
     <lastmod>2023-12-01T14:31:59-05:00</lastmod>
@@ -179,18 +204,6 @@
                 rel="alternate"
                 hreflang="en"
                 href="https://piratemakers.ca/authors/"
-                />
-  </url><url>
-    <loc>https://piratemakers.ca/categories/</loc>
-    <xhtml:link
-                rel="alternate"
-                hreflang="fr"
-                href="https://piratemakers.ca/fr/categories/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://piratemakers.ca/categories/"
                 />
   </url><url>
     <loc>https://piratemakers.ca/series/</loc>

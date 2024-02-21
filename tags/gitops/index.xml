@@ -7,8 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 10 Jan 2024 14:31:56 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 20 Feb 2024 20:05:56 +0000</lastBuildDate>
     <atom:link href="https://piratemakers.ca/tags/gitops/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Crossplane: review after 1.5 years</title>
+      <link>https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/</link>
+      <pubDate>Tue, 20 Feb 2024 20:05:56 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2024/02/crossplane-review-after-1.5-years/</guid>
+      <description>So, a year and a half ago, I wrote Playing with Crossplane, for real blog post (link to the Medium original version).&#xA;This blog post was relating a real POC I did for my company, where *I was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.&#xA;As you can read, the outcome wasn&amp;rsquo;t exactly what I thought.&#xA;I got contacted by Crossplane CEO, who shared my blog post to the team and I discussed many of my pain points with Crossplane Developers during the KubeCon North America 2022 (where I was a speaker, check out the blog and video).</description>
+    </item>
     <item>
       <title>ArgoCD Appset-of-Appset Pattern</title>
       <link>https://piratemakers.ca/posts/2024/01/argocd-appset-of-appset-pattern/</link>
