@@ -70,7 +70,6 @@ While building this Operator was cool, and I learnt a lot by this time, I knew t
 
 
 
-
     <meta property="article:published_time" content="2019-05-22 13:01:42 &#43;0000 UTC" />
 
 
@@ -143,21 +142,6 @@ While building this Operator was cool, and I learnt a lot by this time, I knew t
 
     <div class="post-info">
       <p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-            Published 2019-05-22
-  
-           
-            
-              (Last updated: 2023-12-01)
-            
-          
-      </p>
-      <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
@@ -180,7 +164,7 @@ While building this Operator was cool, and I learnt a lot by this time, I knew t
       
 
       <div class="post-content">
-        <p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+        <p><img alt="image" src="https://piratemakers.ca/posts/2019/05/istio-1.1.7--lets-encrypt-working/images/1.png"></p>
 <p>It’s been almost a year since I first wrote about <a href="https://medium.com/@prune998/istio-0-8-0-envoy-cert-manager-lets-encrypt-for-tls-d26bee634541">using Let’s Encrypt SSL Certificates with Istio, 0.8.0</a> at this time.<br>
 Then <a href="https://medium.com/@prune998/istio-1-0-2-envoy-cert-manager-lets-encrypt-for-tls-certificate-merge-7a774bff66c2">I blogged again</a> when Istio 1.0.2 came out. I had to build an Operator, <a href="https://github.com/prune998/certmerge-operator">Cert-Merge</a>, to allow to merge all the SSL certificates created in many Secrets by Cert-Manager into ONE single secret that Istio’s Gateway could use.</p>
 <p>While building this Operator was cool, and I learnt a lot by this time, I knew this was a temporary solution, a highly insecure one.</p>
@@ -488,25 +472,39 @@ It will also skip secrets that have a field named “token” (commonly the serv
             </div>
 
             
-                <footer class="footer">
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2023</span>
-            
-            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
-            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
-            <span>Pirate Makers™</span>
-        </div>
-    </div>
-    
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-        </div>
-    </div>
-    
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const images = Array.from(document.querySelectorAll(".post-content img"));
+images.forEach(img => {
+  mediumZoom(img, {
+    margin: 0,  
+    scrollOffset: 40,  
+    container: null,  
+    template: null,  
+    background: 'rgba(0, 0, 0, 0.8)'
+  });
+});
+</script>
+
+<footer class="footer">
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>&copy; 2023</span>
+          
+          <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+          <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+          <span>Pirate Makers™</span>
+      </div>
+  </div>
+  
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+      </div>
+  </div>
+  
 </footer>
 
             
@@ -516,7 +514,7 @@ It will also skip secrets that have a field named “token” (commonly the serv
 
 
 
-<script type="text/javascript" src="https://piratemakers.ca/bundle.min.46e438bd2eca7eb6358c700b40f6f56b22ab0b92503ecc11a2d8e4bcc610b8b4da83e5ea3d3e84fdb5f3c3c765744b9f5bbaf43cf5a027910be07ee39a9c12a1.js" integrity="sha512-RuQ4vS7KfrY1jHALQPb1ayKrC5JQPswRotjkvMYQuLTag&#43;XqPT6E/bXzw8dldEufW7r0PPWgJ5EL4H7jmpwSoQ=="></script>
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
 
 
 

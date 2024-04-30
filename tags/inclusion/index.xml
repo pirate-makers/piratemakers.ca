@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Inclusion on Pirate Makers</title>
+    <link>https://piratemakers.ca/tags/inclusion/</link>
+    <description>Recent content in Inclusion on Pirate Makers</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Tue, 30 Apr 2024 10:32:36 -0400</lastBuildDate>
+    <atom:link href="https://piratemakers.ca/tags/inclusion/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Adding color-blind themes to Kubecolor to make Kubernetes more inclusive</title>
+      <link>https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/</link>
+      <pubDate>Tue, 30 Apr 2024 10:19:04 +0000</pubDate>
+      <guid>https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/</guid>
+      <description>Kubcolor is a thin wrapper over the kubectl command that adds coloring to the output.&#xA;I cloned the project and started maintaining it back in 2022 when the original author wasn&amp;rsquo;t active anymore.&#xA;KubeColor can reformats the output of most kubectl commands to add colors and clarity. It makes it so easier to read the output that I still don&amp;rsquo;t understand that it&amp;rsquo;s not more widely used. I actually gave a lightning talk about it at the KubeCon&amp;rsquo;s Cloud Native Reject Europe 2024 in Paris if you want a video pitch.</description>
+    </item>
+  </channel>
+</rss>

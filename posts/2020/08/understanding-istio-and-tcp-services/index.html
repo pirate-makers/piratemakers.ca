@@ -62,7 +62,6 @@
 
 
 
-
     <meta property="article:published_time" content="2020-08-06 23:41:53 &#43;0000 UTC" />
 
 
@@ -135,21 +134,6 @@
 
     <div class="post-info">
       <p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-            Published 2020-08-06
-  
-           
-            
-              (Last updated: 2023-12-01)
-            
-          
-      </p>
-      <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
@@ -174,7 +158,7 @@
       
 
       <div class="post-content">
-        <p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+        <p><img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/1.jpeg"></p>
 <h3 id="overview">overview</h3>
 <p>I lately came across an Istio setup where both the downstream (client) and the upstream (server) were using the same sets of ports:</p>
 <ul>
@@ -182,7 +166,7 @@
 <li>port <em>5701</em> for <a href="https://hazelcast.com/">Hazelcast</a> protocol, a Java based memory database embedded in the pod’s workload, using TCP</li>
 </ul>
 <p>The setup is presented here:</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/2.png"></p>
 <p>In theory, two types of communications happens:</p>
 <ul>
 <li>each Hazelcast database (the red and purple cylinders) talk to each other on port <em>5701</em> using TCP protocol.<br>
@@ -373,10 +357,10 @@ Envoy will look up its list of endpoints for the service named <code>outbound|57
 </ol>
 <p>Of course, Istio is using the round-robin load-balancing algo by default, so it totally explain what is going on here. Each consecutive request go to a different pod.</p>
 <p>Here, blue link is <code>outbound</code> while pink is <code>inbound</code></p>
-<p><img src="images/3.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/3.png"></p>
 <p>OK, this is not really what’s going on ! I tricked you !!</p>
 <p>Istio (Envoy) does NOT send traffic to the Kubernetes Service. Services are used by Pilot (Istiod) to build the mesh topology, then the informations is sent to each Istio-proxy, which then send traffic to the Pods. It finally look more like that:</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/4.png"></p>
 <p>But that’s not how Hazelcast server works either !</p>
 <h3 id="hazelcast-cluster-communication">Hazelcast cluster communication</h3>
 <p>The truth is, Hazelcast does no use the service name for its communications.</p>
@@ -392,14 +376,14 @@ Envoy will look up its list of endpoints for the service named <code>outbound|57
 <li>the upstream connection uses the <code>inbound</code> cluster as before</li>
 </ol>
 <p>Here’s a schema of this situation. In red, the Hazelcast DB nodes (the red cylinder) calls the API (the red-dot arrow) to get all the pods that are part of the cluster. Once done, the first pod calls the IP of the next pod (blue line).</p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/5.png"></p>
 <p>This is not perfect, but at least, it’s working</p>
 <h3 id="things-can-go-bad">Things can go bad</h3>
 <p>Later on I was called as something strange was going on in the cluster.</p>
 <p>At some point, when the manager application tried to connect to the Hazelcast port, the connection was routed to the <code>idle</code> pod in the manager namespace.<br>
 How possible ? This pod even don’t expose the port <em>5701</em> !</p>
 <p>Here’s an overview:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/6.png"></p>
 <p>Nothing changed in the <code>manager</code> Namespace, but looking at the services inside the <code>app</code> namespace, I saw an <code>ExternalName</code> service was later added:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>k get svc  -n app
 </span></span><span style="display:flex;"><span>
@@ -542,7 +526,7 @@ Let’s look at the config:</p>
 From the <a href="https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#configuration">Envoy doc</a>, UF is <em>Upstream connection failure</em> and URX is <a href="https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/network/tcp_proxy/v3/tcp_proxy.proto#envoy-v3-api-field-extensions-filters-network-tcp-proxy-v3-tcpproxy-max-connect-attempts"><em>maximum connect attempts (TCP)</em></a> <em>was reached</em>.<br>
 This is perfectly normal as the <code>idle</code> service does not expose the port <em>5701</em> (nor the Pod binds it)</li>
 <li>request was forwarded to the <code>outbound|5701||app-ext.app.svc.cluster.local</code> cluster
-<img src="images/7.png#layoutTextWidth" alt="image"></li>
+<img alt="image" src="https://piratemakers.ca/posts/2020/08/understanding-istio-and-tcp-services/images/7.png"></li>
 </ol>
 <p>Wait, <em>WHAAAAT</em> ?<br>
 A <code>service</code> created in another Namespace just broke our Hazelcast cluster ?</p>
@@ -840,25 +824,39 @@ Specifically in this case, we could use an annotation on the <code>ExternalName<
             </div>
 
             
-                <footer class="footer">
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2023</span>
-            
-            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
-            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
-            <span>Pirate Makers™</span>
-        </div>
-    </div>
-    
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-        </div>
-    </div>
-    
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const images = Array.from(document.querySelectorAll(".post-content img"));
+images.forEach(img => {
+  mediumZoom(img, {
+    margin: 0,  
+    scrollOffset: 40,  
+    container: null,  
+    template: null,  
+    background: 'rgba(0, 0, 0, 0.8)'
+  });
+});
+</script>
+
+<footer class="footer">
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>&copy; 2023</span>
+          
+          <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+          <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+          <span>Pirate Makers™</span>
+      </div>
+  </div>
+  
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+      </div>
+  </div>
+  
 </footer>
 
             
@@ -868,7 +866,7 @@ Specifically in this case, we could use an annotation on the <code>ExternalName<
 
 
 
-<script type="text/javascript" src="https://piratemakers.ca/bundle.min.46e438bd2eca7eb6358c700b40f6f56b22ab0b92503ecc11a2d8e4bcc610b8b4da83e5ea3d3e84fdb5f3c3c765744b9f5bbaf43cf5a027910be07ee39a9c12a1.js" integrity="sha512-RuQ4vS7KfrY1jHALQPb1ayKrC5JQPswRotjkvMYQuLTag&#43;XqPT6E/bXzw8dldEufW7r0PPWgJ5EL4H7jmpwSoQ=="></script>
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
 
 
 

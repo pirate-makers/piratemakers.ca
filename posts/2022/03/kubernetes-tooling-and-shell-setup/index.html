@@ -70,7 +70,6 @@ Updates:
 
 
 
-
     <meta property="article:published_time" content="2022-03-29 16:54:21 &#43;0000 UTC" />
 
 
@@ -143,21 +142,6 @@ Updates:
 
     <div class="post-info">
       <p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-            Published 2022-03-29
-  
-           
-            
-              (Last updated: 2023-12-01)
-            
-          
-      </p>
-      <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
@@ -181,7 +165,7 @@ Updates:
 
       <div class="post-content">
         <p><em>How to be productive fast with Kubernetes</em></p>
-<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/1.png"></p>
 <p><strong>Updates</strong>:</p>
 <ul>
 <li>20220410: added some Dasel examples</li>
@@ -196,7 +180,7 @@ Well, I think it needed another one blog post (and talk) about it !</p>
 <p>Well, do whatever you want with this blog post. I’m writing it as a reference for myself 🙏</p>
 <h3 id="what-is-kubectl-">What is Kubectl ?</h3>
 <p>Come on, we all know that: <em>kubectl</em> is the CLI to interact with the K8s API !</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/2.png"></p>
 <p><em>kubectl</em> is taking your human-readable requests and translate them to a REST call against the Kubernetes API server.</p>
 <p>Then, the server answer with some information, mostly JSON. Usually, <em>kubectl</em> dump that in a human-readable way, or, quite often, in YAML, because we all love YAML !</p>
 <p>Here, <em>kubectl</em> is usually doing the minimum, and things quickly gets messy when you have a large cluster with hundreds of resources.</p>
@@ -226,7 +210,7 @@ BTW, this <em>kubectl version</em> command is a great way to check for your serv
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># add in your .zshrc  </span>
 </span></span><span style="display:flex;"><span>alias k<span style="color:#f92672">=</span>kubecolor
 </span></span></code></pre></div><p>Result:</p>
-<p><img src="images/3.jpg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/3.jpg"></p>
 <p>Until the <a href="https://github.com/hidetatz/kubecolor/pull/86">PR 86</a> is merged, you may reach an issue when using the <strong>ctx</strong> or <strong>ns</strong> commands, where the whole output is displayed in yellow and hiding the selected default value. In the meantime, clone my own fork and build the binary yourself:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone <span style="color:#f92672">[</span>git@github.com<span style="color:#f92672">](</span>mailto:git@github.com<span style="color:#f92672">)</span>:prune998/kubecolor.git
 </span></span><span style="display:flex;"><span>git checkout prune/ctx-no-color
@@ -267,7 +251,7 @@ Use plugins !!</li>
 </li>
 </ul>
 <p>Here’s an example prompt when customizing all this. Of course, it’s possible to add more Kubernetes related stuff in the prompt, but it’s going to get messy quickly:</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/4.png"></p>
 <h3 id="krew">Krew</h3>
 <p><a href="https://krew.sigs.k8s.io"><em>Krew</em></a> is a plugin manager for <em>kubectl</em>.<br>
 Install: <a href="https://krew.sigs.k8s.io/docs/user-guide/setup/install/">https://krew.sigs.k8s.io/docs/user-guide/setup/install/</a></p>
@@ -362,7 +346,7 @@ Each result is colour coded for quicker debugging.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install stern
 </span></span><span style="display:flex;"><span>stern -n my-namespace dv-oma
 </span></span></code></pre></div><p>Stern will tail the logs of all pods matching <em>dv-oma</em> as a pattern. There’s a ton of options to further filter what you want to display:</p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/5.png"></p>
 <h3 id="kustomize">Kustomize</h3>
 <p><a href="https://kustomize.io/">Kustomize</a> is a Kubernetes native configuration management (templating)</p>
 <ul>
@@ -402,7 +386,7 @@ Each result is colour coded for quicker debugging.</p>
 </span></span><span style="display:flex;"><span>k9s --context &lt;context&gt; <span style="color:#75715e"># Start K9s in an existing KubeConfig context</span>
 </span></span><span style="display:flex;"><span>k9s --readonly          <span style="color:#75715e"># Start K9s in readonly mode - with all cluster modification  </span>
 </span></span><span style="display:flex;"><span>                          commands disabled
-</span></span></code></pre></div><p><img src="images/6.jpg#layoutTextWidth" alt="K9s"></p>
+</span></span></code></pre></div><p><img alt="K9s" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/6.jpg"></p>
 <h4 id="lens">Lens</h4>
 <p><a href="https://k8slens.dev/">Lens</a> is the only IDE you’ll ever need to take control of your Kubernetes clusters (well, that’s what they say)</p>
 <ul>
@@ -411,7 +395,7 @@ Each result is colour coded for quicker debugging.</p>
 <li>Manage CustomResourceDefinitions (CRD)</li>
 <li>Nice UI</li>
 <li>Multi-cluster
-<img src="images/7.jpg#layoutTextWidth" alt="image"></li>
+<img alt="image" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/7.jpg"></li>
 </ul>
 <h3 id="vscode-extensions-for-kubernetes">VsCode extensions for Kubernetes</h3>
 <p>I’m sure there are a lot more than these, but I would consider these as essentials:</p>
@@ -419,7 +403,7 @@ Each result is colour coded for quicker debugging.</p>
 <li><a href="https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools">Kubernetes</a>: Develop, deploy and debug Kubernetes applications</li>
 <li><a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml">YAML</a>: Language Support, with built-in Kubernetes syntax support</li>
 <li><a href="https://github.com/oderwat/vscode-indent-rainbow">Indent-Rainbow</a>: helper to better see Yaml indentations
-<img src="images/8.jpg#layoutTextWidth" alt="Indent-Rainbow"></li>
+<img alt="Indent-Rainbow" src="https://piratemakers.ca/posts/2022/03/kubernetes-tooling-and-shell-setup/images/8.jpg"></li>
 </ul>
 <h3 id="local-kubernetes">Local Kubernetes</h3>
 <p>Here’s a minimal list of solutions to deploy a local Kubernetes cluster on your laptop:</p>
@@ -770,25 +754,39 @@ Kubernetes is still a highly evolving ecosystem and new tools and patterns keeps
             </div>
 
             
-                <footer class="footer">
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2023</span>
-            
-            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
-            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
-            <span>Pirate Makers™</span>
-        </div>
-    </div>
-    
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-        </div>
-    </div>
-    
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const images = Array.from(document.querySelectorAll(".post-content img"));
+images.forEach(img => {
+  mediumZoom(img, {
+    margin: 0,  
+    scrollOffset: 40,  
+    container: null,  
+    template: null,  
+    background: 'rgba(0, 0, 0, 0.8)'
+  });
+});
+</script>
+
+<footer class="footer">
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>&copy; 2023</span>
+          
+          <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+          <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+          <span>Pirate Makers™</span>
+      </div>
+  </div>
+  
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+      </div>
+  </div>
+  
 </footer>
 
             
@@ -798,7 +796,7 @@ Kubernetes is still a highly evolving ecosystem and new tools and patterns keeps
 
 
 
-<script type="text/javascript" src="https://piratemakers.ca/bundle.min.46e438bd2eca7eb6358c700b40f6f56b22ab0b92503ecc11a2d8e4bcc610b8b4da83e5ea3d3e84fdb5f3c3c765744b9f5bbaf43cf5a027910be07ee39a9c12a1.js" integrity="sha512-RuQ4vS7KfrY1jHALQPb1ayKrC5JQPswRotjkvMYQuLTag&#43;XqPT6E/bXzw8dldEufW7r0PPWgJ5EL4H7jmpwSoQ=="></script>
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
 
 
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>cnc on Pirate Makers</title>
+    <title>Cnc on Pirate Makers</title>
     <link>https://piratemakers.ca/tags/cnc/</link>
-    <description>Recent content in cnc on Pirate Makers</description>
+    <description>Recent content in Cnc on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sat, 11 Apr 2020 18:29:43 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 13 Apr 2020 21:36:18 +0000</lastBuildDate>
     <atom:link href="https://piratemakers.ca/tags/cnc/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Laser Post-Processor for Fusion 360 that works on Shapeoko</title>

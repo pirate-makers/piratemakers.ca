@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="In this article we&#39;ll explore the new Custom Color Theme for Kubecolor and how to be more inclusive by offering themes for color-blind (color disabled or color impaired) people." />
+<meta name="keywords" content="blog,developer,personal,cnc,shapeoko,maker,pirate,hacker,go,golang,devops,gitops, kubernetes, cncf, go, kubecolor, inclusion" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/" />
+
+
+    <title>
+        
+            Adding color-blind themes to Kubecolor to make Kubernetes more inclusive :: Pirate Makers 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="https://piratemakers.ca/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+    
+        <link rel="stylesheet" type="text/css" href="https://piratemakers.ca/css/custom.css">
+    
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://piratemakers.ca/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://piratemakers.ca/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://piratemakers.ca/favicon-16x16.png">
+    <link rel="manifest" href="https://piratemakers.ca/site.webmanifest">
+    <link rel="mask-icon" href="https://piratemakers.ca/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="https://piratemakers.ca/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Adding color-blind themes to Kubecolor to make Kubernetes more inclusive">
+<meta itemprop="description" content="In this article we&#39;ll explore the new Custom Color Theme for Kubecolor and how to be more inclusive by offering themes for color-blind (color disabled or color impaired) people."><meta itemprop="datePublished" content="2024-04-30T10:19:04+00:00" />
+<meta itemprop="dateModified" content="2024-04-30T10:32:36-04:00" />
+<meta itemprop="wordCount" content="1788"><meta itemprop="image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/1.png" /><meta itemprop="image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/Kubecolor_Logo_White.png" /><meta itemprop="image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/color-cycles-quad.png" /><meta itemprop="image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/color-cycles.png" /><meta itemprop="image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/crash-magenta.png" /><meta itemprop="image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/dark-theme.png" />
+<meta itemprop="keywords" content="kubernetes,cncf,go,kubecolor,inclusion," />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/1.png" /><meta name="twitter:title" content="Adding color-blind themes to Kubecolor to make Kubernetes more inclusive"/>
+<meta name="twitter:description" content="In this article we&#39;ll explore the new Custom Color Theme for Kubecolor and how to be more inclusive by offering themes for color-blind (color disabled or color impaired) people."/>
+
+
+
+    <meta property="og:title" content="Adding color-blind themes to Kubecolor to make Kubernetes more inclusive" />
+<meta property="og:description" content="In this article we&#39;ll explore the new Custom Color Theme for Kubecolor and how to be more inclusive by offering themes for color-blind (color disabled or color impaired) people." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/1.png" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/Kubecolor_Logo_White.png" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/color-cycles-quad.png" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/color-cycles.png" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/crash-magenta.png" /><meta property="og:image" content="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/dark-theme.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-04-30T10:19:04+00:00" />
+<meta property="article:modified_time" content="2024-04-30T10:32:36-04:00" />
+
+
+
+
+    <meta property="article:section" content="devops" />
+
+
+
+    <meta property="article:published_time" content="2024-04-30 10:19:04 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://piratemakers.ca/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">&gt;</span>
+            <span class="logo__text ">
+                Pirate Makers</span>
+            <span class="logo__cursor" style=
+                  "visibility:hidden;
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://piratemakers.ca/posts/">Blog</a></li><li><a href="https://piratemakers.ca/about/">About</a></li><li><a href="https://piratemakers.ca/tags">Tags</a></li>
+        <div class="submenu">
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">en</a>
+                <div class="dropdown-content">
+                    
+                        
+                    
+                </div>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/">Adding color-blind themes to Kubecolor to make Kubernetes more inclusive</a></h2>
+
+            
+            
+            
+
+            <div class="post-content">
+                <p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/kubecolor-logo-impaired.png"></p>
+<p><a href="https://github.com/kubecolor/kubecolor">Kubcolor</a> is a thin wrapper over the <code>kubectl</code> command that adds coloring to the output.</p>
+<p>I cloned the project and started maintaining it back in 2022 when the original author wasn&rsquo;t active anymore.</p>
+
+    <img src="images/Kubecolor_Logo_White.png"  alt="KubeColor"  class="center"  style="border-radius: 0px; background-color: #212020; max-width: 50%;"  />
+
+
+<p>KubeColor can reformats the output of most <code>kubectl</code> commands to add colors and clarity. It makes it <em>so easier</em> to read the output that I still don&rsquo;t understand that it&rsquo;s not more widely used. I actually <a href="https://www.youtube.com/live/PWZJzjB7vso?si=CvfnmmdSZP3txENZ&t=32723">gave a lightning talk about it at the KubeCon&rsquo;s Cloud Native Reject Europe 2024 in Paris</a> if you want a video pitch.</p>
+<p>One of the longest requested feature, discussed at length in the previous project, was to be able to cusotmize the color theme used by KubeColor.</p>
+<p>Actually, when I first cloned the original project, I applied a patch that was globally changing the colors to make thinks less colory and more standard, limiting to a smaller set of colors. Some people started complaining right away, but that&rsquo;s what people do anyways.</p>
+<p>As of <strong>version 0.3.0</strong>, <code>kubecolor</code> now supports custom color scheme and theme, thanks to the work of other main contributor, <a href="https://github.com/applejag">AppleJag</a>, which is a talented (Go) devleoper. Jag, I can&rsquo;t thank you enough for all the help on this project.</p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/1.png"></p>
+<p><strong>What&rsquo;s the problem ?</strong></p>
+<p>By default <code>kubecolor</code> uses the set of colors from your terminal&rsquo;s config, so it always was possible to configure it. Just change the theme of your terminal and you can adapt the colors to your needs !</p>
+<p>But more than colors default colors, some want to colorize some specific fields differently, or use more colors to further differenciate things.</p>
+<p><strong>But there&rsquo;s more&hellip;</strong></p>
+<p>According to <a href="https://enchroma.com/blogs/beyond-color/interesting-facts-about-color-blindness">this article</a>, one man out of 12 have some sort of <strong>color blindness</strong> (or color disability). Women are a little less concerned, with one out of 200, but still, it&rsquo;s a lot ! (numbers may vary depending on the website too&hellip;)</p>
+<p>Check the <a href="https://en.wikipedia.org/wiki/Color_blindness">Wikipedia</a> page to learn more, and there&rsquo;s tons of other sites about this matter. And still, it&rsquo;s usually not something we think of right away.</p>
+<p>For example, just look at <a href="https://piratemakers.ca/posts/">my blog</a>, with it&rsquo;s low contrast grey colors and you&rsquo;ll understand that color blindness was not my main concerns at the time.</p>
+<p>And, well, when we think at inclusion it&rsquo;s generally genders and skin colors, and when we think about accessibility, it&rsquo;s mobility impairement, deafs and blinds.</p>
+<p><strong>Color-blindness</strong> is usually not mentionned or taken care of. The <a href="https://contribute.cncf.io/accessibility/">CNCF Website itself</a> does not mention it directly. The only TAG (Technical Advisory Groups) in the <code>Accessibility</code> section is <a href="https://contribute.cncf.io/accessibility/deaf-and-hard-of-hearing/">focused on hearing issues</a>.</p>
+<p>Maybe because it&rsquo;s easier to live with color-blindness, or because people don&rsquo;t talk about it by shame, it&rsquo;s still a real problem and the numbers are huge, far more that what I always belived.</p>
+<p>Note that I&rsquo;m not trying to rate any of those against the others, or trying to speak in place of the impacted persons. I&rsquo;m not impaired and I just want to put some light on inclusivity.</p>
+<h2 id="so-what-to-do-with-this-">So, what to do with this ?</h2>
+<p>As soon as <code>kubecolor</code> got the color theme functionnality, I started thinking of adding one or multiple color themes for the various kind of color-blindness.</p>
+<p>The first question that came to my mind was :</p>
+<blockquote>
+<p>It&rsquo;s quite usual to use 
+<code style="background-color: green;"> 
+  <span style="
+      color: green;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      green
+  </span>
+</code> for good things (success) and 
+<code style="background-color: red;"> 
+  <span style="
+      color: red;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      red
+  </span>
+</code> for bad things (errors). But is there a common pattern for color-blind persons ?</p>
+</blockquote>
+<p>Well, so far I don&rsquo;t have the answer. But while searching I learnt few things:</p>
+<ul>
+<li>Color is important, but so is the <code>contrast</code></li>
+<li>there&rsquo;s also modifiers like <strong>bold</strong> and <em>italic</em> that can help better differenciate things</li>
+<li>it is usually better to add some text explaining the status and not only rely on the color. Here, no probleme for us, as we are <em>adding</em> colors to an already expressive text.</li>
+<li>Maybe I should not add a theme at all and each person will built its own</li>
+</ul>
+<h2 id="understanding-kubecolor-themes">Understanding KubeColor Themes</h2>
+<p>Thanks to Jag, <code>kubecolor</code> can process <a href="https://github.com/kubecolor/kubecolor/blob/main/README.md#color-theme">many kind of definitions to configure the colors</a>.</p>
+<p>In short:</p>
+<ul>
+<li>
+<p>using a regular <strong>color names</strong> (like red, blue) will use whatever is defined in your <code>terminal</code> application&rsquo;s theme. <code>white</code> may be white, or not, but <em>if</em> you already have a theme made for color-blindness, you may not have to change anything.</p>
+</li>
+<li>
+<p>using many other ways to define colors, like HEX and RGB values, will allow to use custom colors not part of your terminal&rsquo;s theme.</p>
+</li>
+<li>
+<p>using <code>bg=</code> or <code>fg=</code> will allow to change the background or the front (text) color.</p>
+</li>
+<li>
+<p>it is possible to use any of the <code>modifiers</code> like <strong>bold</strong>, <em>italic</em> and so on to even better tune the visibility of each field.</p>
+</li>
+<li>
+<p>thanks to all the <code>KUBECOLOR_THEME_*</code> ENV variables, it is possible to fully customize the output of &ldquo;each&rdquo; field, depending on the original command used against <code>kubectl</code> (like <code>get</code> or a <code>describe</code>).</p>
+</li>
+<li>
+<p>it is possible to create the theme as a file, which also enable sharing it, by creating a <code>~/.kube/color.yaml</code> file (in OsX and Linux, may be a different location on Windows). We&rsquo;ll dive on the format later, keep reading.</p>
+</li>
+<li>
+<p><code>kubecolor</code> embeds default themes, both in dark and light mode:</p>
+<ul>
+<li>dark
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/dark-theme.png"></li>
+<li>light</li>
+<li>pre-0.0.21-dark: the previous color schema from the original project
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/pre-0.0.21-dark-theme.png"></li>
+<li>pre-0.0.21-light</li>
+</ul>
+</li>
+</ul>
+<p>You can check the content of each basic theme in the code in the <a href="https://github.com/kubecolor/kubecolor/blob/main/config/theme.go#L15">config/theme.go</a> file.</p>
+<h2 id="how-to-build-a-theme">How to build a theme</h2>
+<p>As said earlier, you can either use the <code>KUBECOLOR_THEME_*</code> env variables or create your theme in the <code>~/.kube/color.yaml</code> file.</p>
+<h3 id="using-env-variables">Using ENV Variables</h3>
+<p>The easiest is to check the docs at <a href="https://github.com/kubecolor/kubecolor/blob/main/README.md#color-theme">https://github.com/kubecolor/kubecolor/blob/main/README.md#color-theme</a> and experiment.</p>
+<p>In any case, you have to pick a <code>base</code> theme, by setting <code>KUBECOLOR_PRESET</code>, then update some of the colors. For example you can change all the <code>running</code> pods to blue with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>KUBECOLOR_THEME_BASE_SUCCESS<span style="color:#f92672">=</span>blue KUBECOLOR_PRESET<span style="color:#f92672">=</span>dark kubecolor get pods -o wide
+</span></span></code></pre></div><p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/running-blue.png"></p>
+<h3 id="using-the-config-file">Using the config file</h3>
+<p>Create the file  <code>~/.kube/color.yaml</code> and add some content like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">dark</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">theme</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">table</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">header</span>: <span style="color:#ae81ff">fg=red:bold:bg=blue</span>
+</span></span></code></pre></div><p>So basically, you take the ENV variable and you nest the last part of it.</p>
+<p>With <code>KUBECOLOR_THEME_STATUS_ERROR</code>, you remove the <code>KUBECOLOR</code> part, so the final path is <code>theme.status.error</code>, so to show pods in error in pink:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">dark</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">theme</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">table</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">header</span>: <span style="color:#ae81ff">fg=red:bold:bg=blue</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">status</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">error</span>: <span style="color:#ae81ff">pink</span>
+</span></span></code></pre></div><p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/crash-magenta.png"></p>
+<h2 id="color-blind-theme">Color Blind Theme</h2>
+<p>First I want to clearly state I do not have any color impairement, and the work I&rsquo;m trying to achieve here is based on articles I read and  some talking with color-blind persons. There&rsquo;s no scientific work on my side.</p>
+<p>The idea is to provide an out of the box solution to help people with color-blindness. The outcome may not be perfect or even useful and I take no responsability. It&rsquo;s best effort. It&rsquo;s OpenSource. Bare with me.</p>
+<p>After some researches, I found the <a href="https://asada.website/webCVS/index.html">Cromatic Vision Simulator website</a> which allows to load an image and, using a quad view, see what color-blind persons may see depending on the kind of disability.</p>
+<p>In short, if I upload one of the previous images that captured the <code>k get pods -o wide</code> commands, we can check how it look using the <code>dark</code> theme:</p>
+<ul>
+<li>regular view
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark.png"></li>
+<li>Protanopia view
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark-protanopia.png"></li>
+<li>deuteranopia view
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark-deuteranopia.png"></li>
+<li>tritanopia view
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark-tritanopia.png"></li>
+</ul>
+<p>Now I guess we all understand the issue with the current color scheme of the <code>dark</code> theme: any impaired person will lose most of the color informations. At this point, better use plain <code>kubectl</code> commands&hellip;</p>
+<p>So I tested some chromatic progressions to try to identify a palette that could work fine at least most of the time:</p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/color-cycles-quad.png"></p>
+<p>Being color-blind is not just not seeing green or red, there&rsquo;s also quite a limitation in the color hues that are perceived, so everything from green to red, where the color changes slowly for a regular eye, will be almost the same brown/yellowish for a Protanopian.</p>
+<p>My final conclusion is that it seems possible to achieve a theme that will help better differenciate the content. What we need here is having different color hues to show the difference of, mostly, good and bad situation, and color cycles when there&rsquo;s a table.</p>
+<p>Using the <a href="https://observablehq.com/@d3/color-schemes">Observable HQ website</a>, I used the <code>discrete 10</code> schema to cut the rainbow in 10 usable colors:</p>
+<ul>
+<li>
+<code style="background-color: #23171b;"> 
+  <span style="
+      color: #23171b;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #23171b
+  </span>
+</code></li>
+<li>
+<code style="background-color: #4860e6;"> 
+  <span style="
+      color: #4860e6;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #4860e6
+  </span>
+</code></li>
+<li>
+<code style="background-color: #2aabee;"> 
+  <span style="
+      color: #2aabee;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2aabee
+  </span>
+</code></li>
+<li>
+<code style="background-color: #2ee5ae;"> 
+  <span style="
+      color: #2ee5ae;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2ee5ae
+  </span>
+</code></li>
+<li>
+<code style="background-color: #6afd6a;"> 
+  <span style="
+      color: #6afd6a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #6afd6a
+  </span>
+</code></li>
+<li>
+<code style="background-color: #c0ee3d;"> 
+  <span style="
+      color: #c0ee3d;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c0ee3d
+  </span>
+</code></li>
+<li>
+<code style="background-color: #feb927;"> 
+  <span style="
+      color: #feb927;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #feb927
+  </span>
+</code></li>
+<li>
+<code style="background-color: #fe6e1a;"> 
+  <span style="
+      color: #fe6e1a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fe6e1a
+  </span>
+</code></li>
+<li>
+<code style="background-color: #c2270a;"> 
+  <span style="
+      color: #c2270a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c2270a
+  </span>
+</code></li>
+<li>
+<code style="background-color: #900c00;"> 
+  <span style="
+      color: #900c00;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #900c00
+  </span>
+</code></li>
+</ul>
+<p>Once rendered, we have:</p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/turbo-colors.png"></p>
+<p>The <code>dark</code> theme only uses 6 colors (well, 5 as one if the default white for dark theme, or black for light theme). So here&rsquo;s my selection:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Terminal Color</th>
+<th style="text-align:center">Matching Color</th>
+<th style="text-align:center">protanopia</th>
+<th style="text-align:center">deuteranopia</th>
+<th style="text-align:center">tritanopia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">
+<code style="background-color: yellow;"> 
+  <span style="
+      color: yellow;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      yellow
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #feb927;"> 
+  <span style="
+      color: #feb927;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #feb927
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #f9bb27;"> 
+  <span style="
+      color: #f9bb27;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #f9bb27
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fbbc23;"> 
+  <span style="
+      color: #fbbc23;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fbbc23
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #ffacb6;"> 
+  <span style="
+      color: #ffacb6;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #ffacb6
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: magenta;"> 
+  <span style="
+      color: magenta;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      magenta
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #4860e6;"> 
+  <span style="
+      color: #4860e6;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #4860e6
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #a77fe5;"> 
+  <span style="
+      color: #a77fe5;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #a77fe5
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #888ee4;"> 
+  <span style="
+      color: #888ee4;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #888ee4
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #257e7d;"> 
+  <span style="
+      color: #257e7d;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #257e7d
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: green;"> 
+  <span style="
+      color: green;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      green
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #6afd6a;"> 
+  <span style="
+      color: #6afd6a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #6afd6a
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fee16c;"> 
+  <span style="
+      color: #fee16c;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fee16c
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fee16c;"> 
+  <span style="
+      color: #fee16c;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fee16c
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fee16c;"> 
+  <span style="
+      color: #fee16c;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fee16c
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: red;"> 
+  <span style="
+      color: red;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      red
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #c2270a;"> 
+  <span style="
+      color: #c2270a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c2270a
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #bb8b16;"> 
+  <span style="
+      color: #bb8b16;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #bb8b16
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #936a15;"> 
+  <span style="
+      color: #936a15;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #936a15
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #ff6579;"> 
+  <span style="
+      color: #ff6579;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #ff6579
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: cyan;"> 
+  <span style="
+      color: cyan;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      cyan
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #2aabee;"> 
+  <span style="
+      color: #2aabee;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2aabee
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #34adee;"> 
+  <span style="
+      color: #34adee;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #34adee
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #22afef;"> 
+  <span style="
+      color: #22afef;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #22afef
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #34b4b5;"> 
+  <span style="
+      color: #34b4b5;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #34b4b5
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">Null color (white-ish)</td>
+<td style="text-align:center">
+<code style="background-color: #2ee5ae;"> 
+  <span style="
+      color: #2ee5ae;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2ee5ae
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #e8d0b0;"> 
+  <span style="
+      color: #e8d0b0;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #e8d0b0
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #c6beb3;"> 
+  <span style="
+      color: #c6beb3;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c6beb3
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #4ddfe0;"> 
+  <span style="
+      color: #4ddfe0;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #4ddfe0
+  </span>
+</code></td>
+</tr>
+</tbody>
+</table>
+<p>I also used the <code>bold</code> on the <code>success</code> and I actually inverted the <code>error</code> so the background is <code>red</code> and the text is white. High contrast is usually a good helper where we&rsquo;re limited with the possible colors.</p>
+<p>The result seems to be pretty much working in all situations:
+<img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pod-impaired-theme-1.png"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/describe-pod-impaired-theme.png"></p>
+<h3 id="using-the-themes">Using the themes</h3>
+<p>Finally, along the other 4 themes announced before, you can now use any of the new themes if you&rsquo;re concerned by color blindness. They are:</p>
+<ul>
+<li>protanopia-dark</li>
+<li>protanopia-light</li>
+<li>deuteranopia-dark</li>
+<li>deuteranopia-light</li>
+<li>tritanopia-dark</li>
+<li>tritanopia-light</li>
+</ul>
+<p>Just set your env variables like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>KUBECOLOR_PRESET<span style="color:#f92672">=</span>protanopia-dark kubecolor get pods
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export KUBECOLOR_PRESET<span style="color:#f92672">=</span>protanopia-dark
+</span></span><span style="display:flex;"><span>kubecolor get pods
+</span></span></code></pre></div><p>Or set it in your config file <code>~/.kube/color.yaml</code> like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">protanopia-dark</span>
+</span></span></code></pre></div><h3 id="updating-the-theme">Updating the theme</h3>
+<p>As the Themes are pretty much a first iteration and a work in proress, please, feel free to comment and <a href="https://github.com/kubecolor/kubecolor/issues">open an issue</a> if you feel the current themes can be enhenced.</p>
+<p>Also, you can start creating your own theme, by modifying an existing one, then share it either in a <code>issue</code> or a <code>Pull Request</code>.</p>
+<p>Simply start from original theme file and add more customization to the <code>~/.kube/color.yaml</code>  file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">protanopia-dark</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">theme</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">base</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">key</span>:
+</span></span><span style="display:flex;"><span>       - <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>       - <span style="color:#ae81ff">fg=white</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">info</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">primary</span>: <span style="color:#ae81ff">fg=#4860e6</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secondary</span>: <span style="color:#ae81ff">fg=#2aabee</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">success</span>: <span style="color:#ae81ff">fg=#6afd6a:bold</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">warning</span>: <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">danger</span>: <span style="color:#ae81ff">fg=white:bg=#c2270a</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">muted</span>: <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">options</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">flag</span>: <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">table</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">header</span>: <span style="color:#ae81ff">fg=white:bold:bg=#2aabee</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">status</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">error</span>: <span style="color:#ae81ff">fg=white:bg=#c2270a</span>
+</span></span></code></pre></div><p>Note that, at the moment, all protanopia, deuteranopia and tritanopia themes are the same. Please, when you leave a feedback, mention your condition, so we can update the themes differently to better suite each of the different situations.</p>
+<p>I would encourage you to set your default theme according to your type of disability to benefit of the futur changes.</p>
+<h2 id="wrapping-it-up">Wrapping it up</h2>
+<p>Next time you see the screen of a co-worker using strange colors, don&rsquo;t smile or make fun, this person is probably suffering some sort of color blindness. Instead, just explain them that KubeColor is now your friend.</p>
+<p>Even worse, the next time you see someone using <code>kubectl</code> in monochrome, <em>insist</em> for them to go check <a href="https://github.com/kubecolor/kubecolor">Kubecolor</a> !</p>
+<p>We put a lot of effort into this feature. We trully hope that it will help some persons out there and make Kubernetes more inclusive. If not, it was a good adventure.</p>
+<p>Feature is available in <a href="https://github.com/kubecolor/kubecolor/releases/tag/v0.3.0">Kubecolor v0.3.0</a>, available now !</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubernetes/">kubernetes</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/cncf/">cncf</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/go/">go</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/kubecolor/">kubecolor</a></span>
+        <span class="tag"><a href="https://piratemakers.ca/tags/inclusion/">inclusion</a></span>
+        
+    </p>
+
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://piratemakers.ca/categories/devops/">devops</a></span>
+        
+    </p>
+
+			    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-git-commit"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg><a href="48c0bcc10cff45cb31b55ea17dd284e4630be649" target="_blank" rel="noopener">48c0bcc</a> @ 2024-04-30</p>
+  		</div>
+    </main>
+
+            </div>
+
+            
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const images = Array.from(document.querySelectorAll(".post-content img"));
+images.forEach(img => {
+  mediumZoom(img, {
+    margin: 0,  
+    scrollOffset: 40,  
+    container: null,  
+    template: null,  
+    background: 'rgba(0, 0, 0, 0.8)'
+  });
+});
+</script>
+
+<footer class="footer">
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>&copy; 2023</span>
+          
+          <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+          <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+          <span>Pirate Makers™</span>
+      </div>
+  </div>
+  
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+      </div>
+  </div>
+  
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
+
+
+
+
+    </body>
+</html>

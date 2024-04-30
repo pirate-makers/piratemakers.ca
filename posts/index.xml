@@ -6,8 +6,583 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Tue, 20 Feb 2024 20:05:56 +0000</lastBuildDate>
+        <lastBuildDate>Tue, 30 Apr 2024 10:19:04 +0000</lastBuildDate>
         <atom:link href="https://piratemakers.ca/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Adding color-blind themes to Kubecolor to make Kubernetes more inclusive</title>
+            <link>https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/</link>
+            <pubDate>Tue, 30 Apr 2024 10:19:04 +0000</pubDate>
+            
+            <guid>https://piratemakers.ca/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/</guid>
+            <description>Kubcolor is a thin wrapper over the kubectl command that adds coloring to the output.
+I cloned the project and started maintaining it back in 2022 when the original author wasn&amp;rsquo;t active anymore.
+KubeColor can reformats the output of most kubectl commands to add colors and clarity. It makes it so easier to read the output that I still don&amp;rsquo;t understand that it&amp;rsquo;s not more widely used. I actually gave a lightning talk about it at the KubeCon&amp;rsquo;s Cloud Native Reject Europe 2024 in Paris if you want a video pitch.</description>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/kubecolor-logo-impaired.png"></p>
+<p><a href="https://github.com/kubecolor/kubecolor">Kubcolor</a> is a thin wrapper over the <code>kubectl</code> command that adds coloring to the output.</p>
+<p>I cloned the project and started maintaining it back in 2022 when the original author wasn&rsquo;t active anymore.</p>
+
+    <img src="images/Kubecolor_Logo_White.png"  alt="KubeColor"  class="center"  style="border-radius: 0px; background-color: #212020; max-width: 50%;"  />
+
+
+<p>KubeColor can reformats the output of most <code>kubectl</code> commands to add colors and clarity. It makes it <em>so easier</em> to read the output that I still don&rsquo;t understand that it&rsquo;s not more widely used. I actually <a href="https://www.youtube.com/live/PWZJzjB7vso?si=CvfnmmdSZP3txENZ&t=32723">gave a lightning talk about it at the KubeCon&rsquo;s Cloud Native Reject Europe 2024 in Paris</a> if you want a video pitch.</p>
+<p>One of the longest requested feature, discussed at length in the previous project, was to be able to cusotmize the color theme used by KubeColor.</p>
+<p>Actually, when I first cloned the original project, I applied a patch that was globally changing the colors to make thinks less colory and more standard, limiting to a smaller set of colors. Some people started complaining right away, but that&rsquo;s what people do anyways.</p>
+<p>As of <strong>version 0.3.0</strong>, <code>kubecolor</code> now supports custom color scheme and theme, thanks to the work of other main contributor, <a href="https://github.com/applejag">AppleJag</a>, which is a talented (Go) devleoper. Jag, I can&rsquo;t thank you enough for all the help on this project.</p>
+<p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/1.png"></p>
+<p><strong>What&rsquo;s the problem ?</strong></p>
+<p>By default <code>kubecolor</code> uses the set of colors from your terminal&rsquo;s config, so it always was possible to configure it. Just change the theme of your terminal and you can adapt the colors to your needs !</p>
+<p>But more than colors default colors, some want to colorize some specific fields differently, or use more colors to further differenciate things.</p>
+<p><strong>But there&rsquo;s more&hellip;</strong></p>
+<p>According to <a href="https://enchroma.com/blogs/beyond-color/interesting-facts-about-color-blindness">this article</a>, one man out of 12 have some sort of <strong>color blindness</strong> (or color disability). Women are a little less concerned, with one out of 200, but still, it&rsquo;s a lot ! (numbers may vary depending on the website too&hellip;)</p>
+<p>Check the <a href="https://en.wikipedia.org/wiki/Color_blindness">Wikipedia</a> page to learn more, and there&rsquo;s tons of other sites about this matter. And still, it&rsquo;s usually not something we think of right away.</p>
+<p>For example, just look at <a href="https://piratemakers.ca/posts/">my blog</a>, with it&rsquo;s low contrast grey colors and you&rsquo;ll understand that color blindness was not my main concerns at the time.</p>
+<p>And, well, when we think at inclusion it&rsquo;s generally genders and skin colors, and when we think about accessibility, it&rsquo;s mobility impairement, deafs and blinds.</p>
+<p><strong>Color-blindness</strong> is usually not mentionned or taken care of. The <a href="https://contribute.cncf.io/accessibility/">CNCF Website itself</a> does not mention it directly. The only TAG (Technical Advisory Groups) in the <code>Accessibility</code> section is <a href="https://contribute.cncf.io/accessibility/deaf-and-hard-of-hearing/">focused on hearing issues</a>.</p>
+<p>Maybe because it&rsquo;s easier to live with color-blindness, or because people don&rsquo;t talk about it by shame, it&rsquo;s still a real problem and the numbers are huge, far more that what I always belived.</p>
+<p>Note that I&rsquo;m not trying to rate any of those against the others, or trying to speak in place of the impacted persons. I&rsquo;m not impaired and I just want to put some light on inclusivity.</p>
+<h2 id="so-what-to-do-with-this-">So, what to do with this ?</h2>
+<p>As soon as <code>kubecolor</code> got the color theme functionnality, I started thinking of adding one or multiple color themes for the various kind of color-blindness.</p>
+<p>The first question that came to my mind was :</p>
+<blockquote>
+<p>It&rsquo;s quite usual to use 
+<code style="background-color: green;"> 
+  <span style="
+      color: green;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      green
+  </span>
+</code> for good things (success) and 
+<code style="background-color: red;"> 
+  <span style="
+      color: red;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      red
+  </span>
+</code> for bad things (errors). But is there a common pattern for color-blind persons ?</p>
+</blockquote>
+<p>Well, so far I don&rsquo;t have the answer. But while searching I learnt few things:</p>
+<ul>
+<li>Color is important, but so is the <code>contrast</code></li>
+<li>there&rsquo;s also modifiers like <strong>bold</strong> and <em>italic</em> that can help better differenciate things</li>
+<li>it is usually better to add some text explaining the status and not only rely on the color. Here, no probleme for us, as we are <em>adding</em> colors to an already expressive text.</li>
+<li>Maybe I should not add a theme at all and each person will built its own</li>
+</ul>
+<h2 id="understanding-kubecolor-themes">Understanding KubeColor Themes</h2>
+<p>Thanks to Jag, <code>kubecolor</code> can process <a href="https://github.com/kubecolor/kubecolor/blob/main/README.md#color-theme">many kind of definitions to configure the colors</a>.</p>
+<p>In short:</p>
+<ul>
+<li>
+<p>using a regular <strong>color names</strong> (like red, blue) will use whatever is defined in your <code>terminal</code> application&rsquo;s theme. <code>white</code> may be white, or not, but <em>if</em> you already have a theme made for color-blindness, you may not have to change anything.</p>
+</li>
+<li>
+<p>using many other ways to define colors, like HEX and RGB values, will allow to use custom colors not part of your terminal&rsquo;s theme.</p>
+</li>
+<li>
+<p>using <code>bg=</code> or <code>fg=</code> will allow to change the background or the front (text) color.</p>
+</li>
+<li>
+<p>it is possible to use any of the <code>modifiers</code> like <strong>bold</strong>, <em>italic</em> and so on to even better tune the visibility of each field.</p>
+</li>
+<li>
+<p>thanks to all the <code>KUBECOLOR_THEME_*</code> ENV variables, it is possible to fully customize the output of &ldquo;each&rdquo; field, depending on the original command used against <code>kubectl</code> (like <code>get</code> or a <code>describe</code>).</p>
+</li>
+<li>
+<p>it is possible to create the theme as a file, which also enable sharing it, by creating a <code>~/.kube/color.yaml</code> file (in OsX and Linux, may be a different location on Windows). We&rsquo;ll dive on the format later, keep reading.</p>
+</li>
+<li>
+<p><code>kubecolor</code> embeds default themes, both in dark and light mode:</p>
+<ul>
+<li>dark
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/dark-theme.png"></li>
+<li>light</li>
+<li>pre-0.0.21-dark: the previous color schema from the original project
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/pre-0.0.21-dark-theme.png"></li>
+<li>pre-0.0.21-light</li>
+</ul>
+</li>
+</ul>
+<p>You can check the content of each basic theme in the code in the <a href="https://github.com/kubecolor/kubecolor/blob/main/config/theme.go#L15">config/theme.go</a> file.</p>
+<h2 id="how-to-build-a-theme">How to build a theme</h2>
+<p>As said earlier, you can either use the <code>KUBECOLOR_THEME_*</code> env variables or create your theme in the <code>~/.kube/color.yaml</code> file.</p>
+<h3 id="using-env-variables">Using ENV Variables</h3>
+<p>The easiest is to check the docs at <a href="https://github.com/kubecolor/kubecolor/blob/main/README.md#color-theme">https://github.com/kubecolor/kubecolor/blob/main/README.md#color-theme</a> and experiment.</p>
+<p>In any case, you have to pick a <code>base</code> theme, by setting <code>KUBECOLOR_PRESET</code>, then update some of the colors. For example you can change all the <code>running</code> pods to blue with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>KUBECOLOR_THEME_BASE_SUCCESS<span style="color:#f92672">=</span>blue KUBECOLOR_PRESET<span style="color:#f92672">=</span>dark kubecolor get pods -o wide
+</span></span></code></pre></div><p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/running-blue.png"></p>
+<h3 id="using-the-config-file">Using the config file</h3>
+<p>Create the file  <code>~/.kube/color.yaml</code> and add some content like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">dark</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">theme</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">table</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">header</span>: <span style="color:#ae81ff">fg=red:bold:bg=blue</span>
+</span></span></code></pre></div><p>So basically, you take the ENV variable and you nest the last part of it.</p>
+<p>With <code>KUBECOLOR_THEME_STATUS_ERROR</code>, you remove the <code>KUBECOLOR</code> part, so the final path is <code>theme.status.error</code>, so to show pods in error in pink:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">dark</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">theme</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">table</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">header</span>: <span style="color:#ae81ff">fg=red:bold:bg=blue</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">status</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">error</span>: <span style="color:#ae81ff">pink</span>
+</span></span></code></pre></div><p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/crash-magenta.png"></p>
+<h2 id="color-blind-theme">Color Blind Theme</h2>
+<p>First I want to clearly state I do not have any color impairement, and the work I&rsquo;m trying to achieve here is based on articles I read and  some talking with color-blind persons. There&rsquo;s no scientific work on my side.</p>
+<p>The idea is to provide an out of the box solution to help people with color-blindness. The outcome may not be perfect or even useful and I take no responsability. It&rsquo;s best effort. It&rsquo;s OpenSource. Bare with me.</p>
+<p>After some researches, I found the <a href="https://asada.website/webCVS/index.html">Cromatic Vision Simulator website</a> which allows to load an image and, using a quad view, see what color-blind persons may see depending on the kind of disability.</p>
+<p>In short, if I upload one of the previous images that captured the <code>k get pods -o wide</code> commands, we can check how it look using the <code>dark</code> theme:</p>
+<ul>
+<li>regular view
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark.png"></li>
+<li>Protanopia view
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark-protanopia.png"></li>
+<li>deuteranopia view
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark-deuteranopia.png"></li>
+<li>tritanopia view
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pods-dark-tritanopia.png"></li>
+</ul>
+<p>Now I guess we all understand the issue with the current color scheme of the <code>dark</code> theme: any impaired person will lose most of the color informations. At this point, better use plain <code>kubectl</code> commands&hellip;</p>
+<p>So I tested some chromatic progressions to try to identify a palette that could work fine at least most of the time:</p>
+<p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/color-cycles-quad.png"></p>
+<p>Being color-blind is not just not seeing green or red, there&rsquo;s also quite a limitation in the color hues that are perceived, so everything from green to red, where the color changes slowly for a regular eye, will be almost the same brown/yellowish for a Protanopian.</p>
+<p>My final conclusion is that it seems possible to achieve a theme that will help better differenciate the content. What we need here is having different color hues to show the difference of, mostly, good and bad situation, and color cycles when there&rsquo;s a table.</p>
+<p>Using the <a href="https://observablehq.com/@d3/color-schemes">Observable HQ website</a>, I used the <code>discrete 10</code> schema to cut the rainbow in 10 usable colors:</p>
+<ul>
+<li>
+<code style="background-color: #23171b;"> 
+  <span style="
+      color: #23171b;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #23171b
+  </span>
+</code></li>
+<li>
+<code style="background-color: #4860e6;"> 
+  <span style="
+      color: #4860e6;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #4860e6
+  </span>
+</code></li>
+<li>
+<code style="background-color: #2aabee;"> 
+  <span style="
+      color: #2aabee;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2aabee
+  </span>
+</code></li>
+<li>
+<code style="background-color: #2ee5ae;"> 
+  <span style="
+      color: #2ee5ae;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2ee5ae
+  </span>
+</code></li>
+<li>
+<code style="background-color: #6afd6a;"> 
+  <span style="
+      color: #6afd6a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #6afd6a
+  </span>
+</code></li>
+<li>
+<code style="background-color: #c0ee3d;"> 
+  <span style="
+      color: #c0ee3d;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c0ee3d
+  </span>
+</code></li>
+<li>
+<code style="background-color: #feb927;"> 
+  <span style="
+      color: #feb927;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #feb927
+  </span>
+</code></li>
+<li>
+<code style="background-color: #fe6e1a;"> 
+  <span style="
+      color: #fe6e1a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fe6e1a
+  </span>
+</code></li>
+<li>
+<code style="background-color: #c2270a;"> 
+  <span style="
+      color: #c2270a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c2270a
+  </span>
+</code></li>
+<li>
+<code style="background-color: #900c00;"> 
+  <span style="
+      color: #900c00;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #900c00
+  </span>
+</code></li>
+</ul>
+<p>Once rendered, we have:</p>
+<p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/turbo-colors.png"></p>
+<p>The <code>dark</code> theme only uses 6 colors (well, 5 as one if the default white for dark theme, or black for light theme). So here&rsquo;s my selection:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Terminal Color</th>
+<th style="text-align:center">Matching Color</th>
+<th style="text-align:center">protanopia</th>
+<th style="text-align:center">deuteranopia</th>
+<th style="text-align:center">tritanopia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">
+<code style="background-color: yellow;"> 
+  <span style="
+      color: yellow;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      yellow
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #feb927;"> 
+  <span style="
+      color: #feb927;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #feb927
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #f9bb27;"> 
+  <span style="
+      color: #f9bb27;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #f9bb27
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fbbc23;"> 
+  <span style="
+      color: #fbbc23;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fbbc23
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #ffacb6;"> 
+  <span style="
+      color: #ffacb6;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #ffacb6
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: magenta;"> 
+  <span style="
+      color: magenta;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      magenta
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #4860e6;"> 
+  <span style="
+      color: #4860e6;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #4860e6
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #a77fe5;"> 
+  <span style="
+      color: #a77fe5;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #a77fe5
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #888ee4;"> 
+  <span style="
+      color: #888ee4;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #888ee4
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #257e7d;"> 
+  <span style="
+      color: #257e7d;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #257e7d
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: green;"> 
+  <span style="
+      color: green;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      green
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #6afd6a;"> 
+  <span style="
+      color: #6afd6a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #6afd6a
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fee16c;"> 
+  <span style="
+      color: #fee16c;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fee16c
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fee16c;"> 
+  <span style="
+      color: #fee16c;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fee16c
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #fee16c;"> 
+  <span style="
+      color: #fee16c;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #fee16c
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: red;"> 
+  <span style="
+      color: red;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      red
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #c2270a;"> 
+  <span style="
+      color: #c2270a;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c2270a
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #bb8b16;"> 
+  <span style="
+      color: #bb8b16;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #bb8b16
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #936a15;"> 
+  <span style="
+      color: #936a15;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #936a15
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #ff6579;"> 
+  <span style="
+      color: #ff6579;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #ff6579
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">
+<code style="background-color: cyan;"> 
+  <span style="
+      color: cyan;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      cyan
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #2aabee;"> 
+  <span style="
+      color: #2aabee;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2aabee
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #34adee;"> 
+  <span style="
+      color: #34adee;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #34adee
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #22afef;"> 
+  <span style="
+      color: #22afef;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #22afef
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #34b4b5;"> 
+  <span style="
+      color: #34b4b5;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #34b4b5
+  </span>
+</code></td>
+</tr>
+<tr>
+<td style="text-align:center">Null color (white-ish)</td>
+<td style="text-align:center">
+<code style="background-color: #2ee5ae;"> 
+  <span style="
+      color: #2ee5ae;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #2ee5ae
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #e8d0b0;"> 
+  <span style="
+      color: #e8d0b0;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #e8d0b0
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #c6beb3;"> 
+  <span style="
+      color: #c6beb3;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #c6beb3
+  </span>
+</code></td>
+<td style="text-align:center">
+<code style="background-color: #4ddfe0;"> 
+  <span style="
+      color: #4ddfe0;
+      filter:  grayscale(1) invert(1) contrast(100);
+      ">
+      #4ddfe0
+  </span>
+</code></td>
+</tr>
+</tbody>
+</table>
+<p>I also used the <code>bold</code> on the <code>success</code> and I actually inverted the <code>error</code> so the background is <code>red</code> and the text is white. High contrast is usually a good helper where we&rsquo;re limited with the possible colors.</p>
+<p>The result seems to be pretty much working in all situations:
+<img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/get-pod-impaired-theme-1.png"></p>
+<p><img alt="image" src="/posts/2024/04/adding-color-blind-themes-to-kubecolor-to-make-kubernetes-more-inclusive/images/describe-pod-impaired-theme.png"></p>
+<h3 id="using-the-themes">Using the themes</h3>
+<p>Finally, along the other 4 themes announced before, you can now use any of the new themes if you&rsquo;re concerned by color blindness. They are:</p>
+<ul>
+<li>protanopia-dark</li>
+<li>protanopia-light</li>
+<li>deuteranopia-dark</li>
+<li>deuteranopia-light</li>
+<li>tritanopia-dark</li>
+<li>tritanopia-light</li>
+</ul>
+<p>Just set your env variables like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>KUBECOLOR_PRESET<span style="color:#f92672">=</span>protanopia-dark kubecolor get pods
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export KUBECOLOR_PRESET<span style="color:#f92672">=</span>protanopia-dark
+</span></span><span style="display:flex;"><span>kubecolor get pods
+</span></span></code></pre></div><p>Or set it in your config file <code>~/.kube/color.yaml</code> like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">protanopia-dark</span>
+</span></span></code></pre></div><h3 id="updating-the-theme">Updating the theme</h3>
+<p>As the Themes are pretty much a first iteration and a work in proress, please, feel free to comment and <a href="https://github.com/kubecolor/kubecolor/issues">open an issue</a> if you feel the current themes can be enhenced.</p>
+<p>Also, you can start creating your own theme, by modifying an existing one, then share it either in a <code>issue</code> or a <code>Pull Request</code>.</p>
+<p>Simply start from original theme file and add more customization to the <code>~/.kube/color.yaml</code>  file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">preset</span>: <span style="color:#ae81ff">protanopia-dark</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">theme</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">base</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">key</span>:
+</span></span><span style="display:flex;"><span>       - <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>       - <span style="color:#ae81ff">fg=white</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">info</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">primary</span>: <span style="color:#ae81ff">fg=#4860e6</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secondary</span>: <span style="color:#ae81ff">fg=#2aabee</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">success</span>: <span style="color:#ae81ff">fg=#6afd6a:bold</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">warning</span>: <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">danger</span>: <span style="color:#ae81ff">fg=white:bg=#c2270a</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">muted</span>: <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">options</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">flag</span>: <span style="color:#ae81ff">fg=#feb927</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">table</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">header</span>: <span style="color:#ae81ff">fg=white:bold:bg=#2aabee</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">status</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">error</span>: <span style="color:#ae81ff">fg=white:bg=#c2270a</span>
+</span></span></code></pre></div><p>Note that, at the moment, all protanopia, deuteranopia and tritanopia themes are the same. Please, when you leave a feedback, mention your condition, so we can update the themes differently to better suite each of the different situations.</p>
+<p>I would encourage you to set your default theme according to your type of disability to benefit of the futur changes.</p>
+<h2 id="wrapping-it-up">Wrapping it up</h2>
+<p>Next time you see the screen of a co-worker using strange colors, don&rsquo;t smile or make fun, this person is probably suffering some sort of color blindness. Instead, just explain them that KubeColor is now your friend.</p>
+<p>Even worse, the next time you see someone using <code>kubectl</code> in monochrome, <em>insist</em> for them to go check <a href="https://github.com/kubecolor/kubecolor">Kubecolor</a> !</p>
+<p>We put a lot of effort into this feature. We trully hope that it will help some persons out there and make Kubernetes more inclusive. If not, it was a good adventure.</p>
+<p>Feature is available in <a href="https://github.com/kubecolor/kubecolor/releases/tag/v0.3.0">Kubecolor v0.3.0</a>, available now !</p>
+]]></content>
+        </item>
         
         <item>
             <title>Crossplane: review after 1.5 years</title>
@@ -19,7 +594,7 @@
 This blog post was relating a real POC I did for my company, where I was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.
 As you may have read, the outcome wasn&amp;rsquo;t exactly what I thought.
 I got contacted by Crossplane CEO, who shared my blog post to the Upbound team.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2024/02/crossplane-review-after-1.5-years/images/1.png"></p>
 <p>So, a year and a half ago, I wrote <a href="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/">Playing with Crossplane, for real</a> blog post (<a href="https://medium.com/p/f591e66065ae">link to the Medium original version</a>).</p>
 <p>This blog post was relating a real POC I did for my company, where <strong>I</strong> was pushing for using ArgoCD and Crossplane to handle our infrastructure in place of Terraform.</p>
 <p>As you may have read, the outcome wasn&rsquo;t exactly what I thought.</p>
@@ -213,7 +788,7 @@ upbound-provider-family-gcp-d0f27e03505b   True      1          xpkg.upbound.io/
 <p>The provider&rsquo;s docs changed a lot, but is it for the better ?</p>
 <p>At the time of this blog, Crossplane v1.15 is the latest so we&rsquo;ll use it. <a href="https://docs.crossplane.io/latest/">https://docs.crossplane.io/latest/</a> is the way to go.</p>
 <p>Provider GCP, which is linked from the docs, is on the Upbound Marketplace and contains 347 resources. It can be reached at <a href="https://marketplace.upbound.io/providers/upbound/provider-gcp/v0.41.1/docs/quickstart">https://marketplace.upbound.io/providers/upbound/provider-gcp/v0.41.1/docs/quickstart</a>.</p>
-<p><img src="images/upbound_provider-gcp_v0_41_1.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2024/02/crossplane-review-after-1.5-years/images/upbound_provider-gcp_v0_41_1.png"></p>
 <p>But you have a warning:</p>
 <pre tabindex="0"><code>⚠️ Warning: The monolithic GCP provider (upbound/provider-gcp) has been deprecated in favor of the GCP provider family. 
 
@@ -221,12 +796,12 @@ You can read more about the provider families in our blog post and the official 
 We will continue support for the monolithic GCP provider until June 12, 2024. And you can find more information on migrating from the monolithic providers to the provider families here.
 </code></pre><p>Ah&hellip;</p>
 <p>Let&rsquo;s check the provider family at <a href="https://marketplace.upbound.io/providers/upbound/provider-family-gcp/v0.41.1">https://marketplace.upbound.io/providers/upbound/provider-family-gcp/v0.41.1</a></p>
-<p><img src="images/upbound_provider-family-gcp_v0_41_1.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2024/02/crossplane-review-after-1.5-years/images/upbound_provider-family-gcp_v0_41_1.png"></p>
 <p>No more <code>Managed Resources</code>&hellip; only <code>Providers</code>.  That&rsquo;s the trick, GCP resources are now groupped in smaller <code>Providers</code> so you can deploy only what you need.</p>
 <p>The <code>ServiceAccount</code> Resource is now defined in the <a href="https://marketplace.upbound.io/providers/upbound/provider-gcp-cloudplatform/v0.41.1/resources/cloudplatform.gcp.upbound.io/ServiceAccount/v1beta1">provider-gcp-cloudplatform</a> Provider.</p>
 <p>I&rsquo;ve been searching for it for some time&hellip; so the trick is to <a href="https://marketplace.upbound.io/providers/upbound/provider-family-gcp/v0.41.1/providers?">use the search bar from the provider family</a>.</p>
 <p>The docs are pretty useful here, at least for a resource as simple as a SericeAccount, and better describe the option:</p>
-<p><img src="images/ServiceAccount_-_upbound_provider-gcp-cloudplatform_v0_41_1.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2024/02/crossplane-review-after-1.5-years/images/ServiceAccount_-_upbound_provider-gcp-cloudplatform_v0_41_1.png"></p>
 <p>There&rsquo;s also 3 examples:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">cloudplatform.gcp.upbound.io/v1beta1</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
@@ -266,7 +841,7 @@ We will continue support for the monolithic GCP provider until June 12, 2024. An
 </span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">my-KSA-name</span>
 </span></span></code></pre></div><p>But searching for more docs on <code>ControllerConfig</code> I then found the <a href="https://docs.crossplane.io/latest/concepts/providers/#controller-configuration">OSS Crossplane docs</a> with once again, contradictory statement:</p>
-<p><img src="images/Providers_controllerconfig_Crossplane_v1_15.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2024/02/crossplane-review-after-1.5-years/images/Providers_controllerconfig_Crossplane_v1_15.png"></p>
 <p>So wee need to use a <a href="https://docs.crossplane.io/latest/concepts/providers/#runtime-configuration">DeploymentRuntimeConfigs</a> !</p>
 <p>Which also includes a warning:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Important
@@ -347,7 +922,7 @@ We will continue support for the monolithic GCP provider until June 12, 2024. An
 </span></span><span style="display:flex;"><span>	&gt;  	sigs.k8s.io/controller-runtime@v0.16.3/pkg/internal/controller/controller.go:223 +0x565
 </span></span></code></pre></div><p>It seems to be a Go stack-trace telling me that there&rsquo;s not going to be any logs generated&hellip; whaaaaaat ?</p>
 <p>But we&rsquo;re OK, <a href="https://docs.crossplane.io/knowledge-base/guides/troubleshoot/#provider-logs">we have the docs</a> !!</p>
-<p><img src="images/Troubleshoot_Logs_Crossplane.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2024/02/crossplane-review-after-1.5-years/images/Troubleshoot_Logs_Crossplane.png"></p>
 <p>WHAAAT ? I thought the <code>ControllerConfig</code> was deprecated ?</p>
 <p>Let&rsquo;s update our <code>DeploymentRuntimeConfig</code> to add debug logs&hellip; that should do it:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">pkg.crossplane.io/v1beta1</span>
@@ -673,7 +1248,7 @@ DEBUG	provider-gcp	Observing the external resource	{&#34;uid&#34;: &#34;f13fe9c3
             <description>We all know the App-of-Apps pattern, where one repo contains many other ArgoCD Applications.
 While testing how to add my Kubernetes Cluster&amp;rsquo;s Addons using ArgoCD, which represents all the apps mandatory in all clustets, like crossplane, prometheus (victoriaMetrics), exporters&amp;hellip;, I came to test a &amp;ldquo;new&amp;rdquo; pattern: AppSet-Of-AppSet.
 This is a quick post going over my experiements. It is not a howto, or a suggestion to go this route, it&amp;rsquo;s just a test.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="Docker Fail"></p>
+            <content type="html"><![CDATA[<p><img alt="Docker Fail" src="/posts/2024/01/argocd-appset-of-appset-pattern/images/1.png"></p>
 <p>We all know the App-of-Apps pattern, where one repo contains many other <code>ArgoCD Applications</code>.</p>
 <p>While testing how to add my Kubernetes Cluster&rsquo;s Addons using ArgoCD, which represents all the apps mandatory in all clustets, like crossplane, prometheus (victoriaMetrics), exporters&hellip;, I came to test a &ldquo;new&rdquo; pattern: <code>AppSet-Of-AppSet</code>.</p>
 <p>This is a quick post going over my experiements. It is <strong>not</strong> a howto, or a suggestion to go this route, it&rsquo;s just a test.</p>
@@ -1012,7 +1587,7 @@ And if you read down to <code>Argo CD Server-Side Diff</code>, there&rsquo;s als
             <description>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…
 After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.
 Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="Docker Fail"></p>
+            <content type="html"><![CDATA[<p><img alt="Docker Fail" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/1.png"></p>
 <p>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…</p>
 <p>After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.</p>
 <p>Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</p>
@@ -1031,7 +1606,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>Back in the time, Docker Hub was free. stop.</p>
 <p>It was easy to create an org and publish OSS projects. Really few clicks away.</p>
 <p>Today, well, there’s a specific program for that: <a href="https://www.docker.com/community/open-source/application/">Docker-Sponsored Open Source Program</a>.</p>
-<p><img src="images/3.jpeg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/3.jpeg"></p>
 <p>What you get with that is:</p>
 <ul>
 <li>free autobuilds</li>
@@ -1169,7 +1744,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>You don’t have to put anything in there. The GoReleaser will do that for you.</p>
 <p>The <code>GLOBAL_GITHUB_TOKEN</code> is actually a <a href="https://github.com/settings/tokens">Personnal Token</a> from my user, with sufficient privileges to manager both repos.</p>
 <h4 id="kubecolor-docker-image">KubeColor Docker Image</h4>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/4.png"></p>
 <p>While having a docker image for KubeColor is not strictly needed, well, people will ask for it if there’s none…</p>
 <p>Again, we’re going to use a Github Action for that. Create the file <code>.github/workflows/publish_docker_image.yml</code> :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish docker image</span>
@@ -1231,12 +1806,12 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>Here, I’m using another Secret, <code>GH_CONTAINER_REGISTRY_PUSHER</code>, which allows this pipeline to push into the registry.</p>
 <p>The registry lives at the ORG level. The <strong>GHCR</strong> is actually called <code>Packages</code> in the Org Setup at <code>https://github.com/organizations/&lt;your org&gt;/settings/packages</code> . You have to set it to Public so it’s a public repo.</p>
 <p>You can then access your <code>packages</code> at <code>https://github.com/orgs/&lt;your org&gt;/packages</code></p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/5.png"></p>
 <p>There’s not much to see about it:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/6.png"></p>
 <p>When you click on the <code>Package Settings</code> at the right here, you can then change the visibility (public/private):</p>
-<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
-<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/7.png"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/8.png"></p>
 <h3 id="wrap-up">Wrap-up</h3>
 <p>To me, Docker is gone. We hopefully have alternatives for everything that was docker before.</p>
 <p>I’m not sure what’s going to happen to docker in the future. I know a lot of big companies are paying so their docker images has no download or bandwidth limits, so I guess they will keep on for some time.</p>
@@ -1253,7 +1828,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
             <guid>https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/</guid>
             <description>It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that Terraform (TF) is the leader in this field.
 that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, Hashicorp), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2022/08/playing-with-crossplane-for-real/images/1.png"></p>
 <p>It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that <a href="https://www.hashicorp.com/products/terraform">Terraform (TF)</a> is the leader in this field.</p>
 <p>that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, <a href="https://www.hashicorp.com/">Hashicorp</a>), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it.</p>
 <p>So we end up with complicated code, tricks to make things happen or not (like using <code>count</code>) and the two biggest pain point:</p>
@@ -1279,13 +1854,13 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
 <p>As TF, Crossplane is build up on <a href="https://github.com/crossplane-contrib"><strong>Providers</strong></a> (<a href="https://crossplane.github.io/docs/v1.9/concepts/providers.html">see official list here</a>), which extends Crossplane with new <em>Managed Resource Type</em> to work with.</p>
 <p>But the strength of Crossplane lies in its <code>Composition</code> feature. It is exactly what the name implies: you build up a new type of resource by combining (composing) other type of resources. Ex: create a K8s cluster and a nodepool, or create a DB Instance, a DB schema and a DB user, all at one.</p>
 <p>Let’s grab some pictures from the official docs:</p>
-<p><img src="images/2.png#layoutTextWidth" alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview"></p>
+<p><img alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview" src="/posts/2022/08/playing-with-crossplane-for-real/images/2.png"></p>
 <p>You <code>claim</code> a Postresql Instance, that references a <code>Composite Resource</code> that will trigger the creation of a <code>CloudSQL Instance</code> and a <code>Firewall Rule</code> to access it. Neat !</p>
 <p>It’s a little bit more complicated, so here’s another picture from the doc that is supposed to be closer to reality:</p>
-<p><img src="images/3.png#layoutTextWidth" alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#how-it-works"></p>
+<p><img alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#how-it-works" src="/posts/2022/08/playing-with-crossplane-for-real/images/3.png"></p>
 <p>AH ! There we go !</p>
 <p>You can go read the docs at <a href="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview">https://crossplane.github.io/docs/v1.9/concepts/composition.html</a>. I personally read that again and again, and wasn’t able to fully understand the real thing until I played with it, and built my own schema:</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/08/playing-with-crossplane-for-real/images/4.png"></p>
 <p>Let me break things down:</p>
 <ol>
 <li><strong>Infra</strong>: Deploy a Provider, like GKE, AWS, Helm, K8s, even a <a href="https://github.com/crossplane-contrib/provider-terraform">Terraform provider</a></li>
@@ -1301,7 +1876,7 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
 <p>This is really powerful, and the only limitation is actually in what a provider can do.</p>
 <p>Talking of which, I guess you see me coming, it’s also the biggest problem Crossplane has: it all depends on what a Provider can do !Oh, by the way, I’ll be a speaker at <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/">KubeCon North America 2022 in Detroit</a> , please <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/program/schedule/">check my talk here</a>, register for Thursday, October 27 • 2:30pm — 4:00pm:</p>
 <p><a href="https://kccncna2022.sched.com/event/182F7/tutorial-set-up-your-shell-for-kubernetes-productivity-and-be-efficient-quickly-sebastien-prune-thomas-wunderkind-archy-ayrat-khayretdinov-google">Tutorial: Set Up Your Shell For Kubernetes Productivity And Be Efficient Quickly — Sebastien “Prune” Thomas, Wunderkind &amp; Archy Ayrat Khayretdinov, Google</a></p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/08/playing-with-crossplane-for-real/images/5.png"></p>
 <h3 id="question-1-providers">Question 1: Providers</h3>
 <p>As stated, <code>Providers</code> are the part that manages some resources. In fact, it’s a <code>Pod</code> that will be deployed along Crossplane, will create CRD for the resource it manages and watch on them. Each instance of a managed resource will make the <code>Provider</code> create and maintain a resource. For the GCP provider, that means calling the GCP API and create some resources.</p>
 <p>I’m not diving into <code>Providers</code>configuration here. It involves installing the provider, giving it a global config and some more specific variations of the config, like having a <code>Dev</code> , <code>Staging</code> and <code>Prod</code>provider for GCP. I would maybe have to create a mix of configurations for each of my <code>env</code> * <code>project</code> so I can ensure some devs can deploy to <code>Project A</code> in <code>Dev</code> but not on <code>Prod</code> or in <code>Project B</code> . This is something I haven’t explored yet… Please, again, comment.</p>
@@ -1312,11 +1887,11 @@ Ex:</p>
 <li>crossplane GCP Provider (official): <a href="https://doc.crds.dev/github.com/crossplane/provider-gcp@v0.21.0">https://doc.crds.dev/github.com/crossplane/provider-gcp@v0.21.0</a></li>
 </ul>
 <p>Let’s dive in the GCP provider:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/08/playing-with-crossplane-for-real/images/6.png"></p>
 <p>28 CRDs discovered ? wait, what ? only 28 different GCP resources are managed by Crossplane ?</p>
 <p>short answer: YES :(</p>
 <p>So, for example, you can create a <code>CloudSQLInstance</code> which represents a Postgres or MySQL Database Instance:</p>
-<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/08/playing-with-crossplane-for-real/images/7.png"></p>
 <p>But then, you just can’t create any specific DB, User or anything else related to this DB Instance. Because, well, the resources were not ported into the Provider.</p>
 <p>AWS official Provider is a little better, with 172 resources.</p>
 <p>This situation is just normal. Building up a provider is tedious, there are a lot of different resources, and Crossplane team is quite small compared to this huge work.<br>
@@ -1326,7 +1901,7 @@ At first, I guess the Cloud providers wanted to help, but it feels that in the e
 <p>TerraJet (Jet) is a way to convert Terraform Providers into Crossplane Providers, hiding the TF mechanics. With Jet, TF is run in the background and the TF State file is, let’s say, split and stored along each Crossplane Resource.</p>
 <h4 id="_smart-_"><em>Smart ?</em></h4>
 <p>Well, the GCP Jet Provider counts 438 resources, including all that we need to manage SQL DBs in GCP. AWS Jet Provider counts a wooping 780 resources ! I guess it’s more than you’ll ever use.</p>
-<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/08/playing-with-crossplane-for-real/images/8.png"></p>
 <h3 id="question-2-docs-">Question 2: Docs ?</h3>
 <p>It seems to be a lot of resources to use ! While TF docs are, well, not that bad in the end, and you have a LOT of blog posts and examples to play with, it’s not the same story for Crossplane.</p>
 <p>The <a href="https://crossplane.github.io/docs/v1.9/concepts/composition.html">Composition Docs</a>, for example, showcase few different stuffs that will work out of the box if you copy/paste. But then, you want your own stuff, maybe not a DB instance. So you start digging in… and reach the <a href="https://crossplane.github.io/docs/v1.9/reference/composition.html">Composition Reference doc</a>.<br>
@@ -1784,7 +2359,7 @@ default/test-net-v1beta-1: networking.k8s.io/v1, networking.k8s.io/v1beta1,
 Updates:
 20220410: added some Dasel examples 20220410: I’ll be giving a talk about this post April the 12th at the Canadian CNCF and Kubernetes meetup: https://lnkd.in/ep9yaj6Z 20220412: add commands to build a patched kubecolor 20220413: recording of the K8s/CNCF CANADA Meetup talk A ton of writing had been done about how to setup your shell and all the tooling that goes with it to use Kubernetes.</description>
             <content type="html"><![CDATA[<p><em>How to be productive fast with Kubernetes</em></p>
-<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/1.png"></p>
 <p><strong>Updates</strong>:</p>
 <ul>
 <li>20220410: added some Dasel examples</li>
@@ -1799,7 +2374,7 @@ Well, I think it needed another one blog post (and talk) about it !</p>
 <p>Well, do whatever you want with this blog post. I’m writing it as a reference for myself 🙏</p>
 <h3 id="what-is-kubectl-">What is Kubectl ?</h3>
 <p>Come on, we all know that: <em>kubectl</em> is the CLI to interact with the K8s API !</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/2.png"></p>
 <p><em>kubectl</em> is taking your human-readable requests and translate them to a REST call against the Kubernetes API server.</p>
 <p>Then, the server answer with some information, mostly JSON. Usually, <em>kubectl</em> dump that in a human-readable way, or, quite often, in YAML, because we all love YAML !</p>
 <p>Here, <em>kubectl</em> is usually doing the minimum, and things quickly gets messy when you have a large cluster with hundreds of resources.</p>
@@ -1829,7 +2404,7 @@ BTW, this <em>kubectl version</em> command is a great way to check for your serv
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># add in your .zshrc  </span>
 </span></span><span style="display:flex;"><span>alias k<span style="color:#f92672">=</span>kubecolor
 </span></span></code></pre></div><p>Result:</p>
-<p><img src="images/3.jpg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/3.jpg"></p>
 <p>Until the <a href="https://github.com/hidetatz/kubecolor/pull/86">PR 86</a> is merged, you may reach an issue when using the <strong>ctx</strong> or <strong>ns</strong> commands, where the whole output is displayed in yellow and hiding the selected default value. In the meantime, clone my own fork and build the binary yourself:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone <span style="color:#f92672">[</span>git@github.com<span style="color:#f92672">](</span>mailto:git@github.com<span style="color:#f92672">)</span>:prune998/kubecolor.git
 </span></span><span style="display:flex;"><span>git checkout prune/ctx-no-color
@@ -1870,7 +2445,7 @@ Use plugins !!</li>
 </li>
 </ul>
 <p>Here’s an example prompt when customizing all this. Of course, it’s possible to add more Kubernetes related stuff in the prompt, but it’s going to get messy quickly:</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/4.png"></p>
 <h3 id="krew">Krew</h3>
 <p><a href="https://krew.sigs.k8s.io"><em>Krew</em></a> is a plugin manager for <em>kubectl</em>.<br>
 Install: <a href="https://krew.sigs.k8s.io/docs/user-guide/setup/install/">https://krew.sigs.k8s.io/docs/user-guide/setup/install/</a></p>
@@ -1965,7 +2540,7 @@ Each result is colour coded for quicker debugging.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install stern
 </span></span><span style="display:flex;"><span>stern -n my-namespace dv-oma
 </span></span></code></pre></div><p>Stern will tail the logs of all pods matching <em>dv-oma</em> as a pattern. There’s a ton of options to further filter what you want to display:</p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/5.png"></p>
 <h3 id="kustomize">Kustomize</h3>
 <p><a href="https://kustomize.io/">Kustomize</a> is a Kubernetes native configuration management (templating)</p>
 <ul>
@@ -2005,7 +2580,7 @@ Each result is colour coded for quicker debugging.</p>
 </span></span><span style="display:flex;"><span>k9s --context &lt;context&gt; <span style="color:#75715e"># Start K9s in an existing KubeConfig context</span>
 </span></span><span style="display:flex;"><span>k9s --readonly          <span style="color:#75715e"># Start K9s in readonly mode - with all cluster modification  </span>
 </span></span><span style="display:flex;"><span>                          commands disabled
-</span></span></code></pre></div><p><img src="images/6.jpg#layoutTextWidth" alt="K9s"></p>
+</span></span></code></pre></div><p><img alt="K9s" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/6.jpg"></p>
 <h4 id="lens">Lens</h4>
 <p><a href="https://k8slens.dev/">Lens</a> is the only IDE you’ll ever need to take control of your Kubernetes clusters (well, that’s what they say)</p>
 <ul>
@@ -2014,7 +2589,7 @@ Each result is colour coded for quicker debugging.</p>
 <li>Manage CustomResourceDefinitions (CRD)</li>
 <li>Nice UI</li>
 <li>Multi-cluster
-<img src="images/7.jpg#layoutTextWidth" alt="image"></li>
+<img alt="image" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/7.jpg"></li>
 </ul>
 <h3 id="vscode-extensions-for-kubernetes">VsCode extensions for Kubernetes</h3>
 <p>I’m sure there are a lot more than these, but I would consider these as essentials:</p>
@@ -2022,7 +2597,7 @@ Each result is colour coded for quicker debugging.</p>
 <li><a href="https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools">Kubernetes</a>: Develop, deploy and debug Kubernetes applications</li>
 <li><a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml">YAML</a>: Language Support, with built-in Kubernetes syntax support</li>
 <li><a href="https://github.com/oderwat/vscode-indent-rainbow">Indent-Rainbow</a>: helper to better see Yaml indentations
-<img src="images/8.jpg#layoutTextWidth" alt="Indent-Rainbow"></li>
+<img alt="Indent-Rainbow" src="/posts/2022/03/kubernetes-tooling-and-shell-setup/images/8.jpg"></li>
 </ul>
 <h3 id="local-kubernetes">Local Kubernetes</h3>
 <p>Here’s a minimal list of solutions to deploy a local Kubernetes cluster on your laptop:</p>
@@ -2167,7 +2742,7 @@ Kubernetes is still a highly evolving ecosystem and new tools and patterns keeps
             <description>Starting Istio 1.4 and up, the way the Observability metrics are created, exchanged and scraped changed. Here is how I configure Prometheus-Operator resources to scrape metrics from Istio 1.6 and install latest Grafana Dashboards
 ServiceMonitor Prometheus-Operator is far more dynamic than the default Prometheus install. It adds some CRD to dynamically and transparently re-configure your Prometheus cluster.
 A ServiceMonitor is a resource describing which pods to scrape based on a Service.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/images/1.jpeg"></p>
 <p>Starting Istio 1.4 and up, the way the Observability metrics are created, exchanged and scraped changed. Here is how I configure Prometheus-Operator resources to scrape metrics from Istio 1.6 and install latest Grafana Dashboards</p>
 <h3 id="servicemonitor">ServiceMonitor</h3>
 <p>Prometheus-Operator is far more dynamic than the default Prometheus install. It adds some CRD to dynamically and transparently re-configure your Prometheus cluster.</p>
@@ -2243,7 +2818,7 @@ You can check how yours is configured by looking at the <code>prometheus</code> 
 <p>Add a label <code>istio-prometheus-ignore=”true”</code> to your deployments in case you don’t want Prometheus to scrape the proxy’s metrics.</p>
 <h4 id="result">Result</h4>
 <p>After few seconds for the whole thing to settle, you can connect to your Prom frontend, using Port-Forward on port <strong>9090</strong> or using the Istio Ingress-Gateway that you configured with SSL cert using SDS (check my older posts).</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/images/2.png"></p>
 <h3 id="grafana-dashboards">Grafana Dashboards</h3>
 <p>Now that you have Istio Telemetry V2 into your Prometheus cluster, you maybe want to see the graphs with Grafana.</p>
 <p>Glad you read so far. I know this blog is missing some pictures and colors… but who cares, we are engineers right ?</p>
@@ -2274,7 +2849,7 @@ You can check how yours is configured by looking at the <code>prometheus</code> 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>popd
 </span></span></code></pre></div><p>Restart the Grafana pod and you should see the Dashboards in Grafana:</p>
-<p><img src="images/3.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/prometheus-operator-and-istio-telemetry-v2/images/3.png"></p>
 ]]></content>
         </item>
         
@@ -2288,7 +2863,7 @@ You can check how yours is configured by looking at the <code>prometheus</code> 
 port 8080 for HTTP protocol port 5701 for Hazelcast protocol, a Java based memory database embedded in the pod’s workload, using TCP The setup is presented here:
 In theory, two types of communications happens:
 each Hazelcast database (the red and purple cylinders) talk to each other on port 5701 using TCP protocol.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/1.jpeg"></p>
 <h3 id="overview">overview</h3>
 <p>I lately came across an Istio setup where both the downstream (client) and the upstream (server) were using the same sets of ports:</p>
 <ul>
@@ -2296,7 +2871,7 @@ each Hazelcast database (the red and purple cylinders) talk to each other on por
 <li>port <em>5701</em> for <a href="https://hazelcast.com/">Hazelcast</a> protocol, a Java based memory database embedded in the pod’s workload, using TCP</li>
 </ul>
 <p>The setup is presented here:</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/2.png"></p>
 <p>In theory, two types of communications happens:</p>
 <ul>
 <li>each Hazelcast database (the red and purple cylinders) talk to each other on port <em>5701</em> using TCP protocol.<br>
@@ -2487,10 +3062,10 @@ Envoy will look up its list of endpoints for the service named <code>outbound|57
 </ol>
 <p>Of course, Istio is using the round-robin load-balancing algo by default, so it totally explain what is going on here. Each consecutive request go to a different pod.</p>
 <p>Here, blue link is <code>outbound</code> while pink is <code>inbound</code></p>
-<p><img src="images/3.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/3.png"></p>
 <p>OK, this is not really what’s going on ! I tricked you !!</p>
 <p>Istio (Envoy) does NOT send traffic to the Kubernetes Service. Services are used by Pilot (Istiod) to build the mesh topology, then the informations is sent to each Istio-proxy, which then send traffic to the Pods. It finally look more like that:</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/4.png"></p>
 <p>But that’s not how Hazelcast server works either !</p>
 <h3 id="hazelcast-cluster-communication">Hazelcast cluster communication</h3>
 <p>The truth is, Hazelcast does no use the service name for its communications.</p>
@@ -2506,14 +3081,14 @@ Envoy will look up its list of endpoints for the service named <code>outbound|57
 <li>the upstream connection uses the <code>inbound</code> cluster as before</li>
 </ol>
 <p>Here’s a schema of this situation. In red, the Hazelcast DB nodes (the red cylinder) calls the API (the red-dot arrow) to get all the pods that are part of the cluster. Once done, the first pod calls the IP of the next pod (blue line).</p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/5.png"></p>
 <p>This is not perfect, but at least, it’s working</p>
 <h3 id="things-can-go-bad">Things can go bad</h3>
 <p>Later on I was called as something strange was going on in the cluster.</p>
 <p>At some point, when the manager application tried to connect to the Hazelcast port, the connection was routed to the <code>idle</code> pod in the manager namespace.<br>
 How possible ? This pod even don’t expose the port <em>5701</em> !</p>
 <p>Here’s an overview:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/6.png"></p>
 <p>Nothing changed in the <code>manager</code> Namespace, but looking at the services inside the <code>app</code> namespace, I saw an <code>ExternalName</code> service was later added:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>k get svc  -n app
 </span></span><span style="display:flex;"><span>
@@ -2656,7 +3231,7 @@ Let’s look at the config:</p>
 From the <a href="https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#configuration">Envoy doc</a>, UF is <em>Upstream connection failure</em> and URX is <a href="https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/network/tcp_proxy/v3/tcp_proxy.proto#envoy-v3-api-field-extensions-filters-network-tcp-proxy-v3-tcpproxy-max-connect-attempts"><em>maximum connect attempts (TCP)</em></a> <em>was reached</em>.<br>
 This is perfectly normal as the <code>idle</code> service does not expose the port <em>5701</em> (nor the Pod binds it)</li>
 <li>request was forwarded to the <code>outbound|5701||app-ext.app.svc.cluster.local</code> cluster
-<img src="images/7.png#layoutTextWidth" alt="image"></li>
+<img alt="image" src="/posts/2020/08/understanding-istio-and-tcp-services/images/7.png"></li>
 </ol>
 <p>Wait, <em>WHAAAAT</em> ?<br>
 A <code>service</code> created in another Namespace just broke our Hazelcast cluster ?</p>
@@ -2773,7 +3348,7 @@ Differences between a spindle and a laser are really few&hellip;:</p>
 In this poste we’re going to see how to use your own Prometheus cluster deployed using the Prometheus Operator.
 EDIT also check my previous article on the Banzaicloud Kafka Operator
 EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the operator that create the new brokers.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/images/1.png"></p>
 <p>The new Kafka Operator from BanzaiCloud includes a neat feature : a Prometheus AlertManager that can receive alerts from your global Prometheus cluster.</p>
 <p>In this poste we’re going to see how to use your own Prometheus cluster deployed using the <a href="https://github.com/coreos/prometheus-operator">Prometheus Operator</a>.</p>
 <p><strong>EDIT</strong> also check my previous article on the <a href="/posts/2019/10/banzaicloud-kafka-operator-tour/">Banzaicloud Kafka Operator</a></p>
@@ -2781,7 +3356,7 @@ EDIT : CC only trigger rebalance in an UPscale/DOWNscale operation. It’s the o
 <h3 id="prometheus-operator">Prometheus Operator</h3>
 <p>This <a href="https://github.com/coreos/prometheus-operator">operator</a> is a simple way to bootstrap your Prometheus cluster. Install the Operator, create few manifest and BAM, all set up !</p>
 <p>I’m not going to explain it all here, just follow the operator setup. But here’s a Prometheus overview of what is going on there (some parts have been dismissed for clarity) :</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/10/banzaicloud-kafka-operator-and-broker-autoscaling/images/2.png"></p>
 <p>Normally you already have the left side of the picture in place. The Prometheus CR creates a Prometheus cluster. The AlertManager CR creates… an AlertManager pool of servers. The PrometheusRule CR configure Prometheus Cluster to scrape metrics and create alerts.</p>
 <h4 id="prometheusrule">PrometheusRule</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">k8s.rules  </span>
@@ -3107,7 +3682,7 @@ Thanks again to the Banzaicloud team for doing all this opensource !</p>
 They also did a good job of branding it, so I won’t dive into “why this another Kafka Operator is better than the others”. I can assure it is !
 Just check :
 https://banzaicloud.com/products/kafka-operator/ https://banzaicloud.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2019/10/banzaicloud-kafka-operator-tour/images/1.png"></p>
 <h3 id="welcome-to-the-kafka-operator-magical-mystery-tour-">Welcome to the Kafka Operator (Magical) Mystery tour !</h3>
 <p>I’m sure the Beatles would have rebranded the song if they were still here to see how BanzaiCloud team finally rocked the Kafka Operator world !</p>
 <p>They also did a good job of branding it, so I won’t dive into “why this another Kafka Operator is better than the others”. I can assure it is !<br>
@@ -3131,7 +3706,7 @@ Just check :</p>
 <p>It is also great to get a look at the sample config found in the Git repo : <a href="https://raw.githubusercontent.com/banzaicloud/kafka-operator/master/config/samples/banzaicloud_v1beta1_kafkacluster.yaml">https://raw.githubusercontent.com/banzaicloud/kafka-operator/master/config/samples/banzaicloud_v1beta1_kafkacluster.yaml</a></p>
 <p>Note that I’m not part of BanzaiCloud and I don’t get any advantage whatsoever by publishing this post.</p>
 <h3 id="kafka-operator">Kafka Operator</h3>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/10/banzaicloud-kafka-operator-tour/images/2.png"></p>
 <p>Operator talks to the API server and watch for <code>kafkacluster</code> Resource. It also talks to <a href="https://github.com/linkedin/cruise-control">CruiseControl</a>, a Java application from Linkedin which is <em>“a general-purpose system that continually monitors our clusters and automatically adjusts the resources allocated to them to meet pre-defined performance goals”.</em> Finally it “talks to” Prometheus, watch for alerts and take actions.</p>
 <p>BanzaiCloud provides a Helm Chart (as too many others out there), so let’s use it. As I don’t use <code>Tiller</code>, I just use<code>helm template</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/banzaicloud/kafka-operator.git
@@ -3210,7 +3785,7 @@ I’m going to break down in may parts as it’s quite a huge spec…</p>
 <ul>
 <li><!-- raw HTML omitted -->-all-broker (kf-kafka-all-broker) : a ClusterIP service which point to all your cluster Instances. You can use it to bootstrap your clients.</li>
 <li><!-- raw HTML omitted -->-<!-- raw HTML omitted --> (kf-kafka-0, kf-kafka-1, kf-kafka-2) : one service per Broker. This is used internally by Kafka Brokers to talk to each other, or if you want to give the full list of brokers when bootstrapping.
-<img src="images/3.png#layoutTextWidth" alt="image"></li>
+<img alt="image" src="/posts/2019/10/banzaicloud-kafka-operator-tour/images/3.png"></li>
 </ul>
 <p><strong>oneBrokerPerNode</strong>, when enabled, will put one broker on each node, NOT MORE. Meaning if you have a 2 node cluster and create a 3 broker Kafka cluster, one of the brokers will <strong>NEVER</strong> be scheduled.</p>
 <p>While it’s a good option to set to ensure reliability of the cluster, you may end up with unschedulable brokers, and a broken cluster. It’s sometimes better to have two brokers on the same node instead of a broken cluster… Affinity is also set on the pods by default, so Kubernetes should be able to handle it himself. Keep this option to <strong>False</strong>.</p>
@@ -3331,7 +3906,7 @@ You can read more here : <a href="https://kafka.apache.org/documentation/#dynami
 <p>You can see my full config <a href="https://gist.github.com/prune998/7976be90e04b9f61a04976860b124c73">here</a>.</p>
 <h3 id="kafka-topics">Kafka Topics</h3>
 <p>This is a new addition to this Operator. You can now upload some <code>kafkatopic</code> manifests and create / delete topics.</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/10/banzaicloud-kafka-operator-tour/images/4.png"></p>
 <p>As of 0.6.0 / 0.6.1, this feature use a Kubernates Validating Webhook to ensure the manifest is well formated. For that to work, two other pieces have to be installed in your cluster : Cert-Manager and CAInjecter (both from the Cert-Manager project from JetStack).</p>
 <p>Cert-Manager will create an SSL Certificate, and CA-Inject will provide it to the K8s API so it is authorized to call the Kafka Operator Webhook.</p>
 <h4 id="cert-manager">Cert-Manager</h4>
@@ -3417,7 +3992,7 @@ I also thank BanzaiCloud team for their work, and, oh, I used some of your pictu
             <description>In this Post I’ll try to explain what I’ve set up to generate Kubernetes manifests for all my Micro-Services using Jsonnet.
 Kubernetes / Jsonnet The obvious gain you have when using Jsonnet is that you template JSON files instead of YAML.
 While YAML is easier to read by humans, it is far less computational friendly. There’s a must read about that : Lee Briggs post about “Why the fuck are we templating YAML”</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/images/1.png"></p>
 <p>In this Post I’ll try to explain what I’ve set up to generate Kubernetes manifests for all my Micro-Services using <a href="https://jsonnet.org/">Jsonnet</a>.</p>
 <h3 id="kubernetes--jsonnet">Kubernetes / Jsonnet</h3>
 <p>The obvious gain you have when using Jsonnet is that you template JSON files instead of YAML.<br>
@@ -3439,7 +4014,7 @@ From my own experience with my small templates, using the Go version shorted the
 <p>We are actually using a Mono-Repo to hold all our microservices, written in Go.<br>
 Because of that I decided to store the Jsonnet templates inside the same repo, and ensure the Dev team manage them when they change the commandline or options of the micro-services.</p>
 <p>Here is how it’s done :</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/using-jsonnet-does-not-have-to-be-complex/images/2.png"></p>
 <p>Let’s dive in and re-create all this :</p>
 <p><code>jsonnet</code> directory holds all the Jsonnet stuff. Inside it, we have one directory for each application (micro-service) that is managed by Jsonnet. Let’s pretend we have a Helloworld application :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p jsonnet/helloworld  
@@ -3765,7 +4340,7 @@ Yeah.
 When your project start growing, you end up with a lot of micro-services. If you’re lucky and smart enough, your services API will not change, AT ALL, and all your micro-services are back and forth compatible with each others.</description>
             <content type="html"><![CDATA[<p>In this article you’ll learn how we bundle our Micro-Services in Snapshots, targeting deployment in Kubernetes.</p>
 <h3 id="micro-services">Micro-Services</h3>
-<p><img src="images/1.jpg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/1.jpg"></p>
 <p>Now we have cut our old monolith into a lot of small micro-services, we need to deploy them.</p>
 <p>You think, well, your CI build the micro-service when someone commit a change, and your CD deploy it.</p>
 <p>Yeah.</p>
@@ -3812,19 +4387,19 @@ Once you’ve deployed the <em>Taxe Service</em>, you’ll tell your Cart Servic
 <p>As you constantly iterate over them, versions piles up.</p>
 <p>At some point, you take a snapshot and consider that your <strong>Release</strong>.<br>
 That’s what we did lately.</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image">
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/2.png">
 Example snapshot</p>
 <p>We build an admin tool using VueJs + Vuetify and a Go backend app to manage our snapshots.</p>
 <p>The worflow is now :</p>
-<p><img src="images/3.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/3.png"></p>
 <p>During the deployment process you can select which variable sets you want to use, like <em>dev</em>, <em>integration</em>, <em>prod</em>…</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/4.png"></p>
 <p>All this gives us the flexibility to deploy many time the same micro-service with different commit versions, like :</p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/5.png"></p>
 <p>All this finally translate to JSON to be stored, for the moment, in a Git repository :</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/6.png"></p>
 <p>Another tab of the application allows to compare our snapshot with one Kubernetes Namespace pods/deployments, so we can check what the changes will be when we deploy. Here, the deployed Tower micro-service (in orange) is newer than the one selected in the snapshot (in blue) :</p>
-<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2019/06/micro-services-deployment-as-snapshots/images/7.png"></p>
 <p>As this imply, we don’t version our micro-services. We use the Git Commit Hash as the version. The PRO of doing this is that we don’t maintain the versions and we use the full commit tree and commit message as a reference of what was done. The CONS is that Commit Hash are not ordered by time, so you need to refer to the commit tree to know if this version is “older” than the other one.</p>
 <h3 id="closing">Closing</h3>
 <p>I know some will complain that it’s too much, and you can do without it, or that Jenkins X would allow better than that.<br>
@@ -3858,7 +4433,7 @@ Sorry, for now…</p>
             <description>It’s been almost a year since I first wrote about using Let’s Encrypt SSL Certificates with Istio, 0.8.0 at this time.
 Then I blogged again when Istio 1.0.2 came out. I had to build an Operator, Cert-Merge, to allow to merge all the SSL certificates created in many Secrets by Cert-Manager into ONE single secret that Istio’s Gateway could use.
 While building this Operator was cool, and I learnt a lot by this time, I knew this was a temporary solution, a highly insecure one.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2019/05/istio-1.1.7--lets-encrypt-working/images/1.png"></p>
 <p>It’s been almost a year since I first wrote about <a href="https://medium.com/@prune998/istio-0-8-0-envoy-cert-manager-lets-encrypt-for-tls-d26bee634541">using Let’s Encrypt SSL Certificates with Istio, 0.8.0</a> at this time.<br>
 Then <a href="https://medium.com/@prune998/istio-1-0-2-envoy-cert-manager-lets-encrypt-for-tls-certificate-merge-7a774bff66c2">I blogged again</a> when Istio 1.0.2 came out. I had to build an Operator, <a href="https://github.com/prune998/certmerge-operator">Cert-Merge</a>, to allow to merge all the SSL certificates created in many Secrets by Cert-Manager into ONE single secret that Istio’s Gateway could use.</p>
 <p>While building this Operator was cool, and I learnt a lot by this time, I knew this was a temporary solution, a highly insecure one.</p>
@@ -3963,7 +4538,7 @@ It will also skip secrets that have a field named “token” (commonly the serv
 While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.
 Let me remind you :
 Cert-Manager only create TLS Secrets, which are a kind of Secret that only contains a crt and key file.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/images/1.jpeg"></p>
 <h3 id="recap">Recap</h3>
 <p>I already talked about Istio + Cert-Manager in <a href="https://medium.com/@prune998/istio-envoy-cert-manager-lets-encrypt-for-tls-14b6a098f289">part one</a> and <a href="https://medium.com/@prune998/istio-0-8-0-envoy-cert-manager-lets-encrypt-for-tls-d26bee634541">part two</a>. In the meantime Istio went to release 1.0, lastly 1.0.3.</p>
 <p>While this version improves a lot of things and finally get rid of some nasty bugs when using gRPC (HTTP2) Streams, there’s still no improvement on the Ingress Gateway SSL Management.</p>
@@ -3992,7 +4567,7 @@ When I say <em>soon</em>, it’s more of a joke than a close event. I opened a d
 <p>Be warned : this is my first time using the <a href="https://github.com/operator-framework/operator-sdk">Operator SDK</a> and this is Beta software. Still, I just put it in Production on our platform.</p>
 <p>The idea is simple : as Istio can only read <em>ONE Secret</em> to fetch <em>Certificates</em> and since Cert-Manager can only set <em>ONE certificate</em> in each <em>Secret</em>, we need a way to <strong>merge many TLS Secret’s data into one Opaque Secret with many Certificates.</strong></p>
 <p>So, how does this work ? Let’s find out…</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2018/11/istio-1.0.2-envoy--cert-manager--lets-encrypt-for-tls--certificate-merge/images/2.png"></p>
 <ol>
 <li>The user push Manifests to create some <em>Certificates</em></li>
 <li><strong>Cert-Manager</strong> is triggered and create to corresponding TLS Secrets</li>
@@ -4361,7 +4936,7 @@ Just keep in mind that APIs are not written in stone. You’re allowed to break 
             <description>A few months back I wrote a blog post on how to use Cert-Manager to provide SSL certificates for Istio.
 Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using Kubernetes Custom Resources. It is called the Route Rules v1alpha3.
 What have changed ? Istio had a great blog post about it here. To sum it up quickly, instead of using Ingress manifests with annotations, you now have to define a Gateway, which defines the Layer 4 configuration, and a VirtualService which is the Layer 6/7 part.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/images/1.jpeg"></p>
 <p>A few months back I wrote a blog post on <a href="https://medium.com/@prune998/istio-envoy-cert-manager-lets-encrypt-for-tls-14b6a098f289">how to use Cert-Manager to provide SSL certificates for Istio</a>.</p>
 <p>Since then, Istio reached version 0.8.0 and changed the Ingress API to a new version using <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Kubernetes Custom Resources</a>. It is called the Route Rules v1alpha3.</p>
 <h3 id="what-have-changed-">What have changed ?</h3>
@@ -4415,7 +4990,7 @@ Well, let’s start from scratch and we’ll see…</p>
 </span></span><span style="display:flex;"><span>    ]  
 </span></span><span style="display:flex;"><span>  }
 </span></span></code></pre></div><p>Here is mine :</p>
-<p><img src="images/2.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2018/06/istio-0.8.0-envoy--cert-manager--lets-encrypt-for-tls/images/2.png"></p>
 <h4 id="setup-user">Setup User</h4>
 <p>Go to the <code>user</code> tab and create a new user, applying the above policy to it. Select the <strong>Programmatic access checkbox.</strong> On the last page you will find the Access Key and the Secret Key. Note them down.</p>
 <p>You will need to set the Secret Key in a Kubernetes Secret so the Cert-Manager can use it. This can be done by a single shell command using, again, kubectl :
@@ -4642,7 +5217,7 @@ From my point of view, the <code>Istio Pilot</code> service should monitor the s
             <description>Updates 1 Thanks to comments by Laurent Demailly, here are some updates. This article have been updated accordinately :
 there is now an official Helm Chart for Cert-Manager Istio Ingress also support GRPC, which is based on HTTP/2 Update 2 (2018–06–26) I made a new post to use Cert-Manager with Istio 0.8.0 here.
 Istio Istio is a part of a new way to manage the flow of data in your Microservice world.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.jpeg#layoutTextWidth" alt="image"></p>
+            <content type="html"><![CDATA[<p><img alt="image" src="/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/images/1.jpeg"></p>
 <h4 id="updates-1">Updates 1</h4>
 <p>Thanks to comments by Laurent Demailly, here are some updates. This article have been updated accordinately :</p>
 <ul>
@@ -4798,7 +5373,7 @@ So you have to add all the public DNS names to this one certificate !</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>istio-ingress-7f8468bb7b-pxl94 istio-ingress [2018-01-23T21:01:53.341Z] &#34;GET /.well-known/acme-challenge/xxxxxxx HTTP/1.1&#34; 503 UH 0 19 0 - &#34;10.20.5.1&#34; &#34;Go-http-client/1.1&#34; &#34;xxx&#34; &#34;www.domain.com&#34; &#34;-&#34;  
 </span></span><span style="display:flex;"><span>istio-ingress-7f8468bb7b-pxl94 istio-ingress [2018-01-23T21:01:58.287Z] &#34;GET /.well-known/acme-challenge/xxxxxx HTTP/1.1&#34; 503 UH 0 19 0 - &#34;10.20.5.1&#34; &#34;Go-http-client/1.1&#34; &#34;xxxx&#34; &#34;mobile.domain.com&#34; &#34;-&#34;
 </span></span></code></pre></div><p>This is because the Let’s Encrypt servers is polling for the validation token and your setup is not working yet. As of now your setup looks like that :</p>
-<p><img src="images/2.jpeg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/images/2.jpeg"></p>
 <p>Now it’s time to remove the unwanted stuff created by Cert-Manager.<br>
 Use your best K8s tool, like the Dashboard or kubectl, and remove the service and ingress from the <em>istio-system</em> Namespace. They will be named like <strong>cm-istio-ingress-certs-xxxx.</strong> If you have many domain names in your certificate request, you will have more things to remove.</p>
 <p>Also, don’t remove the pods !! (they will be re-created in case of error)</p>
@@ -5006,7 +5581,7 @@ Depending wether you created an <code>Issuer</code> or a <code>ClusterIssuer</co
 <p>then:
 <code>kubectl -n default apply -f helloworld.yml</code></p>
 <p>Note you will need one Ingress for all you HTTPS domains, and one for the HTTP… Only the HTTPS is represented here :</p>
-<p><img src="images/3.jpeg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2018/01/istio-envoy--cert-manager--lets-encrypt-for-tls/images/3.jpeg"></p>
 <p>Cert-Manager should remove the Token-Exchange pods in the istio-system namespace after the validation is done. Yes, once the Cert-Manager agreed with the Let’s Encrypt servers, they exchange a permanent key that is used for renewal. No need of the pods, and even Services and Ingress, at least if your are sure you will not need to add or change something in the certificate.</p>
 <h3 id="updating-the-certificate">Updating the Certificate</h3>
 <p>When updating the certificate, I suggest to first create the right <code>Service</code> for it. Then update the <code>Ingress</code> to send traffic to the right service.<br>

@@ -66,7 +66,6 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
 
 
 
-
     <meta property="article:published_time" content="2022-08-24 18:27:29 &#43;0000 UTC" />
 
 
@@ -139,21 +138,6 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
 
     <div class="post-info">
       <p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-            Published 2022-08-24
-  
-           
-            
-              (Last updated: 2024-02-21)
-            
-          
-      </p>
-      <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
@@ -176,7 +160,7 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
       
 
       <div class="post-content">
-        <p><img src="images/1.png#layoutTextWidth" alt="image"></p>
+        <p><img alt="image" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/1.png"></p>
 <p>It’s 2022 ! We all know about the necessity of creating your Infra AS CODE. I guess we can all agree that <a href="https://www.hashicorp.com/products/terraform">Terraform (TF)</a> is the leader in this field.</p>
 <p>that said, TF is far from easy to use. This is actually not the fault of TF itself (or its parent company, <a href="https://www.hashicorp.com/">Hashicorp</a>), but to the fact that each provider is so specific that it’s impossible to build up something clean out of it.</p>
 <p>So we end up with complicated code, tricks to make things happen or not (like using <code>count</code>) and the two biggest pain point:</p>
@@ -202,13 +186,13 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
 <p>As TF, Crossplane is build up on <a href="https://github.com/crossplane-contrib"><strong>Providers</strong></a> (<a href="https://crossplane.github.io/docs/v1.9/concepts/providers.html">see official list here</a>), which extends Crossplane with new <em>Managed Resource Type</em> to work with.</p>
 <p>But the strength of Crossplane lies in its <code>Composition</code> feature. It is exactly what the name implies: you build up a new type of resource by combining (composing) other type of resources. Ex: create a K8s cluster and a nodepool, or create a DB Instance, a DB schema and a DB user, all at one.</p>
 <p>Let’s grab some pictures from the official docs:</p>
-<p><img src="images/2.png#layoutTextWidth" alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview"></p>
+<p><img alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/2.png"></p>
 <p>You <code>claim</code> a Postresql Instance, that references a <code>Composite Resource</code> that will trigger the creation of a <code>CloudSQL Instance</code> and a <code>Firewall Rule</code> to access it. Neat !</p>
 <p>It’s a little bit more complicated, so here’s another picture from the doc that is supposed to be closer to reality:</p>
-<p><img src="images/3.png#layoutTextWidth" alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#how-it-works"></p>
+<p><img alt="https://crossplane.github.io/docs/v1.9/concepts/composition.html#how-it-works" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/3.png"></p>
 <p>AH ! There we go !</p>
 <p>You can go read the docs at <a href="https://crossplane.github.io/docs/v1.9/concepts/composition.html#overview">https://crossplane.github.io/docs/v1.9/concepts/composition.html</a>. I personally read that again and again, and wasn’t able to fully understand the real thing until I played with it, and built my own schema:</p>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/4.png"></p>
 <p>Let me break things down:</p>
 <ol>
 <li><strong>Infra</strong>: Deploy a Provider, like GKE, AWS, Helm, K8s, even a <a href="https://github.com/crossplane-contrib/provider-terraform">Terraform provider</a></li>
@@ -224,7 +208,7 @@ that said, TF is far from easy to use. This is actually not the fault of TF itse
 <p>This is really powerful, and the only limitation is actually in what a provider can do.</p>
 <p>Talking of which, I guess you see me coming, it’s also the biggest problem Crossplane has: it all depends on what a Provider can do !Oh, by the way, I’ll be a speaker at <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/">KubeCon North America 2022 in Detroit</a> , please <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/program/schedule/">check my talk here</a>, register for Thursday, October 27 • 2:30pm — 4:00pm:</p>
 <p><a href="https://kccncna2022.sched.com/event/182F7/tutorial-set-up-your-shell-for-kubernetes-productivity-and-be-efficient-quickly-sebastien-prune-thomas-wunderkind-archy-ayrat-khayretdinov-google">Tutorial: Set Up Your Shell For Kubernetes Productivity And Be Efficient Quickly — Sebastien “Prune” Thomas, Wunderkind &amp; Archy Ayrat Khayretdinov, Google</a></p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/5.png"></p>
 <h3 id="question-1-providers">Question 1: Providers</h3>
 <p>As stated, <code>Providers</code> are the part that manages some resources. In fact, it’s a <code>Pod</code> that will be deployed along Crossplane, will create CRD for the resource it manages and watch on them. Each instance of a managed resource will make the <code>Provider</code> create and maintain a resource. For the GCP provider, that means calling the GCP API and create some resources.</p>
 <p>I’m not diving into <code>Providers</code>configuration here. It involves installing the provider, giving it a global config and some more specific variations of the config, like having a <code>Dev</code> , <code>Staging</code> and <code>Prod</code>provider for GCP. I would maybe have to create a mix of configurations for each of my <code>env</code> * <code>project</code> so I can ensure some devs can deploy to <code>Project A</code> in <code>Dev</code> but not on <code>Prod</code> or in <code>Project B</code> . This is something I haven’t explored yet… Please, again, comment.</p>
@@ -235,11 +219,11 @@ Ex:</p>
 <li>crossplane GCP Provider (official): <a href="https://doc.crds.dev/github.com/crossplane/provider-gcp@v0.21.0">https://doc.crds.dev/github.com/crossplane/provider-gcp@v0.21.0</a></li>
 </ul>
 <p>Let’s dive in the GCP provider:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/6.png"></p>
 <p>28 CRDs discovered ? wait, what ? only 28 different GCP resources are managed by Crossplane ?</p>
 <p>short answer: YES :(</p>
 <p>So, for example, you can create a <code>CloudSQLInstance</code> which represents a Postgres or MySQL Database Instance:</p>
-<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/7.png"></p>
 <p>But then, you just can’t create any specific DB, User or anything else related to this DB Instance. Because, well, the resources were not ported into the Provider.</p>
 <p>AWS official Provider is a little better, with 172 resources.</p>
 <p>This situation is just normal. Building up a provider is tedious, there are a lot of different resources, and Crossplane team is quite small compared to this huge work.<br>
@@ -249,7 +233,7 @@ At first, I guess the Cloud providers wanted to help, but it feels that in the e
 <p>TerraJet (Jet) is a way to convert Terraform Providers into Crossplane Providers, hiding the TF mechanics. With Jet, TF is run in the background and the TF State file is, let’s say, split and stored along each Crossplane Resource.</p>
 <h4 id="_smart-_"><em>Smart ?</em></h4>
 <p>Well, the GCP Jet Provider counts 438 resources, including all that we need to manage SQL DBs in GCP. AWS Jet Provider counts a wooping 780 resources ! I guess it’s more than you’ll ever use.</p>
-<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/08/playing-with-crossplane-for-real/images/8.png"></p>
 <h3 id="question-2-docs-">Question 2: Docs ?</h3>
 <p>It seems to be a lot of resources to use ! While TF docs are, well, not that bad in the end, and you have a LOT of blog posts and examples to play with, it’s not the same story for Crossplane.</p>
 <p>The <a href="https://crossplane.github.io/docs/v1.9/concepts/composition.html">Composition Docs</a>, for example, showcase few different stuffs that will work out of the box if you copy/paste. But then, you want your own stuff, maybe not a DB instance. So you start digging in… and reach the <a href="https://crossplane.github.io/docs/v1.9/reference/composition.html">Composition Reference doc</a>.<br>
@@ -753,25 +737,39 @@ I’m really pleased to see that I had an answer quickly along with an appointme
             </div>
 
             
-                <footer class="footer">
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2023</span>
-            
-            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
-            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
-            <span>Pirate Makers™</span>
-        </div>
-    </div>
-    
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-        </div>
-    </div>
-    
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const images = Array.from(document.querySelectorAll(".post-content img"));
+images.forEach(img => {
+  mediumZoom(img, {
+    margin: 0,  
+    scrollOffset: 40,  
+    container: null,  
+    template: null,  
+    background: 'rgba(0, 0, 0, 0.8)'
+  });
+});
+</script>
+
+<footer class="footer">
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>&copy; 2023</span>
+          
+          <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+          <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+          <span>Pirate Makers™</span>
+      </div>
+  </div>
+  
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+      </div>
+  </div>
+  
 </footer>
 
             
@@ -781,7 +779,7 @@ I’m really pleased to see that I had an answer quickly along with an appointme
 
 
 
-<script type="text/javascript" src="https://piratemakers.ca/bundle.min.46e438bd2eca7eb6358c700b40f6f56b22ab0b92503ecc11a2d8e4bcc610b8b4da83e5ea3d3e84fdb5f3c3c765744b9f5bbaf43cf5a027910be07ee39a9c12a1.js" integrity="sha512-RuQ4vS7KfrY1jHALQPb1ayKrC5JQPswRotjkvMYQuLTag&#43;XqPT6E/bXzw8dldEufW7r0PPWgJ5EL4H7jmpwSoQ=="></script>
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
 
 
 

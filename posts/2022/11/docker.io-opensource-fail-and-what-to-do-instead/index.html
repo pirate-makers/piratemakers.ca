@@ -70,7 +70,6 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 
 
 
-
     <meta property="article:published_time" content="2022-11-29 14:31:56 &#43;0000 UTC" />
 
 
@@ -145,21 +144,6 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 
     <div class="post-info">
       <p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-            Published 2022-11-29
-  
-           
-            
-              (Last updated: 2023-12-01)
-            
-          
-      </p>
-      <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
@@ -186,7 +170,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
       
 
       <div class="post-content">
-        <p><img src="images/1.png#layoutTextWidth" alt="Docker Fail"></p>
+        <p><img alt="Docker Fail" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/1.png"></p>
 <p>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…</p>
 <p>After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.</p>
 <p>Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</p>
@@ -205,7 +189,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>Back in the time, Docker Hub was free. stop.</p>
 <p>It was easy to create an org and publish OSS projects. Really few clicks away.</p>
 <p>Today, well, there’s a specific program for that: <a href="https://www.docker.com/community/open-source/application/">Docker-Sponsored Open Source Program</a>.</p>
-<p><img src="images/3.jpeg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/3.jpeg"></p>
 <p>What you get with that is:</p>
 <ul>
 <li>free autobuilds</li>
@@ -343,7 +327,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>You don’t have to put anything in there. The GoReleaser will do that for you.</p>
 <p>The <code>GLOBAL_GITHUB_TOKEN</code> is actually a <a href="https://github.com/settings/tokens">Personnal Token</a> from my user, with sufficient privileges to manager both repos.</p>
 <h4 id="kubecolor-docker-image">KubeColor Docker Image</h4>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/4.png"></p>
 <p>While having a docker image for KubeColor is not strictly needed, well, people will ask for it if there’s none…</p>
 <p>Again, we’re going to use a Github Action for that. Create the file <code>.github/workflows/publish_docker_image.yml</code> :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish docker image</span>
@@ -405,12 +389,12 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>Here, I’m using another Secret, <code>GH_CONTAINER_REGISTRY_PUSHER</code>, which allows this pipeline to push into the registry.</p>
 <p>The registry lives at the ORG level. The <strong>GHCR</strong> is actually called <code>Packages</code> in the Org Setup at <code>https://github.com/organizations/&lt;your org&gt;/settings/packages</code> . You have to set it to Public so it’s a public repo.</p>
 <p>You can then access your <code>packages</code> at <code>https://github.com/orgs/&lt;your org&gt;/packages</code></p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/5.png"></p>
 <p>There’s not much to see about it:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/6.png"></p>
 <p>When you click on the <code>Package Settings</code> at the right here, you can then change the visibility (public/private):</p>
-<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
-<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/7.png"></p>
+<p><img alt="image" src="https://piratemakers.ca/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/8.png"></p>
 <h3 id="wrap-up">Wrap-up</h3>
 <p>To me, Docker is gone. We hopefully have alternatives for everything that was docker before.</p>
 <p>I’m not sure what’s going to happen to docker in the future. I know a lot of big companies are paying so their docker images has no download or bandwidth limits, so I guess they will keep on for some time.</p>
@@ -632,25 +616,39 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
             </div>
 
             
-                <footer class="footer">
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2023</span>
-            
-            <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
-            <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
-            <span>Pirate Makers™</span>
-        </div>
-    </div>
-    
-    
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
-        </div>
-    </div>
-    
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha512-9ZKhgaFdKlsELap/dGw3Iaz5Bj+Las0XXZiRKYZaN9QArg6FtkD5rULNmNH4rTCTFxjPiBGr3MX8smRADRorDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+const images = Array.from(document.querySelectorAll(".post-content img"));
+images.forEach(img => {
+  mediumZoom(img, {
+    margin: 0,  
+    scrollOffset: 40,  
+    container: null,  
+    template: null,  
+    background: 'rgba(0, 0, 0, 0.8)'
+  });
+});
+</script>
+
+<footer class="footer">
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>&copy; 2023</span>
+          
+          <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+          <span><a href="https://piratemakers.ca/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+          <span>Pirate Makers™</span>
+      </div>
+  </div>
+  
+  
+  <div class="footer__inner">
+      <div class="footer__content">
+          <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+      </div>
+  </div>
+  
 </footer>
 
             
@@ -660,7 +658,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 
 
 
-<script type="text/javascript" src="https://piratemakers.ca/bundle.min.46e438bd2eca7eb6358c700b40f6f56b22ab0b92503ecc11a2d8e4bcc610b8b4da83e5ea3d3e84fdb5f3c3c765744b9f5bbaf43cf5a027910be07ee39a9c12a1.js" integrity="sha512-RuQ4vS7KfrY1jHALQPb1ayKrC5JQPswRotjkvMYQuLTag&#43;XqPT6E/bXzw8dldEufW7r0PPWgJ5EL4H7jmpwSoQ=="></script>
+<script type="text/javascript" src="https://piratemakers.ca/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
 
 
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>tooling on Pirate Makers</title>
+    <title>Tooling on Pirate Makers</title>
     <link>https://piratemakers.ca/tags/tooling/</link>
-    <description>Recent content in tooling on Pirate Makers</description>
+    <description>Recent content in Tooling on Pirate Makers</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Tue, 29 Mar 2022 16:54:21 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 01 Dec 2023 14:31:59 -0500</lastBuildDate>
     <atom:link href="https://piratemakers.ca/tags/tooling/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Kubernetes tooling and shell setup</title>

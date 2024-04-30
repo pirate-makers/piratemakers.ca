@@ -18,7 +18,7 @@
             <description>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…
 After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.
 Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="Docker Fail"></p>
+            <content type="html"><![CDATA[<p><img alt="Docker Fail" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/1.png"></p>
 <p>Ah Docker… what a sad story… The coolest and most promising openSource project, used by millions, and not able to make any profit out of it…</p>
 <p>After a split of the many different parts of Docker, there was a move to finally try to make money with Docker Hub and Docker-For-Desktop.</p>
 <p>Good or bad, I don’t know. What I know is that many openSource alternatives to Docker-For-Desktop now exist, and work perfectly, at least on macs, even on new M1/M2 processors.</p>
@@ -37,7 +37,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>Back in the time, Docker Hub was free. stop.</p>
 <p>It was easy to create an org and publish OSS projects. Really few clicks away.</p>
 <p>Today, well, there’s a specific program for that: <a href="https://www.docker.com/community/open-source/application/">Docker-Sponsored Open Source Program</a>.</p>
-<p><img src="images/3.jpeg#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/3.jpeg"></p>
 <p>What you get with that is:</p>
 <ul>
 <li>free autobuilds</li>
@@ -175,7 +175,7 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>You don’t have to put anything in there. The GoReleaser will do that for you.</p>
 <p>The <code>GLOBAL_GITHUB_TOKEN</code> is actually a <a href="https://github.com/settings/tokens">Personnal Token</a> from my user, with sufficient privileges to manager both repos.</p>
 <h4 id="kubecolor-docker-image">KubeColor Docker Image</h4>
-<p><img src="images/4.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/4.png"></p>
 <p>While having a docker image for KubeColor is not strictly needed, well, people will ask for it if there’s none…</p>
 <p>Again, we’re going to use a Github Action for that. Create the file <code>.github/workflows/publish_docker_image.yml</code> :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish docker image</span>
@@ -237,12 +237,12 @@ Good or bad, I don’t know. What I know is that many openSource alternatives to
 <p>Here, I’m using another Secret, <code>GH_CONTAINER_REGISTRY_PUSHER</code>, which allows this pipeline to push into the registry.</p>
 <p>The registry lives at the ORG level. The <strong>GHCR</strong> is actually called <code>Packages</code> in the Org Setup at <code>https://github.com/organizations/&lt;your org&gt;/settings/packages</code> . You have to set it to Public so it’s a public repo.</p>
 <p>You can then access your <code>packages</code> at <code>https://github.com/orgs/&lt;your org&gt;/packages</code></p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/5.png"></p>
 <p>There’s not much to see about it:</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/6.png"></p>
 <p>When you click on the <code>Package Settings</code> at the right here, you can then change the visibility (public/private):</p>
-<p><img src="images/7.png#layoutTextWidth" alt="image"></p>
-<p><img src="images/8.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/7.png"></p>
+<p><img alt="image" src="/posts/2022/11/docker.io-opensource-fail-and-what-to-do-instead/images/8.png"></p>
 <h3 id="wrap-up">Wrap-up</h3>
 <p>To me, Docker is gone. We hopefully have alternatives for everything that was docker before.</p>
 <p>I’m not sure what’s going to happen to docker in the future. I know a lot of big companies are paying so their docker images has no download or bandwidth limits, so I guess they will keep on for some time.</p>
@@ -262,7 +262,7 @@ Apres plusieurs essais, IMPOSSIBLE d’avoir une place. Impossible de remplir le
 Un ami a donc crée un bot pour être le plus rapide. Voila comment.
 Disclamer Cette publication est faite à titre purement informatif et éducatif.
 C’est une analyse du fonctionnement du site de reservation de vaccin faite uniquement avec les outils qui se trouvent dans tous les navigateurs.</description>
-            <content type="html"><![CDATA[<p><img src="images/1.png#layoutTextWidth" alt="image">
+            <content type="html"><![CDATA[<p><img alt="image" src="images/1.png#layoutTextWidth">
 Il y a deux semaines le Quebec a ouvert la vaccination aux personnes de 45 ans et plus, avec le vaccin AstraZeneca.</p>
 <p>Apres plusieurs essais, IMPOSSIBLE d’avoir une place. Impossible de remplir le formulaire assez vite.</p>
 <p>Un ami a donc crée un bot pour être le plus rapide. Voila comment.</p>
@@ -283,23 +283,23 @@ C’est une analyse du fonctionnement du site de reservation de vaccin faite uni
 </li>
 <li>
 <p>sélectionner un centre de vaccin ou une pharmacie
-<img src="images/2.png#layoutTextWidth" alt="image"></p>
+<img alt="image" src="images/2.png#layoutTextWidth"></p>
 </li>
 <li>
 <p>sélectionner la date souhaité (en general, on a pas le choix), puis l’heure
-<img src="images/3.png#layoutTextWidth" alt="image"></p>
+<img alt="image" src="images/3.png#layoutTextWidth"></p>
 </li>
 <li>
 <p>remplir un lonnnng formulaire, ce qui prend en general au moins 30s si vous tapez vite, voir plus
-<img src="images/4.png#layoutTextWidth" alt="image"></p>
+<img alt="image" src="images/4.png#layoutTextWidth"></p>
 </li>
 </ul>
 <p>Note: votre No d’assurance maladie, c’est <strong>PAS VOTRE N.A.S</strong>, mais le code en bas de votre carte soleil, qui commence par les 3 lettres de votre nom et la 1ere lettre de votre prénom, puis votre age (ex: FOOJ 740712..)</p>
 <p>En general quand vous en êtes la, vous cliquez sur “SOUMETTRE” en bas de page et ca vous dit que votre choix n’est plus disponible.</p>
-<p><img src="images/5.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="images/5.png#layoutTextWidth"></p>
 <h3 id="2eme-tentative">2eme tentative</h3>
 <p>Vous recommencez le process du debut, et encore une fois, le temps de remplir le formulaire, votre place n’est plus dispo…</p>
-<p><img src="images/6.png#layoutTextWidth" alt="image"></p>
+<p><img alt="image" src="images/6.png#layoutTextWidth"></p>
 <p>Voila pourquoi, quand vous réservez une place de spectacle sur TicketMaster™ ou autres, on vous laisse un gros 5 minutes pour finaliser votre transaction. Pendent ce temps la, votre place est bloquée et on ne peut pas vous la prendre. Passé les 5 minutes, elle revient dans le pool.</p>
 <p>Mais bon, ca demande un peu plus de travail. J’imagine que le ministère de la santé ne pensait pas que le monde se battrait pour avoir le vaccin… Ou ils ont sous-traités, a fort prix, sans se préoccuper de l’experience utilisateur ?</p>
 <h3 id="décomposition">Décomposition</h3>
